@@ -20,7 +20,6 @@ class CompraEstado {
         $this->cefechafin = $datos['cefechafin'] ?? null;
     }
 
-    // Getters
     public function getIdCompraEstado() {
         return $this->idcompraestado;
     }
@@ -37,7 +36,6 @@ class CompraEstado {
         return $this->cefechafin;
     }
 
-    // Setters
     public function setIdCompra($idCompra) {
         $this->idcompra = $idCompra;
     }
@@ -50,4 +48,75 @@ class CompraEstado {
     public function setFechaFin($fecha) {
         $this->cefechafin = $fecha;
     }
+
+    public function insertar() {
+        $res = false;
+        $baseDatos = new BaseDatos();
+         $sql = "INSERT INTO compraestado (idcompra, idcompraestadotipo, cefechaini, cefechafin) 
+                VALUES (:idcompra, :idcompraestadotipo, :getFechaIni, :cefechafin)";
+
+        $stmt = $base->prepare($sql);
+        if ($stmt->execute([
+            ':idcompra' => $this->getIdCompra(),
+            ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),
+            ':getFechaIni' => $this->getFechaIni(),
+            ':cefechafin' => $this->getFechaFin()
+        ])) {
+            $resp = true;
+        }
+        return $resp;
+    }
+
+    public function modificar() {
+        $base = new BaseDatos();
+        $resp = false;
+        $sql = "UPDATE compraestado 
+                SET idcompra = :idcompra, idcompraestadotipo = :idcompraestadotipo, cefechaini = :cefechaini, cefechafin = :cefechafin
+                WHERE idcompraestado = :idcompraestado";
+        
+            $stmt = $base->prepare($sql);
+            if ($stmt->execute([
+            ':idcompra' => $this->getIdCompra(),
+            ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),
+            ':getFechaIni' => $this->getFechaIni(),
+            ':cefechafin' => $this->getFechaFin(),
+            ':idcompraestado' => $this->getIdCompraEstado()
+            ])) {
+                $resp = true;
+            }
+        return $resp;
+    }
+
+    public function eliminar() {
+        $base = new BaseDatos();
+        $resp = false;
+        $sql = "DELETE compraestado  WHERE idcompraestado = :idcompraestado";
+        $stmt = $base->prepare($sql);
+            if ($stmt->execute([
+            ':idcompraestado' => $this->getIdCompraEstado(),
+            ])) {
+                $resp = true;
+            }
+        return $resp;
+    }
+
+    public function listar($condicion = "") {
+        $base = new BaseDatos();
+        $sql = "SELECT * FROM compraestado";
+        if ($condicion != "") {
+            $sql .= " WHERE " . $condicion;
+        }
+        $stmt = $base->prepare($sql);
+        $stmt->execute();
+        
+        $comprasEstados = [];
+        while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $objCompraEstado = new Menu();
+            $objCompraEstado->cargarDatos($fila);
+            $comprasEstados[] = $objCompraEstado;
+        }
+        return $comprasEstados;
+    }
+
+
 }

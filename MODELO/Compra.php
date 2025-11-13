@@ -16,7 +16,6 @@ class Compra {
         $this->idusuario = $datos['idusuario'] ?? null;
     }
 
-    // Getters
     public function getIdCompra() {
         return $this->idcompra;
     }
@@ -27,11 +26,75 @@ class Compra {
         return $this->idusuario;
     }
 
-    // Setters
     public function setFecha($fecha) {
         $this->cofecha = $fecha;
     }
     public function setIdUsuario($idUsuario) {
         $this->idusuario = $idUsuario;
+    }
+
+    public function insertar() {
+        $res = false;
+        $baseDatos = new BaseDatos();
+         $sql = "INSERT INTO compra (cofecha, idusuario) 
+                VALUES (:cofecha, :idusuario)";
+
+        $stmt = $base->prepare($sql);
+        if ($stmt->execute([
+            ':cofecha' => $this->getFecha(),
+            ':idusuario' => $this->getIdUsuario()
+        ])) {
+            $resp = true;
+        }
+        return $resp;
+    }
+
+    public function modificar() {
+        $base = new BaseDatos();
+        $resp = false;
+        $sql = "UPDATE compra 
+                SET cofecha = :cofecha, idusuario = :idusuario
+                WHERE idcompra = :idcompra";
+        
+        $stmt = $base->prepare($sql);
+            if ($stmt->execute([
+            ':idcompra' => $this->getIdCompra(),
+            ':cofecha' => $this->getFecha(),
+            ':idusuario' => $this->getIdUsuario()
+            ])) {
+                $resp = true;
+            }
+        return $resp;
+    }
+
+    public function eliminar() {
+        $base = new BaseDatos();
+        $resp = false;
+        $sql = "DELETE compra  WHERE idcompra = :idcompra";
+        $stmt = $base->prepare($sql);
+            if ($stmt->execute([
+            ':idcompra' => $this->getIdCompra()
+            ])) {
+                $resp = true;
+            }
+        return $resp;
+    }
+
+    public function listar() {
+        $base = new BaseDatos();
+        $sql = "SELECT * FROM compra";
+        if ($condicion != "") {
+            $sql .= " WHERE " . $condicion;
+        }
+        $stmt = $base->prepare($sql);
+        $stmt->execute();
+        
+        $compras = [];
+        while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $objCompra = new Menu();
+            $objCompra->cargarDatos($fila);
+            $compras[] = $objCompra;
+        }
+        return $compras;
     }
 }

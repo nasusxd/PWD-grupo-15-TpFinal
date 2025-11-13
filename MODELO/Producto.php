@@ -18,7 +18,6 @@ class Producto {
         $this->procantstock = $datos['procantstock'] ?? null;
     }
 
-    // Getters
     public function getIdProducto() {
         return $this->idproducto;
     }
@@ -32,7 +31,6 @@ class Producto {
         return $this->procantstock;
     }
 
-    // Setters
     public function setNombre($nombre) {
         $this->pronombre = $nombre;
     }
@@ -41,5 +39,73 @@ class Producto {
     }
     public function setStock($stock) {
         $this->procantstock = $stock;
+    }
+
+    
+    public function insertar() {
+        $res = false;
+        $baseDatos = new BaseDatos();
+         $sql = "INSERT INTO producto (pronombre, prodetalle, procantstock) 
+                VALUES (:pronombre, :prodetalle, :procantstock)";
+
+        $stmt = $base->prepare($sql);
+        if ($stmt->execute([
+            ':pronombre' => $this->getNombre(),
+            ':prodetalle' => $this->getDetalle(),
+            ':procantstock' => $this->getStock(),
+        ])) {
+            $resp = true;
+        }
+        return $resp;
+    }
+
+    public function modificar() {
+        $base = new BaseDatos();
+        $resp = false;
+        $sql = "UPDATE producto
+                SET pronombre = :pronombre, prodetalle = :prodetalle, procantstock = :procantstock
+                WHERE idproducto = :idproducto";
+        
+        $stmt = $base->prepare($sql);
+            if ($stmt->execute([
+            ':idproducto' => $this->getIdProducto(),
+            ':pronombre' => $this->getNombre(),
+            ':prodetalle' => $this->getDetalle(),
+            ':procantstock' => $this->getStock()
+            ])) {
+                $resp = true;
+            }
+        return $resp;
+    }
+
+    public function eliminar() {
+        $base = new BaseDatos();
+        $resp = false;
+        $sql = "DELETE producto WHERE idproducto = :idproducto";
+        $stmt = $base->prepare($sql);
+            if ($stmt->execute([
+            ':idproducto' => $this->getIdProducto()
+            ])) {
+                $resp = true;
+            }
+        return $resp;
+    }
+
+    public function listar() {
+        $base = new BaseDatos();
+        $sql = "SELECT * FROM producto";
+        if ($condicion != "") {
+            $sql .= " WHERE " . $condicion;
+        }
+        $stmt = $base->prepare($sql);
+        $stmt->execute();
+        
+        $productos = [];
+        while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $objProducto = new Menu();
+            $objProducto->cargarDatos($fila);
+            $productos[] = $objProducto;
+        }
+        return $productos;
     }
 }
