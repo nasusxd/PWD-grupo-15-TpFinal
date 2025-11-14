@@ -51,7 +51,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 1</h5>
           <p class="card-text text-success fw-bold">$1000</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="1">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -63,7 +63,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 2</h5>
           <p class="card-text text-success fw-bold">$1500</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="2">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 3</h5>
           <p class="card-text text-success fw-bold">$2000</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="3">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 4</h5>
           <p class="card-text text-success fw-bold">$1200</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="4">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 5</h5>
           <p class="card-text text-success fw-bold">$1000</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="5">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 6</h5>
           <p class="card-text text-success fw-bold">$1500</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="6">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -129,7 +129,7 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 7</h5>
           <p class="card-text text-success fw-bold">$2000</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="7">Agregar al carrito</button>
         </div>
       </div>
     </div>
@@ -141,13 +141,14 @@ include_once './structure/header.php';
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">Producto 8</h5>
           <p class="card-text text-success fw-bold">$1200</p>
-          <button class="btn btn-primary mt-auto">Agregar al carrito</button>
+          <button class="agregar-carrito btn btn-primary mt-auto" data-id="8">Agregar al carrito</button>
         </div>
       </div>
     </div>
 
   </div>
 </div>
+<script src="./assets/js/carrito.js"></script>
 <style>
  #miCarrusel .carousel-item img {
   width: 100%;
