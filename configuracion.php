@@ -1,21 +1,16 @@
 <?php
 session_start();
-header('Content-Type: text/html; charset=utf-8');
-header('Cache-Control: no-cache, must-revalidate');
 
-// Ruta absoluta al directorio del proyecto (donde está este archivo)
+// Carpeta raíz del proyecto en el servidor
 $GLOBALS['ROOT'] = __DIR__ . '/';
 
-// Definición de la URL base 
-define('BASE_URL', '/VISTA/');
+// URL base de la aplicación
+$host = $_SERVER['HTTP_HOST'];
+$uri  = '/tpfinal/PWD-grupo-15-TpFinal/VISTA'; // carpeta de tus vistas
+define('BASE_URL', "http://$host$uri/");
 
-// Ruta principal
-//$PRINCIPAL = "Location:http://" . $_SERVER['HTTP_HOST'] . "/PWD-GRUPO-15-TPFINAL/VISTA/menu.php";
-
-// Guardamos el root también en sesión si querés mantener compatibilidad
+// Guardar ROOT en sesión
 $_SESSION['ROOT'] = $GLOBALS['ROOT'];
 
-// Incluí las funciones (autoload)
+// Incluir funciones globales
 include_once($GLOBALS['ROOT'] . 'UTILS/funciones.php');
-
-?>

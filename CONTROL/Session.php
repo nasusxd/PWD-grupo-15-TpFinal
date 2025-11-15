@@ -7,16 +7,17 @@ class Session {
         }
     }
 
-    public function iniciar ($nombreUser, $pass) {
+    public function iniciar ($usMail, $pass) {
         $resp = false;
         $objABMUsuario = new ABMUsuario();
-        $param = ['usnombre' => $nombreUser];
+        $lista = $objABMUsuario->buscar(['usmail' => $usMail]);
 
-        $lista = $objABMUsuario->buscar($param);
-
-        if (count($lista) == 1) {
+        if (count($lista) !== 1) {
+            $this->cerrar(); //cierro la sesion si no encuentro el usuario
+        } else {
             $usuario = $lista[0];
-            if ($usuario->getDeshabilitado() != '0000-00-00') {
+            
+            if ($usuario->getDeshabilitado() !== null) {
                 $this->cerrar(); //cierro la sesion si el usuario esta deshabilitado
             }else {
                 if (password_verify($pass, $usuario->getPassword())) {
@@ -26,11 +27,11 @@ class Session {
                     $this->cerrar(); //cierro la sesion si la password es incorrecta
                 }
             }
-        } else {
             $this->cerrar(); //cierro la sesion si no encuentro el usuario
         }
         return $resp;
     }
+
     //valida si la sesion tiene un usuario valido
     public function validar() {
         return isset($_SESSION['idusuario']);

@@ -48,9 +48,11 @@ include_once './structure/header.php';
                     dataType: "json",
                     success: function(respuesta) {
                         if (respuesta.success) {
+                            console.log("login exitoso");
                             //redirijo segun el rol
                             window.location.href = respuesta.redirect;
                         } else {
+                            console.log("error en el login");
                             //muestro el error
                             $("#mensaje").html(`<div class="alert alert-danger">${respuesta.msg}</div>`);
                         }

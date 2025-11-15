@@ -60,7 +60,7 @@ class ABMUsuario {
         $resp = false;
         if (array_key_exists('idusuario', $param)) {
             $objUsuario = $this->cargarObjeto($param);
-            if ($objUsuario != null && $objUsuario->modificar()) {
+            if ($objUsuario != null && $objUsuario->modificarUsuario($param)) {
                 $resp = true;
             }
         }
