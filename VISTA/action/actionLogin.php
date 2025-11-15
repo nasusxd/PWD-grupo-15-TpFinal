@@ -1,0 +1,16 @@
+<?php
+
+include_once '../structure/header.php';
+$datos = datasubmitted();
+
+$session = new Session();
+$login = $session->iniciar($datos['usmail'], $datos['uspass']);
+$response = ["success" => false, "msg" => "Usuario o contraseña incorrectos, o cuenta deshabilitada."]; //mensaje por defecto
+//evaluo si el login fue exitoso
+if ($login) {
+    $response = ["success" => true, "redirect" => "../menu.php"];
+}
+header('Content-Type: application/json'); //le dice al navegador que va a recibir un json
+echo json_encode($response); //mando la respuesta en json
+
+include_once '../structure/footer.php';

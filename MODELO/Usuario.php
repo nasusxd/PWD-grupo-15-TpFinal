@@ -50,19 +50,22 @@ class Usuario {
         $this->usdeshabilitado = $fecha;
     }
 
-    public function insertarUsuario($datos) {
-        $contrasenia = $datos['uspass'];
-        $hashedPassword = password_hash($contrasenia, PASSWORD_BCRYPT);
+    public function insertarUsuario() {
+        $hashContrasenia = password_hash($this->getPassword(), PASSWORD_BCRYPT);
         $baseDatos = new BaseDatos();
         $sql = "INSERT INTO usuario (usnombre, uspass, usmail, usdeshabilitado) 
         VALUES (:nombre, :contrasenia, :mail, :deshabilitado)";
         $stmt = $baseDatos->prepare($sql);
-        $stmt->execute([
-            ':nombre' => $datos['nombre'],
+        $res = $stmt->execute([
+            ':nombre' => $this->getNombre(),
             ':contrasenia' => $hashContrasenia,
-            ':mail' => $datos['mail'],
-            ':deshabilitado' => $datos['deshabilitado']
+            ':mail' => $this->getMail(),
+            ':deshabilitado' => $this->getDeshabilitado()
         ]);
+        if ($res) {
+            $this->idusuario = $baseDatos->lastInsertId();
+        }
+        return $res;
     }
 
     public function buscarUsuario($nombreUsuario) {

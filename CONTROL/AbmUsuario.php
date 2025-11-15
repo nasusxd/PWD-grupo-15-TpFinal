@@ -13,8 +13,8 @@ class ABMUsuario {
         $obj = null;
 
         if (array_key_exists('idusuario', $param) && array_key_exists('usnombre', $param) && array_key_exists('uspass', $param) && array_key_exists('usmail', $param) && array_key_exists('usdeshabilitado', $param)) {
-            $objUsuario = new Usuario();
-            $objUsuario->cargarDatos($param);
+            $obj = new Usuario();
+            $obj->cargarDatos($param);
         }
         return $obj;
     }
@@ -30,8 +30,16 @@ class ABMUsuario {
 
     public function alta($param) {
         $resp = false;
-        $objUsuario = $this->cargarObjeto($param);
-        if ($objUsuario != null && $objUsuario->insertar()) {
+        $nuevoUsuario = [
+            "idusuario" => null,
+            "usnombre" => $param['usnombre'],
+            "uspass" => $param['uspass'],
+            "usmail" => $param['usmail'],
+            "usdeshabilitado" => null
+        ];
+
+        $cargarUsuario = $this->cargarObjeto($nuevoUsuario);
+        if ($cargarUsuario != null && $cargarUsuario->insertarUsuario()) {
             $resp = true;
         }
         return $resp;
@@ -72,7 +80,7 @@ class ABMUsuario {
                 $where .= " and usdeshabilitado = '" . $param['usdeshabilitado'] . "'";
         }
         $objUsuario = new Usuario();
-        $arreglo = $objUsuario->listar($where);
+        $arreglo = $objUsuario->listarUsuarios($where);
         return $arreglo;
     }
 }
