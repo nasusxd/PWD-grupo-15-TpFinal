@@ -38,12 +38,7 @@ include_once(__DIR__ . '../../../configuracion.php');
         <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>contacto.php">Contacto</a></li>
       </ul>
 
-      <!-- BUSCADOR -->
-      <form class="d-flex me-3" action="<?= BASE_URL ?>buscar.php" method="get">
-        <input class="form-control me-2" type="search" name="q" placeholder="Buscar productos..." aria-label="Buscar">
-        <button class="btn btn-outline-primary" type="submit">Buscar</button>
-      </form>
-      <br>
+    
 
       <!-- ICONOS (USUARIO / CARRITO) -->
       <div class="d-flex align-items-center">
@@ -57,13 +52,7 @@ include_once(__DIR__ . '../../../configuracion.php');
           <i class="bi bi-house-fill"></i>
         </a>
 
-        <!-- CARRITO -->
-        <a href="<?= BASE_URL ?>carrito.php" class="btn btn-link text-dark fs-5 p-0 position-relative" title="Carrito">
-          <i class="bi bi-cart3"></i>
-          <!-- contador del carrito -->
-          <span id="contador-carrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            0
-          </span>
+       
         </a>
       </div>
       </div>
