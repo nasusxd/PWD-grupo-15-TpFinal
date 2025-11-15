@@ -20,13 +20,13 @@ if ($sesion->validar()) {
   <!-- Imágenes -->
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="./assets/img/ims/diseno-fondo-acuarela-arco-iris_23-2149574508.avif" class="d-block w-100" alt="Imagen 1">
+      <img src="../img/malvinas.jpg" class="d-block w-100" alt="Imagen 1">
     </div>
     <div class="carousel-item">
-      <img src="./assets/img/ims/fondo-abstracto-acuarela-colorida_23-2149108517.avif" class="d-block w-100" alt="Imagen 2">
+      <img src="../img/cheQueAsado.png" class="d-block w-100" alt="Imagen 2">
     </div>
     <div class="carousel-item">
-      <img src="./assets/img/ims/fondo-textura-acuarela-color-arco-iris_1048-16710.avif" class="d-block w-100" alt="Imagen 3">
+      <img src="../img/sombrasDeArrabal.png" class="d-block w-100" alt="Imagen 3">
     </div>
   </div>
 

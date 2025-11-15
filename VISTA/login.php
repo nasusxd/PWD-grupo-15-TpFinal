@@ -1,5 +1,5 @@
 <?php
-include_once './structure/header.php';
+include_once './structure/headerGlobal.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">

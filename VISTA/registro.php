@@ -1,4 +1,4 @@
-<?php include_once 'structure/header.php'; ?>
+<?php include_once 'structure/headerGlobal.php'; ?>
 
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="card shadow-sm" style="width: 450px;">
