@@ -53,17 +53,23 @@ $totalCarrito = isset($_SESSION['carrito']) && is_array($_SESSION['carrito']) ? 
 
         <!-- USUARIO -->
         <?php if ($login): ?>
-           <!-- esto es para ver el id del usuario actual -->
-          <a href="<?= BASE_URL ?>usuario/perfil.php?id=<?= $idUsuario ?>"
-            class="btn btn-link text-dark fs-5 me-3 p-0" title="Mi cuenta">
+        <!-- Mi cuenta -->
+        <a href="<?= BASE_URL ?>usuario/perfil.php?id=<?= $idUsuario ?>"
+          class="btn btn-link text-dark fs-5 me-3 p-0" title="Mi cuenta">
             <i class="bi bi-person-check-fill"></i>
-          </a>
+        </a>
+
+        <!-- Cerrar sesión -->
+        <a href="<?= BASE_URL ?>logout.php"
+          class="btn btn-outline-danger me-3">
+            Cerrar sesión
+        </a>
         <?php else: ?>
-          <a href="<?= BASE_URL ?>login.php" 
-            class="btn btn-primary me-3">
-            Iniciar sesión
-          </a>
+            <a href="<?= BASE_URL ?>login.php" class="btn btn-primary me-3">
+                Iniciar sesión
+            </a>
         <?php endif; ?>
+
 
           <!-- HOME -->
           <a href="<?= BASE_URL ?>menu.php" class="btn btn-link text-dark fs-5 me-3 p-0" title="Menú">

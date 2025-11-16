@@ -103,7 +103,7 @@ class Session {
 
     //cierro la sesion
     public function cerrar() {
-        session_unset();
-        session_destroy();
+        session_unset(); //limpio los datos de la sesion
+        session_destroy(); //destruyo la sesion
     } 
 }

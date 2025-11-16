@@ -30,41 +30,7 @@ include_once './structure/headerGlobal.php';
             </div>
         </div>
     </div>
-
-    <script>
-        $(document).ready(function() {
-            $("#loginButton").click(function(e) {
-                e.preventDefault();
-
-                let datosFormulario = {
-                    usmail: $("#usmail").val(),
-                    uspass: $("#uspass").val()
-                };
-
-                $.ajax({
-                    url: "action/actionLogin.php",
-                    type: "POST",
-                    data: datosFormulario,
-                    dataType: "json",
-                    success: function(respuesta) {
-                        if (respuesta.success) {
-                            console.log("login exitoso");
-                            //redirijo segun el rol
-                            window.location.href = respuesta.redirect;
-                        } else {
-                            console.log("error en el login");
-                            //muestro el error
-                            $("#mensaje").html(`<div class="alert alert-danger">${respuesta.msg}</div>`);
-                        }
-                    },
-                    error: function() {
-                        $("#mensaje").html('<div class="alert alert-danger">Error en la conexión al servidor.</div>');
-                    }
-                });
-            });
-        });
-    </script>
-
+    <script src="./assets/js/login.js"></script>
     <div class="text-center mt-3">
         <p>¿No tenés cuenta?</p>
         <a href="registro.php" class="btn btn-outline-primary w-45">Registrarse</a>
