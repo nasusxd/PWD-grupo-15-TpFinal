@@ -1,18 +1,21 @@
 <?php
-class Usuario {
+class Usuario
+{
     private $idusuario;
     private $usnombre;
     private $uspass;
     private $usmail;
     private $usdeshabilitado;
 
-    public function __construct($datos = []) {
+    public function __construct($datos = [])
+    {
         if (!empty($datos)) {
             $this->cargarDatos($datos);
         }
     }
 
-    public function cargarDatos($datos) {
+    public function cargarDatos($datos)
+    {
         $this->idusuario = $datos['idusuario'] ?? null;
         $this->usnombre = $datos['usnombre'] ?? null;
         $this->uspass = $datos['uspass'] ?? null;
@@ -20,37 +23,47 @@ class Usuario {
         $this->usdeshabilitado = $datos['usdeshabilitado'] ?? null;
     }
     // Getters
-    public function getIdUsuario() {
+    public function getIdUsuario()
+    {
         return $this->idusuario;
     }
-    public function getNombre() {
+    public function getNombre()
+    {
         return $this->usnombre;
     }
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->uspass;
     }
-    public function getMail() {
+    public function getMail()
+    {
         return $this->usmail;
     }
-    public function getDeshabilitado() {
+    public function getDeshabilitado()
+    {
         return $this->usdeshabilitado;
     }
 
     // Setters
-    public function setNombre($nombre) {
+    public function setNombre($nombre)
+    {
         $this->usnombre = $nombre;
     }
-    public function setPassword($pass) {
+    public function setPassword($pass)
+    {
         $this->uspass = $pass;
     }
-    public function setMail($mail) {
+    public function setMail($mail)
+    {
         $this->usmail = $mail;
     }
-    public function setDeshabilitado($fecha) {
+    public function setDeshabilitado($fecha)
+    {
         $this->usdeshabilitado = $fecha;
     }
 
-    public function insertarUsuario() {
+    public function insertarUsuario()
+    {
         $hashContrasenia = password_hash($this->getPassword(), PASSWORD_BCRYPT);
         $baseDatos = new BaseDatos();
         $sql = "INSERT INTO usuario (usnombre, uspass, usmail, usdeshabilitado) 
@@ -68,7 +81,8 @@ class Usuario {
         return $res;
     }
 
-    public function buscarUsuario($nombreUsuario) {
+    public function buscarUsuario($nombreUsuario)
+    {
         $baseDatos = new BaseDatos();
         $sql = "SELECT * FROM usuario WHERE usnombre = :nombre";
         $stmt = $baseDatos->prepare($sql);
@@ -78,32 +92,40 @@ class Usuario {
     }
 
     //se modifica por la cookie
-    public function modificarUsuario($datos) {
+
+    public function modificarUsuario($datos)
+    {
         $baseDatos = new BaseDatos();
+
+
         $sql = "UPDATE usuario 
-        SET usnombre = :nombre, usmail = :mail, uspass = :pass 
-        WHERE idusuario = :id";
+            SET usnombre = :usnombre, usmail = :usmail, uspass = :uspass 
+            WHERE idusuario = :idusuario";
 
         $stmt = $baseDatos->prepare($sql);
-        $stmt->execute([
-            ':nombre' => $datos['nombre'],
-            ':mail' => $datos['mail'],
-            ':pass' => password_hash($datos['pass'], PASSWORD_BCRYPT),
-            ':id' => $datos['idusuario']
+
+
+        return $stmt->execute([
+            ':usnombre' => $datos['usnombre'],
+            ':usmail'   => $datos['usmail'],
+            ':uspass'   => password_hash($datos['uspass'], PASSWORD_BCRYPT),
+            ':idusuario' => $datos['idusuario']
         ]);
     }
 
     //se elimina por la cookie
-    public function eliminarUsuario($idUsuario) {
+    public function eliminarUsuario($idUsuario)
+    {
         $res = false;
         $baseDatos = new BaseDatos();
         $sql = "DELETE FROM usuario WHERE idusuario = :id";
         $stmt = $baseDatos->prepare($sql);
-        if($stmt->execute([':id' => $idUsuario])) $res = true;
+        if ($stmt->execute([':id' => $idUsuario])) $res = true;
         return $res;
     }
 
-    public function listarUsuarios($condicion = "") {
+    public function listarUsuarios($condicion = "")
+    {
         $baseDatos = new BaseDatos();
         $sql = "SELECT * FROM usuario";
         if ($condicion != "") {

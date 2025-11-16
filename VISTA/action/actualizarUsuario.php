@@ -2,70 +2,58 @@
 include_once "../../configuracion.php";
 
 $session = new Session();
+
+
+if (!$session->validar()) {
+    echo json_encode(["success" => false, "error" => "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."]);
+    exit;
+}
+
+
 $usuario = $session->getUsuario();
 
-$accion = $_POST["accion"];  //veo q form vino
-
+$accion = $_POST["accion"];
 $abm = new AbmUsuario();
+$resultado = false;
 
-// Traigo datos actuales de BD
-$datosActuales = $abm->buscar(['idusuario' => $usuario['idusuario']]);
+
+$datosActuales = $abm->buscar(['idusuario' => $usuario]);
 if (!$datosActuales) {
     echo json_encode(["success" => false, "error" => "Usuario no encontrado"]);
     exit;
 }
 
-$datosActuales = $datosActuales[0]; // objeto usuario
+$datosActuales = $datosActuales[0];
 
-// Preparo el array base para modificación
+//este param me estaba arruinando la vida
 $param = [
-    "idusuario" => $usuario["idusuario"],
-    "usnombre" => $datosActuales->getUsNombre(),
-    "uspass" => $datosActuales->getUsPass(),
-    "usmail" => $datosActuales->getUsMail(),
-    "usdeshabilitado" => $datosActuales->getUsDeshabilitado()
+    "idusuario" => $usuario,
+    "usnombre" => $datosActuales->getNombre(),      
+    "uspass" => $datosActuales->getPassword(),    
+    "usmail" => $datosActuales->getMail(),        
+    "usdeshabilitado" => $datosActuales->getDeshabilitado() 
 ];
 
-// -------------------------------
-//       ACTUALIZAR NOMBRE
-// -------------------------------
+
 if ($accion == "nombre") {
-    $nuevo = trim($_POST["usnombre"]);
-    $param["usnombre"] = $nuevo;
+    $param["usnombre"] = trim($_POST["usnombre"]);
     $resultado = $abm->modificacion($param);
 }
 
-// -------------------------------
-//         ACTUALIZAR EMAIL
-// -------------------------------
+
 if ($accion == "email") {
-    $nuevo = trim($_POST["usmail"]);
-    $param["usmail"] = $nuevo;
+    $param["usmail"] = trim($_POST["usmail"]);
     $resultado = $abm->modificacion($param);
 }
 
-// -------------------------------
-//        ACTUALIZAR PASS
-// -------------------------------
+
 if ($accion == "pass") {
-
     $p1 = $_POST["pass1"];
-    $p2 = $_POST["pass2"];
-
-    if ($p1 !== $p2) {
-        echo json_encode(["success" => false, "error" => "Las contraseñas no coinciden"]);
-        exit;
-    }
-
-    // ⚠ importante: si usas hash, hacelo acá
+    
     $param["uspass"] = $p1;
-
+    
     $resultado = $abm->modificacion($param);
 }
-
-// -------------------------------
-//     RESPUESTA JSON
-// -------------------------------
 echo json_encode([
     "success" => $resultado,
     "mensaje" => $resultado ? "Datos actualizados" : "Error al guardar"
