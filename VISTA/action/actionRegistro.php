@@ -11,23 +11,31 @@ $response = ["success" => false, "msg" => ""];
 
 $objUsuario = new ABMUsuario();
 
-$resultado = $objUsuario->alta($datos);
+$existeEmail = $objUsuario->buscar(['usmail' => $datos['usmail']]);
 
-if ($resultado) {
-    // asignamos el rol de cliente al nuevo usuario
-    $objUsuarioRol = new ABMUsuarioRol();
-    $idUsuario = $objUsuario->buscar(['usnombre' => $datos['usnombre']])[0]->getIdUsuario();
-
-    $nuevoUsuarioRol = [
-        'idusuario' => $idUsuario,
-        'idrol'     => 1
+if (count($existeEmail) > 0) {
+    $response = [
+        "success" => false, 
+        "msg" => "El email ingresado ya esta registrado"
     ];
-    $objUsuarioRol->alta($nuevoUsuarioRol);
-
-    $response = ["success" => true, "redirect" => "login.php"];
 } else {
-    $response = ["success" => false, "msg" => "Error en el alta del usuario."];
-}
+    $resultado = $objUsuario->alta($datos);
 
+    if ($resultado) {
+        // asignamos el rol de cliente al nuevo usuario
+        $objUsuarioRol = new ABMUsuarioRol();
+        $idUsuario = $objUsuario->buscar(['usnombre' => $datos['usnombre']])[0]->getIdUsuario();
+
+        $nuevoUsuarioRol = [
+            'idusuario' => $idUsuario,
+            'idrol'     => 1
+        ];
+        $objUsuarioRol->alta($nuevoUsuarioRol);
+
+        $response = ["success" => true, "redirect" => "login.php"];
+    } else {
+        $response = ["success" => false, "msg" => "Error en el alta del usuario."];
+    }
+}
 echo json_encode($response);
 exit;
