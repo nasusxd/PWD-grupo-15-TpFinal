@@ -13,7 +13,7 @@ $objUsuario = $abmUsuario->buscar(['idusuario' => $idUsuario]); //obtengo un arr
 
         <h4 class="mb-4">Detalles básicos</h4>
 
-        <form class="mb-4">
+        <form id="formNombre" class="mb-4">
             <input type="hidden" name="accion" value="nombre">
 
             <label class="form-label">Nombre de usuario</label>
@@ -26,7 +26,7 @@ $objUsuario = $abmUsuario->buscar(['idusuario' => $idUsuario]); //obtengo un arr
             </div>
         </form>
 
-        <form class="mb-4">
+        <form id="formEmail" class="mb-4">
             <input type="hidden" name="accion" value="email">
 
             <label class="form-label">Correo Electrónico</label>
@@ -39,7 +39,7 @@ $objUsuario = $abmUsuario->buscar(['idusuario' => $idUsuario]); //obtengo un arr
             </div>
         </form>
 
-        <form class="mb-4">
+        <form id="formPass" class="mb-4">
             <input type="hidden" name="accion" value="pass">
 
             <label class="form-label">Nueva contraseña</label>
