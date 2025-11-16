@@ -60,9 +60,9 @@ class Session {
         }
         return $roles;
     }
-
+    
     public function agregarAlCarrito($idProducto, $cantidad) {
-        if (!isset($_SESSION['carrito'])) {
+        if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
             $_SESSION['carrito'] = [];
         }
 
@@ -73,6 +73,7 @@ class Session {
         }
     }
 
+
     public function totalProductosCarrito() {
         $total = 0;
         if (isset($_SESSION['carrito'])) {
@@ -80,7 +81,6 @@ class Session {
                 $total += $cantidad;
             }
         }
-        $_SESSION['carrito'] = $total;
         return $total;
     }
 

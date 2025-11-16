@@ -3,6 +3,7 @@ include_once(__DIR__ . '../../../configuracion.php');
 $sesion = new Session();
 $login = $sesion->validar();
 $idUsuario = $login ? $sesion->getUsuario() : null;
+$totalCarrito = isset($_SESSION['carrito']) && is_array($_SESSION['carrito']) ? array_sum($_SESSION['carrito']) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -75,7 +76,7 @@ $idUsuario = $login ? $sesion->getUsuario() : null;
              class="btn btn-link text-dark fs-5 p-0 position-relative" title="Carrito">
             <i class="bi bi-cart3"></i>
             <span id="contador-carrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            0
+            <?= $totalCarrito ?>
             </span>
           </a>
 

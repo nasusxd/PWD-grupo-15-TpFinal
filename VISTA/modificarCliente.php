@@ -1,7 +1,11 @@
 <?php 
+
+//hay que usar una libreria de mail para el tema de cambiar el mail/contraseña/usuario
 include_once 'structure/header.php'; 
 $session = new Session();
-$usuario=$session->getUsuario();
+$idUsuario = $session->getUsuario(); //saco la id y anda
+$abmUsuario = new ABMUsuario(); //creo un abm usuario para buscar los datos del usuario
+$objUsuario = $abmUsuario->buscar(['idusuario' => $idUsuario]); //obtengo un array de objs de usuarios
 ?>
 
 <div class="container mt-5">
@@ -14,7 +18,7 @@ $usuario=$session->getUsuario();
 
             <label class="form-label">Nombre de usuario</label>
             <input type="text" name="usnombre" class="form-control" 
-                   value="<?= $usuario['usnombre'] ?>">
+                   value="<?= $objUsuario[0]->getNombre() ?>">
 
             <div class="d-flex justify-content-end gap-2 mt-2">
                 <button type="reset" class="btn btn-outline-secondary btn-sm">Cancelar</button>
@@ -27,7 +31,7 @@ $usuario=$session->getUsuario();
 
             <label class="form-label">Correo Electrónico</label>
             <input type="email" name="usmail" class="form-control" 
-                   value="<?= $usuario['usmail'] ?>">
+                   value="<?= $objUsuario[0]->getMail() ?>">
 
             <div class="d-flex justify-content-end gap-2 mt-2">
                 <button type="reset" class="btn btn-outline-secondary btn-sm">Cancelar</button>
@@ -64,7 +68,7 @@ $usuario=$session->getUsuario();
 
   
     $.ajax({
-        url: "accion/actualizarUsuario.php", 
+        url: "./action/actualizarUsuario.php", 
         type: "POST",
         data: $(this).serialize(),
         dataType: "json", 
