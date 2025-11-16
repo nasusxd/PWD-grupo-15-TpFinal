@@ -108,7 +108,7 @@ class Usuario
         return $stmt->execute([
             ':usnombre' => $datos['usnombre'],
             ':usmail'   => $datos['usmail'],
-            ':uspass'   => password_hash($datos['uspass'], PASSWORD_BCRYPT),
+            ':uspass'   => $datos['uspass'],
             ':idusuario' => $datos['idusuario']
         ]);
     }

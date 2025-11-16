@@ -50,7 +50,7 @@ if ($accion == "email") {
 if ($accion == "pass") {
     $p1 = $_POST["pass1"];
     
-    $param["uspass"] = $p1;
+    $param["uspass"] = password_hash($p1, PASSWORD_DEFAULT); //hasheamos directamente aca
     
     $resultado = $abm->modificacion($param);
 }
