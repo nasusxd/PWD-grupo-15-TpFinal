@@ -58,7 +58,7 @@ class UsuarioRol {
         return $resp;
     }
 
-    public static function listar($condicion = "") {
+    public function listar($condicion = "") {
         $base = new BaseDatos();
         $sql = "SELECT * FROM usuariorol";
         if ($condicion != "") {

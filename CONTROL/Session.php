@@ -31,6 +31,19 @@ class Session {
         return $resp;
     }
 
+    public function esAdmin() {
+        $res = false;
+        if ($this->validar()) {
+           $usuario = $this->getUsuario();
+           $objUsuarioRol = new ABMUsuarioRol();
+           $roles = $objUsuarioRol->buscar(['idusuario' => $usuario]);
+           if (!empty ($roles) && $roles[0]->getIdRol() == 2) {
+            $res = true;
+           }
+        }
+        return $res;
+    }
+
     //valida si la sesion tiene un usuario valido
     public function validar() {
         return isset($_SESSION['idusuario']);
