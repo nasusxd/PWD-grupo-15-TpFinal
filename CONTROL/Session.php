@@ -27,7 +27,6 @@ class Session {
                     $this->cerrar(); //cierro la sesion si la password es incorrecta
                 }
             }
-            $this->cerrar(); //cierro la sesion si no encuentro el usuario
         }
         return $resp;
     }
@@ -61,8 +60,49 @@ class Session {
         }
         return $roles;
     }
+
+    public function agregarAlCarrito($idProducto, $cantidad) {
+        if (!isset($_SESSION['carrito'])) {
+            $_SESSION['carrito'] = [];
+        }
+
+        if (isset($_SESSION['carrito'][$idProducto])) {
+            $_SESSION['carrito'][$idProducto] += $cantidad;
+        } else {
+            $_SESSION['carrito'][$idProducto] = $cantidad;
+        }
+    }
+
+    public function totalProductosCarrito() {
+        $total = 0;
+        if (isset($_SESSION['carrito'])) {
+            foreach ($_SESSION['carrito'] as $idProducto => $cantidad) {
+                $total += $cantidad;
+            }
+        }
+        $_SESSION['carrito'] = $total;
+        return $total;
+    }
+
+    public function precioTotalCarrito() {
+        $total = 0;
+        if (isset($_SESSION['carrito'])) {
+            $objProducto = new ABMProducto();
+            foreach ($_SESSION['carrito'] as $idProducto => $cantidad) {
+                $productos = $objProducto->buscar(['idproducto' => $idProducto]);
+                if (count($productos) > 0) {
+                    $producto = $productos[0];
+                    $total += $producto->getProprecio() * $cantidad;
+                }
+            }
+        }
+        return $total;
+    }
+
+
+
     //cierro la sesion
-    public function cerrar () {
+    public function cerrar() {
         session_unset();
         session_destroy();
     } 

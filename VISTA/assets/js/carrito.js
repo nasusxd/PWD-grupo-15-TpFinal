@@ -12,7 +12,7 @@ $(document).ready(function () {
             success: function (respuesta) {
                 if (respuesta.success) {
                     // Actualizar contador del carrito
-                    $("#contador-carrito").text(respuesta.total);
+                    $("#contador-carrito").text(respuesta.totalProductos);
                 } else {
                     alert("Error: " + respuesta.mensaje);
                 }

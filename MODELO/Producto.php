@@ -91,7 +91,7 @@ class Producto {
         return $resp;
     }
 
-    public function listar() {
+    public function listar($condicion = "") {
         $base = new BaseDatos();
         $sql = "SELECT * FROM producto";
         if ($condicion != "") {
@@ -102,7 +102,7 @@ class Producto {
         
         $productos = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objProducto = new Menu();
+            $objProducto = new Producto();
             $objProducto->cargarDatos($fila);
             $productos[] = $objProducto;
         }
