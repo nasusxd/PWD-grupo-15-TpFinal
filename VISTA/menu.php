@@ -1,5 +1,10 @@
 <?php
 include_once './structure/header.php';
+$sesion = new Session();
+//aca se evalua si el usuario esta logeado o no, si esta logeado al hacer click en su perfil habria q cambiarlo de vista poara q peuda modificarlo, si no esta log tendria q aparecer algo de iniciar sesion
+if ($sesion->validar()) {
+  $idUsuario = $sesion->getUsuario();
+}
 ?>
 <br>
 
