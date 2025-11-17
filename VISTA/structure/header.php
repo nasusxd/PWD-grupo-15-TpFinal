@@ -23,7 +23,7 @@ $idUsuario = $objSession->getUsuario();
     <div class="container-fluid">
         
       <!-- LOGO -->
-    <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>menu.php"><img src="../juegunco.ico" height="50" width="50">Pelunco</a>
+    <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>menu.php"><img src="../img/pelunco.svg" height="100" width="200"></a>
 
     <!-- BOTÓN HAMBURGUESA -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuTienda" aria-controls="menuTienda" aria-expanded="false" aria-label="Alternar menú">
