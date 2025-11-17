@@ -34,8 +34,8 @@ $productos = $objProductos->buscar(null);
                         <td><?= $producto->getPrecio() ?></td>
                         <td><?= $producto->getStock() ?></td>
                         <td>
-                            <img src="../uploads/<?= $producto->getImagen() ?>" 
-                                 style="width: 80px; height: 80px; object-fit: cover;">
+                            <img src="../uploads/<?= $producto->getImagen() ?>"
+                                style="width: 80px; height: 80px; object-fit: cover;">
                         </td>
 
                         <td>
@@ -60,90 +60,104 @@ $productos = $objProductos->buscar(null);
     </table>
 </div>
 <script>
-    
-function showToast(text, type="success") {
-    const toast = document.getElementById("toast");
-    toast.className = `toast show ${type}`;
-    toast.innerText = text;
-    setTimeout(() => toast.className = "toast", 3000);
-}
+    function showToast(text, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.className = `toast show ${type}`;
+        toast.innerText = text;
+        setTimeout(() => toast.className = "toast", 3000);
+    }
 
-$(document).ready(function() {
+    $(document).ready(function() {
 
-    //editar producto
-    $(".editar-btn").click(function() {
-        let btn = $(this);
-        let row = btn.closest("tr");
-        let id = btn.data("id");
+        //editar producto
+        $(".editar-btn").click(function() {
+            let btn = $(this);
+            let row = btn.closest("tr");
+            let id = btn.data("id");
 
-        // Convertir a inputs
-        row.find("td:eq(1)").html(`<input class="form-control" value="${row.find("td:eq(1)").text()}">`);
-        row.find("td:eq(2)").html(`<input class="form-control" value="${row.find("td:eq(2)").text()}">`);
-        row.find("td:eq(3)").html(`<input class="form-control" type="number" value="${row.find("td:eq(3)").text().replace('$','')}">`);
-        row.find("td:eq(4)").html(`<input class="form-control" type="number" value="${row.find("td:eq(4)").text()}">`);
+            // Convertir a inputs
+            row.find("td:eq(1)").html(`<input class="form-control" value="${row.find("td:eq(1)").text()}">`);
+            row.find("td:eq(2)").html(`<input class="form-control" value="${row.find("td:eq(2)").text()}">`);
+            row.find("td:eq(3)").html(`<input class="form-control" type="number" value="${row.find("td:eq(3)").text().replace('$','')}">`);
+            row.find("td:eq(4)").html(`<input class="form-control" type="number" value="${row.find("td:eq(4)").text()}">`);
 
-        btn.removeClass("btn-warning").addClass("btn-success").text("Guardar");
+            btn.removeClass("btn-warning").addClass("btn-success").text("Guardar");
 
-        btn.off().click(function() {
+            btn.off().click(function() {
 
-            let pronombre = row.find("td:eq(1) input").val();
-            let prodetalle = row.find("td:eq(2) input").val();
-            let precio = row.find("td:eq(3) input").val();
-            let procantstock = row.find("td:eq(4) input").val();
+                let pronombre = row.find("td:eq(1) input").val();
+                let prodetalle = row.find("td:eq(2) input").val();
+                let precio = row.find("td:eq(3) input").val();
+                let procantstock = row.find("td:eq(4) input").val();
 
-            $.ajax({
-                url: "action/actionEditarProd.php",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    id: id,
-                    pronombre: pronombre,
-                    prodetalle: prodetalle,
-                    prodetalle: prodetalle,
-                    procantstock: procantstock
-                },
-                success: function(res) {
-                    if (res.success) {
+                $.ajax({
+                    url: "action/actionEditarProd.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        idproducto: id,
+                        pronombre: pronombre,
+                        prodetalle: prodetalle,
+                        precio: precio,
+                        procantstock: procantstock
+                    },
+                    success: function(res) {
+                        if (res.success) {
 
-                        row.find("td:eq(1)").text(pronombre);
-                        row.find("td:eq(2)").text(prodetalle);
-                        row.find("td:eq(3)").text("$" + precio);
-                        row.find("td:eq(4)").text(procantstock);
+                            row.find("td:eq(1)").text(pronombre);
+                            row.find("td:eq(2)").text(prodetalle);
+                            row.find("td:eq(3)").text("$" + precio);
+                            row.find("td:eq(4)").text(procantstock);
 
-                        btn.removeClass("btn-success").addClass("btn-warning").text("Editar");
-                        showToast("Producto actualizado.");
-                    } else {
-                        showToast(res.message, "error");
+                            btn.removeClass("btn-success").addClass("btn-warning").text("Editar");
+                            showToast("Producto actualizado.");
+                        } else {
+                            showToast(res.message, "error");
+                        }
                     }
-                }
+                });
             });
         });
-    });
 
-    //eliminar producto
-    $(".eliminar-btn").click(function() {
-        if (!confirm("Seguro que queres eliminar este producto?")) return;
+        $(".eliminar-btn").click(function() {
+            let id = $(this).data("id");
+            let row = $(this).closest("tr");
 
-        let id = $(this).data("id");
-        let row = $(this).closest("tr");
+            
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+               
+                if (result.isConfirmed) {
 
-        $.ajax({
-            url: "eliminarProducto.php",
-            type: "POST",
-            dataType: "json",
-            data: { id },
-            success: function(res) {
-                if (res.success) {
-                    row.remove();
-                    showToast("Producto eliminado.");
-                } else {
-                    showToast(res.message, "error");
+                   
+                    $.ajax({
+                        url: "action/actionEliminarProducto.php",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            id: id
+                        },
+                        success: function(res) {
+                            if (res.success) {
+                                row.remove();
+                                
+                                Swal.fire('¡Eliminado!', 'El producto ha sido borrado.', 'success');
+                            } else {
+                                Swal.fire('Error', res.message, 'error');
+                            }
+                        }
+                    });
                 }
-            }
+            })
         });
+
     });
-
-});
 </script>
-
-

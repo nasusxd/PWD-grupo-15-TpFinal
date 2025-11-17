@@ -1,24 +1,27 @@
 <?php 
 class ABMProducto  {
-    public function cargarObjeto($param) {
-        $objProducto = null;
+  public function cargarObjeto($param) {
+    $objProducto = new Producto();
 
-        if (array_key_exists('idproducto', $param) && array_key_exists('pronombre', $param) && array_key_exists('prodetalle', $param) && array_key_exists('precio', $param) && array_key_exists('procantstock', $param) && array_key_exists('proimagen', $param)) {
-            $objProducto = new Producto();
-            $objProducto->cargarDatos($param);
-        }
-        return $objProducto;
+    // Solo seteamos si existe cada campo
+    if (isset($param['idproducto']))  $objProducto->setIdProducto($param['idproducto']);
+    if (isset($param['pronombre']))   $objProducto->setNombre($param['pronombre']);
+    if (isset($param['prodetalle']))  $objProducto->setDetalle($param['prodetalle']);
+    if (isset($param['precio']))      $objProducto->setPrecio($param['precio']);
+    if (isset($param['procantstock']))$objProducto->setStock($param['procantstock']);
+    if (isset($param['proimagen']))   $objProducto->setImagen($param['proimagen']);
+
+    return $objProducto;
+}
+
+public function cargarObjetoConClave($param) {
+    $obj = null;
+    if (isset($param['idproducto'])) {
+        $obj = new Producto(); 
+        $obj->cargarDatos(['idproducto' => $param['idproducto']]);
     }
-
-    public function cargarObjetoConClave($param) {
-        $obj = null;
-        if (isset($param['idproducto'])) {
-            $objProducto = new Producto();
-            $objProducto->cargarDatos(['idproducto' => $param['idproducto']]);
-        }
-        return $obj;
-    }
-
+    return $obj; 
+}
     public function alta($param) {
         $resp = false;
         $nuevoProducto = [
