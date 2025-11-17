@@ -74,7 +74,7 @@ foreach ($listaProductos as $producto):
               </button>
             <?php else: ?>
               <div class="mt-auto text-center w-100">
-                <span class="fw-bold">Inicia sesión</span>
+                <span class="fw-bold">Inicia sesión para comprar</span>
               </div>
             <?php endif; ?>
 
