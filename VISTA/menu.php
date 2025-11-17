@@ -19,19 +19,24 @@ $listaProductos = $objProducto->buscar(null);
     <button type="button" data-bs-target="#miCarrusel" data-bs-slide-to="2" aria-label="Imagen 3"></button>
   </div>
 
-  <!-- Imágenes -->
   <div class="carousel-inner">
+    
     <div class="carousel-item active">
-      <img src="#" class="d-block w-100" alt="Imagen 1">
+        <img src="../img/ecoDeLaPampa.png" class="d-block w-100" alt="Eco de la Pampa" 
+             style="height: 500px; object-fit: contain; background-color: #ffffffff;">
     </div>
-    <div class="carousel-item">
-      <img src="#" class="d-block w-100" alt="Imagen 2">
-    </div>
-    <div class="carousel-item">
-      <img src="#" class="d-block w-100" alt="Imagen 3">
-    </div>
-  </div>
 
+    <div class="carousel-item">
+        <img src="../img/selloDeGoma.png" class="d-block w-100" alt="Sello de Goma" 
+             style="height: 500px; object-fit: contain; background-color: #ffffffff;">
+    </div>
+
+    <div class="carousel-item">
+         <img src="../img/elRoboDelSigloPasado.png" class="d-block w-100" alt="Imagen 3" 
+             style="height: 500px; object-fit: contain; background-color: #ffffffff;">
+    </div>
+
+</div>
   <!-- Botón anterior -->
   <button class="carousel-control-prev" type="button" data-bs-target="#miCarrusel" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -39,7 +44,7 @@ $listaProductos = $objProducto->buscar(null);
   </button>
 
   <!-- Botón siguiente -->
-  <button class="carousel-control-next" type="button" data-bs-target="#miCarrusel" data-bs-slide="next">
+  <button class="carousel-control-next" type="button" data-bs-target="#miCarrusel" data-bs-slide="next" >
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Siguiente</span>
   </button>

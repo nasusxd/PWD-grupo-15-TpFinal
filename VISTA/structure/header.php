@@ -3,6 +3,7 @@ include_once(__DIR__ . '../../../configuracion.php');
 $objSession = new Session(); // Instancia de la sesión
 $rolUsuario = $objSession->getRol(); // Esto te dará el rol del usuario
 $idUsuario = $objSession->getUsuario();
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,15 +16,18 @@ $idUsuario = $objSession->getUsuario();
   <script src="<?= BASE_URL ?>assets/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
   <title>TPFINAL - Programación Web Dinámica</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="assets/css/menu.css">
+
+
 
 </head>
 <body>
 <header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light py-1">
     <div class="container-fluid">
         
       <!-- LOGO -->
-    <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>menu.php"><img src="../img/pelunco.svg" height="100" width="200"></a>
+    <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>menu.php"><img src="../img/pelunco.svg" height="40" width="auto"></a>
 
     <!-- BOTÓN HAMBURGUESA -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuTienda" aria-controls="menuTienda" aria-expanded="false" aria-label="Alternar menú">
