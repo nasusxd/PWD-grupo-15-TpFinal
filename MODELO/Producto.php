@@ -3,7 +3,9 @@ class Producto {
     private $idproducto;
     private $pronombre; // Nota: en tu BD es INT
     private $prodetalle;
+    private $precio;
     private $procantstock;
+    private $proimagen;
 
     public function __construct($datos = []) {
         if (!empty($datos)) {
@@ -15,7 +17,9 @@ class Producto {
         $this->idproducto = $datos['idproducto'] ?? null;
         $this->pronombre = $datos['pronombre'] ?? null;
         $this->prodetalle = $datos['prodetalle'] ?? null;
+        $this->precio = $datos['precio'] ?? null;
         $this->procantstock = $datos['procantstock'] ?? null;
+        $this->proimagen = $datos['proimagen'] ?? null;
     }
 
     public function getIdProducto() {
@@ -27,8 +31,15 @@ class Producto {
     public function getDetalle() {
         return $this->prodetalle;
     }
+    public function getPrecio() {
+        return $this->precio;
+    }
     public function getStock() {
         return $this->procantstock;
+    }
+
+    public function getImagen() {
+        return $this->proimagen;
     }
 
     public function setNombre($nombre) {
@@ -37,22 +48,33 @@ class Producto {
     public function setDetalle($detalle) {
         $this->prodetalle = $detalle;
     }
+    
+    public function setPrecio($precio) {
+        $this->precio = $precio;
+    }
+
     public function setStock($stock) {
         $this->procantstock = $stock;
+    }
+
+    public function setImagen($img) {
+        $this->proimagen = $img;
     }
 
     
     public function insertar() {
         $res = false;
         $baseDatos = new BaseDatos();
-         $sql = "INSERT INTO producto (pronombre, prodetalle, procantstock) 
-                VALUES (:pronombre, :prodetalle, :procantstock)";
+         $sql = "INSERT INTO producto (pronombre, prodetalle, precio, procantstock, proimagen) 
+                VALUES (:pronombre, :prodetalle, :precio, :procantstock, :proimagen)";
 
-        $stmt = $base->prepare($sql);
+        $stmt = $baseDatos->prepare($sql);
         if ($stmt->execute([
             ':pronombre' => $this->getNombre(),
             ':prodetalle' => $this->getDetalle(),
+            ':precio' => $this->getPrecio(),
             ':procantstock' => $this->getStock(),
+            ':proimagen' => $this->getImagen()
         ])) {
             $resp = true;
         }
@@ -63,7 +85,7 @@ class Producto {
         $base = new BaseDatos();
         $resp = false;
         $sql = "UPDATE producto
-                SET pronombre = :pronombre, prodetalle = :prodetalle, procantstock = :procantstock
+                SET pronombre = :pronombre, prodetalle = :prodetalle, precio = :precio, procantstock = :procantstock, proimagen = :proimagen
                 WHERE idproducto = :idproducto";
         
         $stmt = $base->prepare($sql);
@@ -71,7 +93,9 @@ class Producto {
             ':idproducto' => $this->getIdProducto(),
             ':pronombre' => $this->getNombre(),
             ':prodetalle' => $this->getDetalle(),
-            ':procantstock' => $this->getStock()
+            ':precio' => $this->getPrecio(),
+            ':procantstock' => $this->getStock(),
+            ':proimagen' => $this->getImagen()
             ])) {
                 $resp = true;
             }

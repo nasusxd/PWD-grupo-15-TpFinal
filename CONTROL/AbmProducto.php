@@ -1,13 +1,13 @@
 <?php 
 class ABMProducto  {
     public function cargarObjeto($param) {
-        $obj = null;
+        $objProducto = null;
 
-        if (array_key_exists('idproducto', $param) && array_key_exists('pronombre', $param)) {
+        if (array_key_exists('idproducto', $param) && array_key_exists('pronombre', $param) && array_key_exists('prodetalle', $param) && array_key_exists('precio', $param) && array_key_exists('procantstock', $param) && array_key_exists('proimagen', $param)) {
             $objProducto = new Producto();
             $objProducto->cargarDatos($param);
         }
-        return $obj;
+        return $objProducto;
     }
 
     public function cargarObjetoConClave($param) {
@@ -21,7 +21,16 @@ class ABMProducto  {
 
     public function alta($param) {
         $resp = false;
-        $objProducto = $this->cargarObjeto($param);
+        $nuevoProducto = [
+            "idproducto" => null,
+            "pronombre" => $param['pronombre'],
+            "prodetalle" => $param['prodetalle'],
+            "procantstock" => $param['procantstock'],
+            "precio" => $param['precio'],
+            "proimagen" => $param['proimagen']
+        ];
+
+        $objProducto = $this->cargarObjeto($nuevoProducto);
         if ($objProducto != null && $objProducto->insertar()) {
             $resp = true;
         }
