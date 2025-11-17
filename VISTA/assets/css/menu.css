@@ -1,0 +1,23 @@
+ #miCarrusel .carousel-item img {
+  width: 100%;
+  height: auto;         /* altura automática según proporción */
+  max-height: 400px;    /* opcional para limitar tamaño */
+  object-fit: contain;  /* mantiene proporción */
+  margin: 0 auto;       /* centra horizontalmente */
+  background-color: #ffffffff; /* opcional, fondo negro donde sobra */
+}
+
+.deshabilitada p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-shadow: 2px 2px 5px black;
+}
+
+.deshabilitada img {
+    filter: blur(3px) brightness(0.7);
+}
