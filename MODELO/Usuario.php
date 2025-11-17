@@ -93,25 +93,30 @@ class Usuario
 
     //se modifica por la cookie
 
-    public function modificarUsuario($datos)
-    {
-        $baseDatos = new BaseDatos();
+   public function modificarUsuario($datos)
+{
+    $baseDatos = new BaseDatos();
 
 
-        $sql = "UPDATE usuario 
-            SET usnombre = :usnombre, usmail = :usmail, uspass = :uspass 
+    $sql = "UPDATE usuario 
+            SET usnombre = :usnombre, 
+                usmail = :usmail, 
+                uspass = :uspass, 
+                usdeshabilitado = :usdeshabilitado 
             WHERE idusuario = :idusuario";
 
-        $stmt = $baseDatos->prepare($sql);
+    $stmt = $baseDatos->prepare($sql);
 
-
-        return $stmt->execute([
-            ':usnombre' => $datos['usnombre'],
-            ':usmail'   => $datos['usmail'],
-            ':uspass'   => $datos['uspass'],
-            ':idusuario' => $datos['idusuario']
-        ]);
-    }
+    
+    return $stmt->execute([
+        ':usnombre' => $datos['usnombre'],
+        ':usmail'   => $datos['usmail'],
+        ':uspass'   => $datos['uspass'],
+       
+        ':usdeshabilitado' => $datos['usdeshabilitado'] ?? null, 
+        ':idusuario' => $datos['idusuario']
+    ]);
+}
 
     //se elimina por la cookie
     public function eliminarUsuario($idUsuario)

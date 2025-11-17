@@ -58,7 +58,11 @@ $productos = $objProductos->buscar(null);
 
         </tbody>
     </table>
+    <a href="index.php" class="btn btn-secondary">
+        ← Volver al menú anterior
+    </a>
 </div>
+
 <script>
     function showToast(text, type = "success") {
         const toast = document.getElementById("toast");
@@ -123,7 +127,7 @@ $productos = $objProductos->buscar(null);
             let id = $(this).data("id");
             let row = $(this).closest("tr");
 
-            
+
             Swal.fire({
                 title: '¿Estás seguro?',
                 text: "No podrás revertir esta acción",
@@ -134,10 +138,10 @@ $productos = $objProductos->buscar(null);
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
-               
+
                 if (result.isConfirmed) {
 
-                   
+
                     $.ajax({
                         url: "action/actionEliminarProducto.php",
                         type: "POST",
@@ -148,7 +152,7 @@ $productos = $objProductos->buscar(null);
                         success: function(res) {
                             if (res.success) {
                                 row.remove();
-                                
+
                                 Swal.fire('¡Eliminado!', 'El producto ha sido borrado.', 'success');
                             } else {
                                 Swal.fire('Error', res.message, 'error');

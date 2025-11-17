@@ -71,13 +71,13 @@ include_once './structure/headerAdmin.php';
             Administrar Usuarios
         </div>
         <div id="usuariosCollapse" class="collapse admin-list">
-            <ul class="list-group">
-                <li class="list-group-item"><a href="usuarios_listar.php">Listar Usuarios</a></li>
-                <li class="list-group-item"><a href="usuarios_alta.php">Agregar Usuario</a></li>
-                <li class="list-group-item"><a href="usuarios_modificar.php">Modificar Usuario</a></li>
-                <li class="list-group-item"><a href="usuarios_eliminar.php">Eliminar Usuario</a></li>
-            </ul>
-        </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a href="administrarUsuarios.php?accion=listar">admiistrar usuarios</a>
+        </li>
+       
+    </ul>
+</div>
     </div>
 
     <div class="admin-card card">

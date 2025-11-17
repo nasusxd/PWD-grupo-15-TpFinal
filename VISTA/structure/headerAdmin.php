@@ -25,9 +25,7 @@ $usuario = $objUsuario->buscar(['idusuario' => $idUsuario]);
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
 
-      <a class="navbar-brand fw-bold text-dark" href="<?= BASE_URL ?>admin/index.php">
-        <img src="../juegunco.ico" height="50" width="50"> Admin - Juegunco
-      </a>
+       <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>index.php"><img src="../img/pelunco.svg" height="40" width="auto"></a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuAdmin">
         <span class="navbar-toggler-icon"></span>
