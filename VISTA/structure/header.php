@@ -104,7 +104,8 @@ $idUsuario = $objSession->getUsuario();
               </div>
               
               <div class="modal-footer">
-                <button class="btn btn-success w-100">Finalizar compra</button>
+                <button id="btn-finalizar"  class="alert alert-dismissible fade show mt-3" role="alert">
+                  Finalizar compra</button>
               </div>
             </div>
           </div>
@@ -119,6 +120,7 @@ $idUsuario = $objSession->getUsuario();
   </nav>
 </header>
 
+<script src="<?= BASE_URL ?>assets/js/compra.js"></script>
 <script src="<?= BASE_URL ?>assets/js/carrito.js"></script>
 <script src="<?= BASE_URL ?>assets/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
