@@ -41,7 +41,7 @@ $idUsuario = $objSession->getUsuario();
         <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>contacto.php">Contacto</a></li>
       </ul>
 
-      <?php if ($rolUsuario[0] == 1): ?>
+      <?php if ($rolUsuario == [] || $rolUsuario[0] != 2): ?>
       <!-- BUSCADOR -->
       <form class="d-flex me-3" action="<?= BASE_URL ?>buscar.php" method="get">
         <input class="form-control me-2" type="search" name="q" placeholder="Buscar productos..." aria-label="Buscar">
@@ -52,17 +52,28 @@ $idUsuario = $objSession->getUsuario();
 
       <!-- ICONOS (USUARIO) -->
       <div class="d-flex align-items-center">
-        <!-- USUARIO -->
-        <a href="<?= BASE_URL ?>modificarCliente.php" class="btn btn-link text-dark fs-5 me-3 p-0" title="Mi cuenta">
-          <i class="bi bi-person-circle"></i>
+        <?php if ($rolUsuario !== [] ): ?>
+        <!-- Usuario cliente -->
+        <a href="<?= BASE_URL ?>logout.php" class="btn btn-outline-danger me-2">
+        Cerrar sesión
         </a>
+
+        <a href="<?= BASE_URL ?>modificarCliente.php" class="btn btn-link text-dark fs-5 me-3 p-0" title="Mi cuenta">
+            <i class="bi bi-person-circle"></i>
+        </a>
+        
+        <?php else: ?>
+        <a href="<?= BASE_URL ?>login.php" class="btn btn-primary me-2">
+        Iniciar sesión
+        </a>
+        <?php endif; ?>
 
         <!-- ICONO MENÚ -->
          <a href="<?= BASE_URL ?>menu.php" class="btn btn-link text-dark fs-5 me-3 p-0" title="Menú">
           <i class="bi bi-house-fill"></i>
         </a>
 
-        <?php if ($rolUsuario[0] == 1): ?>
+        <?php if ($rolUsuario !== [] && $rolUsuario[0] !== 2): ?>
         <!-- CARRITO -->
         <a href="#" class="btn btn-link text-dark fs-5 p-0 position-relative" title="Carrito" data-bs-toggle="modal" data-bs-target="#modalCarrito">
           <i class="bi bi-cart3"></i>
