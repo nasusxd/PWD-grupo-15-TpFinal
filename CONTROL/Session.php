@@ -74,6 +74,10 @@ class Session {
         }
         return $roles;
     }
+
+    public function getCarrito() {
+    return isset($_SESSION['carrito']) ? $_SESSION['carrito'] : [];
+    }
     
     public function agregarAlCarrito($idProducto, $cantidad) {
         if (!isset($_SESSION['carrito']) || !is_array($_SESSION['carrito'])) {
