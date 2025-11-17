@@ -1,65 +1,136 @@
 <?php
-class Rol {
+class Rol
+{
+    private $idrol;
     private $rodescripcion;
+    private $mensajeoperacion;
 
-    public function __construct($datos = []) {
-        if (!empty($datos)) {
-            $this->cargarDatos($datos);
-        }
+    public function __construct()
+    {
+        $this->idrol = "";
+        $this->rodescripcion = "";
+        $this->mensajeoperacion = "";
     }
 
-    public function cargarDatos($datos) {
-        $this->rodescripcion = $datos['rodescripcion'] ?? null;
+    public function cargarDatos($datos)
+    {
+        $this->setIdRol($datos['idrol']);
+        $this->setRoDescripcion($datos['rodescripcion']);
     }
 
-    public function getDescripcion() {
+    // Getters
+    public function getIdRol()
+    {
+        return $this->idrol;
+    }
+    public function getRoDescripcion()
+    {
         return $this->rodescripcion;
     }
-
-    public function setDescripcion($descripcion) {
-        $this->rodescripcion = $descripcion;
+    public function getMensajeOperacion()
+    {
+        return $this->mensajeoperacion;
     }
 
-    
-    public function insertarRol($rodescripcion) {
-        $base = new BaseDatos();
-        $sql = "INSERT INTO rol (rodescripcion) VALUES (:desc)";
-        $stmt = $base->prepare($sql);
-        $stmt->execute([':desc' => $this->rodescripcion]);
+    // Setters
+    public function setIdRol($valor)
+    {
+        $this->idrol = $valor;
+    }
+    public function setRoDescripcion($valor)
+    {
+        $this->rodescripcion = $valor;
+    }
+    public function setMensajeOperacion($valor)
+    {
+        $this->mensajeoperacion = $valor;
     }
 
-    public function modificarRol($rodescripcion) {
-        $base = new BaseDatos();
-        $resp = false;
-        $sql = "UPDATE rol 
-        SET rodescripcion = :rodescripcion
-        WHERE rodescripcion = :rodescripcion";
-        $stmt = $baseDatos->prepare($sql);
-        $stmt->execute([
-            ':nombre' => $rodescripcion
-        ]);
-    }
 
-    public function listarRol($condicion = "") {
+    public function listar($parametro = "")
+    {
+        $arreglo = array();
         $base = new BaseDatos();
-        $sql = "SELECT * FROM rol";
-        if ($condicion != "") $sql .= " WHERE " . $condicion;
-        $stmt = $base->prepare($sql);
-        $stmt->execute();
-        $roles = [];
-        while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $usuario = new Rol();
-            $usuario->cargarDatos($fila);
-            $roles[] = $rol;
+        $sql = "SELECT * FROM rol ";
+        if ($parametro != "") {
+            $sql .= 'WHERE ' . $parametro;
         }
-        return $roles;
+
+
+        try {
+            if ($base->Iniciar()) {
+                $res = $base->Ejecutar($sql);
+                if ($res > -1) {
+                    if ($res > 0) {
+                        while ($row = $base->Registro()) {
+                            $obj = new Rol();
+                            $obj->cargarDatos($row);
+                            array_push($arreglo, $obj);
+                        }
+                    }
+                }
+            } else {
+                $this->setMensajeOperacion("Rol->listar: " . $base->getError());
+            }
+        } catch (Exception $e) {
+            $this->setMensajeOperacion("Rol->listar: " . $e->getMessage());
+        }
+
+        return $arreglo;
     }
 
-    public function eliminarRol($rodescripcion) {
+    public function insertar()
+    {
+        $resp = false;
         $base = new BaseDatos();
-        $sql = "DELETE FROM rol WHERE rodescripcion = :rodescripcion";
-        $stmt = $base->prepare($sql);
-        $stmt->execute([':rodescripcion' => $rodescripcion]);
+        $sql = "INSERT INTO rol(rodescripcion) VALUES('" . $this->getRoDescripcion() . "')";
+
+        if ($base->Iniciar()) {
+            if ($id = $base->Ejecutar($sql)) {
+                $this->setIdRol($id);
+                $resp = true;
+            } else {
+                $this->setMensajeOperacion("Rol->insertar: " . $base->getError());
+            }
+        } else {
+            $this->setMensajeOperacion("Rol->insertar: " . $base->getError());
+        }
+        return $resp;
     }
 
+    public function modificar()
+    {
+        $resp = false;
+        $base = new BaseDatos();
+        $sql = "UPDATE rol SET rodescripcion='" . $this->getRoDescripcion() . "' WHERE idrol=" . $this->getIdRol();
+
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($sql)) {
+                $resp = true;
+            } else {
+                $this->setMensajeOperacion("Rol->modificar: " . $base->getError());
+            }
+        } else {
+            $this->setMensajeOperacion("Rol->modificar: " . $base->getError());
+        }
+        return $resp;
+    }
+
+    public function eliminar()
+    {
+        $resp = false;
+        $base = new BaseDatos();
+        $sql = "DELETE FROM rol WHERE idrol=" . $this->getIdRol();
+
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($sql)) {
+                $resp = true;
+            } else {
+                $this->setMensajeOperacion("Rol->eliminar: " . $base->getError());
+            }
+        } else {
+            $this->setMensajeOperacion("Rol->eliminar: " . $base->getError());
+        }
+        return $resp;
+    }
 }

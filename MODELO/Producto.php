@@ -1,19 +1,22 @@
 <?php
-class Producto {
+class Producto
+{
     private $idproducto;
-    private $pronombre; // Nota: en tu BD es INT
+    private $pronombre;
     private $prodetalle;
     private $precio;
     private $procantstock;
     private $proimagen;
 
-    public function __construct($datos = []) {
+    public function __construct($datos = [])
+    {
         if (!empty($datos)) {
             $this->cargarDatos($datos);
         }
     }
 
-    public function cargarDatos($datos) {
+    public function cargarDatos($datos)
+    {
         $this->idproducto = $datos['idproducto'] ?? null;
         $this->pronombre = $datos['pronombre'] ?? null;
         $this->prodetalle = $datos['prodetalle'] ?? null;
@@ -22,50 +25,67 @@ class Producto {
         $this->proimagen = $datos['proimagen'] ?? null;
     }
 
-    public function getIdProducto() {
+    public function getIdProducto()
+    {
         return $this->idproducto;
     }
-    public function getNombre() {
+    public function getNombre()
+    {
         return $this->pronombre;
     }
-    public function getDetalle() {
+    public function getDetalle()
+    {
         return $this->prodetalle;
     }
-    public function getPrecio() {
+    public function getPrecio()
+    {
         return $this->precio;
     }
-    public function getStock() {
+    public function getStock()
+    {
         return $this->procantstock;
     }
 
-    public function getImagen() {
+    public function getImagen()
+    {
         return $this->proimagen;
     }
+    
+    public function setIdProducto($id)
+    {
+        $this->idproducto = $id;
+    }
 
-    public function setNombre($nombre) {
+    public function setNombre($nombre)
+    {
         $this->pronombre = $nombre;
     }
-    public function setDetalle($detalle) {
+    public function setDetalle($detalle)
+    {
         $this->prodetalle = $detalle;
     }
-    
-    public function setPrecio($precio) {
+
+    public function setPrecio($precio)
+    {
         $this->precio = $precio;
     }
 
-    public function setStock($stock) {
+    public function setStock($stock)
+    {
         $this->procantstock = $stock;
     }
 
-    public function setImagen($img) {
+    public function setImagen($img)
+    {
         $this->proimagen = $img;
     }
 
-    
-    public function insertar() {
+
+    public function insertar()
+    {
         $res = false;
         $baseDatos = new BaseDatos();
-         $sql = "INSERT INTO producto (pronombre, prodetalle, precio, procantstock, proimagen) 
+        $sql = "INSERT INTO producto (pronombre, prodetalle, precio, procantstock, proimagen) 
                 VALUES (:pronombre, :prodetalle, :precio, :procantstock, :proimagen)";
 
         $stmt = $baseDatos->prepare($sql);
@@ -81,41 +101,44 @@ class Producto {
         return $resp;
     }
 
-    public function modificar() {
+    public function modificar()
+    {
         $base = new BaseDatos();
         $resp = false;
         $sql = "UPDATE producto
                 SET pronombre = :pronombre, prodetalle = :prodetalle, precio = :precio, procantstock = :procantstock, proimagen = :proimagen
                 WHERE idproducto = :idproducto";
-        
+
         $stmt = $base->prepare($sql);
-            if ($stmt->execute([
+        if ($stmt->execute([
             ':idproducto' => $this->getIdProducto(),
             ':pronombre' => $this->getNombre(),
             ':prodetalle' => $this->getDetalle(),
             ':precio' => $this->getPrecio(),
             ':procantstock' => $this->getStock(),
             ':proimagen' => $this->getImagen()
-            ])) {
-                $resp = true;
-            }
+        ])) {
+            $resp = true;
+        }
         return $resp;
     }
 
-    public function eliminar() {
+    public function eliminar()
+    {
         $base = new BaseDatos();
         $resp = false;
-        $sql = "DELETE producto WHERE idproducto = :idproducto";
+        $sql = "DELETE FROM producto WHERE idproducto = :idproducto";
         $stmt = $base->prepare($sql);
-            if ($stmt->execute([
+        if ($stmt->execute([
             ':idproducto' => $this->getIdProducto()
-            ])) {
-                $resp = true;
-            }
+        ])) {
+            $resp = true;
+        }
         return $resp;
     }
 
-    public function listar($condicion = "") {
+    public function listar($condicion = "")
+    {
         $base = new BaseDatos();
         $sql = "SELECT * FROM producto";
         if ($condicion != "") {
@@ -123,7 +146,7 @@ class Producto {
         }
         $stmt = $base->prepare($sql);
         $stmt->execute();
-        
+
         $productos = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $objProducto = new Producto();

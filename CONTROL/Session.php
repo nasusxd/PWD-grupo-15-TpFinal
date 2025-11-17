@@ -31,18 +31,18 @@ class Session {
         return $resp;
     }
 
-    public function esAdmin() {
-        $res = false;
-        if ($this->validar()) {
-           $usuario = $this->getUsuario();
-           $objUsuarioRol = new ABMUsuarioRol();
-           $roles = $objUsuarioRol->buscar(['idusuario' => $usuario]);
-           if (!empty ($roles) && $roles[0]->getIdRol() == 2) {
-            $res = true;
-           }
+   public function esAdmin() {
+    $esAdmin = false;
+    if ($this->validar()) {
+        $roles = $this->getRol(); 
+        
+       
+        if (in_array(2, $roles)) { 
+            $esAdmin = true;
         }
-        return $res;
     }
+    return $esAdmin;
+}
 
     //valida si la sesion tiene un usuario valido
     public function validar() {
@@ -73,6 +73,10 @@ class Session {
             }
         }
         return $roles;
+    }
+
+    public function getCarrito() {
+    return isset($_SESSION['carrito']) ? $_SESSION['carrito'] : [];
     }
     
     public function agregarAlCarrito($idProducto, $cantidad) {
