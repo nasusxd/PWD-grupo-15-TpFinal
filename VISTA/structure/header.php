@@ -116,9 +116,6 @@ $totalCarrito = $objSession->totalProductosCarrito();
           </div>
         </div>
       </div>
-      <div class="modal-footer border-top-0">
-        <button class="btn btn-success w-100 rounded-pill fw-bold shadow-sm">Finalizar compra</button>
-      </div>
     </div>
   </nav>
 </header>

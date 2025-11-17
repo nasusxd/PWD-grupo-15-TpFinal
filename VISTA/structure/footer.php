@@ -16,7 +16,7 @@
                     <i class="bi bi-person-fill me-2"></i> Sofia Bascur
                 </p>
                 <p>
-                    <i class="bi bi-person-fill me-2"></i> Nahuel Gonzales
+                    <i class="bi bi-person-fill me-2"></i> Nahuel Gonzalez
                 </p>
                 <p>
                     <i class="bi bi-person-fill me-2"></i> Juan Sastre
