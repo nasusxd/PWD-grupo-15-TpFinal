@@ -113,8 +113,6 @@ class Session {
         return $total;
     }
 
-
-
     //cierro la sesion
     public function cerrar() {
         session_unset(); //limpio los datos de la sesion

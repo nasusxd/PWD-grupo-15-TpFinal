@@ -11,7 +11,7 @@ include_once 'structure/header.php';
     <div class="row">
         <div class="col-md-8 offset-md-2">
         <div id="datosContacto">
-            <form action="contacto.php" method="POST">
+            <form action="contacto.php" method="POST" name="contactoForm" id="contactoForm">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre Completo</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -32,11 +32,12 @@ include_once 'structure/header.php';
                     <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+                <button type="button" id="contactoButton" class="btn btn-primary">Enviar Mensaje</button>
             </form>
             </div>
         </div>
     </div>
+    <script src="./assets/js/contacto.js"></script>
 
 <br><br><br>
 

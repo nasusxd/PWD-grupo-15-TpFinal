@@ -1,4 +1,8 @@
 <?php 
+include_once __DIR__ . '/../vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 function datasubmitted() {
     $_AAux= array();
     if (!empty($_POST))
@@ -36,5 +40,47 @@ spl_autoload_register(function ($clase) {
         }
     }
 });
+
+function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente) {
+    $res = false;
+    $mail = new PHPMailer();
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // SMTP a utilizar. Por ej. smtp.elserver.com
+        $mail->SMTPAuth = true;
+        $mail->Username = 'grupo15pwd@gmail.com'; // correo
+        $mail->Password = 'dldrmbwtojfpaats'; // Contraseña
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        //remitente
+        $mail->setFrom('grupo15pwd@gmail.com', 'Soporte Pelunco');
+
+        //destinatario
+        $mail->addAddress($correoCliente);
+
+        //contenido del correo
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = "
+        <p>Hola <strong>$nombre</strong>,</p>
+        <p>Gracias por contactarte con nosotros. Este fue tu mensaje:</p>
+        <blockquote>$mensajeCliente</blockquote>
+        <p>Pronto nos comunicaremos con vos.</p>
+        <p>Saludos,<br>El equipo de soporte Pelunco</p>
+        ";
+
+        //alternativa 
+        $mail->AltBody = "Hola $nombre, gracias por contactarte. Tu mensaje fue: $mensajeCliente";
+        
+        //lo mando
+        $mail->send();
+        $res = true;
+    } catch (Exception $e) {
+        $res = "Error al enviar el correo: " . $e->getMessage();
+    }
+    return $res;
+}
 
 ?>
