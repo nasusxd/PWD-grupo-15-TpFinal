@@ -40,7 +40,9 @@ class UsuarioRol {
         if ($stmt->execute([
             ':idusuario' => $this->getIdUsuario(),
             ':idrol' => $this->getIdRol()
-        ])) $resp = true;
+        ])) {
+            $resp = true;
+        }
         return $resp;
     }
 

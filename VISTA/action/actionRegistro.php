@@ -24,15 +24,17 @@ if (count($existeEmail) > 0) {
     if ($resultado) {
         // asignamos el rol de cliente al nuevo usuario
         $objUsuarioRol = new ABMUsuarioRol();
-        $idUsuario = $objUsuario->buscar(['usnombre' => $datos['usnombre']])[0]->getIdUsuario();
-
+        $idUsuario = $objUsuario->buscar(['usmail' => $datos['usmail']])[0]->getIdUsuario();
         $nuevoUsuarioRol = [
             'idusuario' => $idUsuario,
-            'idrol'     => 1
+            'idrol' => 1
         ];
         $objUsuarioRol->alta($nuevoUsuarioRol);
-
-        $response = ["success" => true, "redirect" => "login.php"];
+        if ($objUsuarioRol) {
+            $response = ["success" => true, "redirect" => "login.php"];
+        } else {
+            $response = ["success" => false, "msg" => "Error al cargar el rol"];
+        }
     } else {
         $response = ["success" => false, "msg" => "Error en el alta del usuario."];
     }

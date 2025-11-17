@@ -1,4 +1,4 @@
-<?php include_once 'structure/headerGlobal.php'; ?>
+<?php include_once './structure/header.php'; ?>
 
 <style>
 .text-danger {

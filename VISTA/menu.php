@@ -1,17 +1,18 @@
 <?php
 include_once './structure/header.php';
 $sesion = new Session();
-//aca se evalua si el usuario esta logeado o no, si esta logeado al hacer click en su perfil habria q cambiarlo de vista poara q peuda modificarlo, si no esta log tendria q aparecer algo de iniciar sesion
-if ($sesion->validar()) {
-  $idUsuario = $sesion->getUsuario();
-}
+
+$idUsuario = $sesion->getUsuario();
+$objAbmUsuarioRol = new ABMUsuarioRol();
+$objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
+
 $objProducto = new ABMProducto();
 $listaProductos = $objProducto->buscar(null);
 ?>
 <br>
 <div id="miCarrusel" class="carousel slide" data-bs-ride="carousel">
   
-  <!-- Indicadores (la "barrita") -->
+  <!-- Indicadores -->
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#miCarrusel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Imagen 1"></button>
     <button type="button" data-bs-target="#miCarrusel" data-bs-slide-to="1" aria-label="Imagen 2"></button>
@@ -49,46 +50,50 @@ $listaProductos = $objProducto->buscar(null);
 <div class="container">
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 <?php 
-foreach ($listaProductos as $producto) {
-  if ($producto->getStock() > 0) {
+foreach ($listaProductos as $producto):
+    $disponible = $producto->getStock() > 0;
 ?>
     <div class="col">
-      <div class="card h-100">
-        <img height="400" width="50" src="<?= $producto->getImagen(); ?>" class="card-img-top" alt="Producto 1">
+      <div class="card h-100 shadow-sm">
+        <img src="../uploads/<?= $producto->getImagen(); ?>" 
+             class="card-img-top img-fluid" 
+             style="height: 250px; object-fit: cover;" 
+             alt="<?= $producto->getNombre() ?>">
+
         <div class="card-body d-flex flex-column">
-          <h5 class="card-title"><?= $producto->getNombre() ?></h5>
-          <p>Cantidad disponible: <?= $producto->getStock() ?></p>
-          <p class="card-text text-success fw-bold">$<?= $producto->getPrecio(); ?></p>
-          <?php  if ($rolUsuario == 1): ?>
-          <button class="agregar-carrito btn btn-primary mt-auto" data-id="<?=$producto->getIdProducto();?>" data-nombre="<?=$producto->getNombre();?>">
-          Agregar al carrito</button>
-           <?php  else: ?>
-           <div class="mt-auto text-center w-100">
-            <span class="fw-bold">Inicia sesión</span>
-          </div>
+          <?php if ($disponible): ?>
+            <h5 class="card-title mb-2"><?= $producto->getNombre() ?></h5>
+            <p class="mb-1">Cantidad disponible: <?= $producto->getStock() ?></p>
+            <p class="card-text text-success fw-bold mb-3">$<?= $producto->getPrecio(); ?></p>
+
+            <?php if ($objUsuarioRol[0]->getIdRol() == 1): ?>
+              <button class="agregar-carrito btn btn-primary mt-auto" 
+                      data-id="<?=$producto->getIdProducto();?>" 
+                      data-nombre="<?=$producto->getNombre();?>">
+                Agregar al carrito
+              </button>
+            <?php else: ?>
+              <div class="mt-auto text-center w-100">
+                <span class="fw-bold">Inicia sesión</span>
+              </div>
+            <?php endif; ?>
+
+          <?php else: ?>
+            <div class="text-center text-muted" style="opacity: 0.6;">
+              <h5 class="card-title">No disponible</h5>
+              <p class="mb-0"><?= $producto->getNombre() ?></p>
+            </div>
+          <?php endif; ?>
         </div>
-         <?php  endif; ?>
       </div>
     </div>
-<?php
-  }else{?>
-    <div class="col">
-      <div class="card h-100">
-        <div style="opacity: 0.5;" class="card-body d-flex flex-column">
-          <img height="350" width="50" src="<?= $producto->getImagen(); ?>" class="card-img-top" alt="Producto no disponible">
-        <h5 class="card-title">No disponible</h5>
-    </div>
-    <div class="card-footer">
-          <h5 style="text-align: center;"><?= $producto->getNombre() ?></h5>
-      </div>
-    </div>
-  <?php }
-}?>
+<?php endforeach; ?>
   </div>
 </div>
-   
+
 <script src="./assets/js/carrito.js"></script>
 <link rel="stylesheet" href="./assets/css/carrito.css">
+
 <?php
 include_once 'structure/footer.php';
 ?>

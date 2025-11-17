@@ -3,13 +3,13 @@
 class ABMUsuarioRol {
 
     public function cargarObjeto($param) {
-        $obj = null;
+        $objUsuarioRol = null;
 
         if (array_key_exists('idusuario', $param) && array_key_exists('idrol', $param)) {
             $objUsuarioRol = new UsuarioRol();
             $objUsuarioRol->cargarDatos($param);
         }
-        return $obj;
+        return $objUsuarioRol;
     }
 
     public function cargarObjetoConClave($param) {

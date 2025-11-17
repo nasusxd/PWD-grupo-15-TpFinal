@@ -23,7 +23,7 @@ $idUsuario = $objSession->getUsuario();
     <div class="container-fluid">
         
       <!-- LOGO -->
-    <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>menu.php"><img src="../../juegunco.ico" height="50" width="50">Pelunco</a>
+    <a class="navbar-brand fw-bold" href="<?= BASE_URL ?>menu.php"><img src="../juegunco.ico" height="50" width="50">Pelunco</a>
 
     <!-- BOTÓN HAMBURGUESA -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuTienda" aria-controls="menuTienda" aria-expanded="false" aria-label="Alternar menú">
@@ -41,7 +41,7 @@ $idUsuario = $objSession->getUsuario();
         <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>contacto.php">Contacto</a></li>
       </ul>
 
-      <?php if ($rolUsuario == 1): ?>
+      <?php if ($rolUsuario[0] == 1): ?>
       <!-- BUSCADOR -->
       <form class="d-flex me-3" action="<?= BASE_URL ?>buscar.php" method="get">
         <input class="form-control me-2" type="search" name="q" placeholder="Buscar productos..." aria-label="Buscar">
@@ -53,7 +53,7 @@ $idUsuario = $objSession->getUsuario();
       <!-- ICONOS (USUARIO) -->
       <div class="d-flex align-items-center">
         <!-- USUARIO -->
-        <a href="<?= BASE_URL ?>login.php" class="btn btn-link text-dark fs-5 me-3 p-0" title="Mi cuenta">
+        <a href="<?= BASE_URL ?>modificarCliente.php" class="btn btn-link text-dark fs-5 me-3 p-0" title="Mi cuenta">
           <i class="bi bi-person-circle"></i>
         </a>
 
@@ -62,7 +62,7 @@ $idUsuario = $objSession->getUsuario();
           <i class="bi bi-house-fill"></i>
         </a>
 
-        <?php if ($rolUsuario == 1): ?>
+        <?php if ($rolUsuario[0] == 1): ?>
         <!-- CARRITO -->
         <a href="#" class="btn btn-link text-dark fs-5 p-0 position-relative" title="Carrito" data-bs-toggle="modal" data-bs-target="#modalCarrito">
           <i class="bi bi-cart3"></i>

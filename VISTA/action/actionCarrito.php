@@ -1,39 +1,50 @@
 <?php
-session_start();
+header('Content-Type: application/json');
+include_once '../../configuracion.php';
+include_once '../../CONTROL/AbmProducto.php';
+include_once '../../UTILS/funciones.php';
+$sesion = new Session();
+$datos = datasubmitted();
 
-// Tomar datos enviados por AJAX (POST)
-$idProducto = $_POST['idproducto'] ?? null;
-$cantidad   = $_POST['cantidad'] ?? 1;
-
-// Inicializar carrito si no existe
-if (!isset($_SESSION['carrito'])) {
-    $_SESSION['carrito'] = [];
+// Validar datos
+if (!$datos['idproducto'] || $datos['cantidad'] <= 0) {
+    echo json_encode([
+        "success" => false,
+        "error" => "Datos inválidos"
+    ]);
+    exit;
 }
 
-// Aumentar cantidad del producto
-if (!isset($_SESSION['carrito'][$idProducto])) {
-    $_SESSION['carrito'][$idProducto] = 0;
-}
+// Agregar al carrito usando la clase Session
+$sesion->agregarAlCarrito($datos['idproducto'], $datos['cantidad']);
 
-$_SESSION['carrito'][$idProducto] += $cantidad;
+// Obtener totales
+$totalProductos = $sesion->totalProductosCarrito();
+$totalPrecio = $sesion->precioTotalCarrito();
 
-// Calcular total de productos
-$_SESSION['total_carrito'] = array_sum($_SESSION['carrito']);
-
-// Construir lista de items para el modal
+// Construir lista de items con nombre y cantidad
 $items = [];
+if (isset($_SESSION['carrito'])) {
+    $objProducto = new ABMProducto();
+    foreach ($_SESSION['carrito'] as $idProducto => $cantidad) {
+        $productos = $objProducto->buscar(['idproducto' => $idProducto]);
+        if (count($productos) > 0) {
+            $producto = $productos[0];
+            $items[] = [
+                "id" => $idProducto,
+                "nombre" => $producto->getNombre(),
+                "cantidad" => $cantidad,
+                "precioUnitario" => $producto->getPrecio(),
+                "subtotal" => $producto->getPrecio() * $cantidad
+            ];
+        }
+    }
+} 
 
-foreach ($_SESSION['carrito'] as $id => $cant) {
-    $items[] = [
-        "id" => $id,
-        "nombre" => "Producto $id", // POR AHORA, hasta usar BD real
-        "cantidad" => $cant
-    ];
-}
-
-// Respuesta JSON
+// Devolver JSON completo
 echo json_encode([
     "success" => true,
-    "total" => $_SESSION['total_carrito'],
+    "totalProductos" => $totalProductos,
+    "totalPrecio" => $totalPrecio,
     "items" => $items
 ]);

@@ -64,11 +64,12 @@ class Session {
         $roles = [];
         $idUsuario = $this->getUsuario();
         if ($idUsuario) {
-            $objABMUsuarioRol = new ABMUsuarioRol();
-            $param = ['idusuario' => $idUsuario];
-            $listaUsuarioRol = $objABMUsuarioRol->buscar($param);
-            foreach ($listaUsuarioRol as $usuarioRol) {
-                $roles[] = $usuarioRol->getObjRol()->getRodescripcion();
+            $abmUsuarioRol = new ABMUsuarioRol();
+            $usuariosRoles = $abmUsuarioRol->buscar(['idusuario' => $idUsuario]);
+            if (!empty($usuariosRoles)) {
+                foreach ($usuariosRoles as $rolObj) {
+                    $roles[] = $rolObj->getIdRol();
+                }
             }
         }
         return $roles;
@@ -105,7 +106,7 @@ class Session {
                 $productos = $objProducto->buscar(['idproducto' => $idProducto]);
                 if (count($productos) > 0) {
                     $producto = $productos[0];
-                    $total += $producto->getProprecio() * $cantidad;
+                    $total += $producto->getPrecio() * $cantidad;
                 }
             }
         }

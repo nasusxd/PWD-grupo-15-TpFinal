@@ -9,7 +9,7 @@ $(document).ready(function () {
 
             success: function (respuesta) {
                 if (respuesta.success) {
-                    $("#contador-carrito").text(respuesta.total);
+                    $("#contador-carrito").text(respuesta.totalProductos);
                     actualizarListaCarrito(respuesta.items);
                 } else {
                     alert("Error: " + respuesta.mensaje);
@@ -36,7 +36,7 @@ $(document).on("click", ".eliminar-item", function() {
             success: function(response) {
                 if(response.success) {
                     // Vaciar el contenedor del carrito
-                    let carritoContainer = $("##lista-carrito");
+                    let carritoContainer = $("#lista-carrito");
                     carritoContainer.empty();
 
                     // Reconstruir los productos
