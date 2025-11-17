@@ -93,25 +93,36 @@ $totalCarrito = $objSession->totalProductosCarrito();
   </nav>
 </header>
 
-<div class="modal fade" id="modalCarrito" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header border-bottom-0">
-        <h5 class="modal-title fw-bold">Tu Carrito</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <ul class="list-group list-group-flush mb-3" id="lista-carrito"></ul>
-        <div class="d-flex justify-content-between fw-bold fs-5">
-          <span>Total:</span> <span id="total-carrito" class="text-primary">$0</span>
+        <div class="modal fade" id="modalCarrito" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title">Tu Carrito</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+
+              <div class="modal-body">
+                <ul class="list-group mb-3" id="lista-carrito"></ul>
+                <div class="d-flex justify-content-between">
+                  <strong>Total:</strong> <span id="total-carrito">$0</span>
+                </div>
+              </div>
+              
+              <div class="modal-footer">
+                <button class="btn btn-success w-100">Finalizar compra</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer border-top-0">
         <button class="btn btn-success w-100 rounded-pill fw-bold shadow-sm">Finalizar compra</button>
       </div>
     </div>
-  </div>
-</div>
+  </nav>
+</header>
+
 <script src="<?= BASE_URL ?>assets/js/carrito.js"></script>
 <script src="<?= BASE_URL ?>assets/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
