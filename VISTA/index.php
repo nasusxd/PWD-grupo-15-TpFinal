@@ -2,122 +2,99 @@
 include_once '../configuracion.php';
 $sesion = new Session();
 
+// VALIDACIONES DE SEGURIDAD
 if (!$sesion->validar()) {
     header("Location: login.php");
     exit;
 }
-
-$idUsuario = $sesion->getUsuario();
-$objUsuarioRol = new ABMUsuarioRol();
-$roles = $objUsuarioRol->buscar(['idusuario' => $idUsuario]);
-
-$esAdmin = false;
-foreach ($roles as $rol) {
-    if ($rol->getIdRol() == 2) {
-        $esAdmin = true;
-        break;
-    }
-}
-
-if (!$esAdmin) {
+if (!$sesion->esAdmin()) {
     header("Location: menu.php");
     exit;
 }
 
 include_once './structure/headerAdmin.php';
 ?>
-<style>
-    .admin-card {
-        border: none;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
 
-    .admin-header {
-        background: #0d6efd;
-        color: white;
-        padding: 12px 20px;
-        font-size: 1.1rem;
-        font-weight: 500;
-        cursor: pointer;
-    }
+<div class="container mt-4 mb-4 flex-grow-1 d-flex flex-column justify-content-center">
 
-    .admin-header:hover {
-        background: #0b5ed7;
-    }
+    <div class="row justify-content-center">
+        <div class="col-md-8"> <div class="card mb-3 border-0 shadow-sm">
+                <button class="btn btn-primary w-100 p-3 fs-5 fw-bold text-start d-flex justify-content-between align-items-center" 
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsuarios" aria-expanded="false">
+                    <span><i class="bi bi-people-fill me-2"></i> Administrar Usuarios</span>
+                    <i class="bi bi-chevron-down fs-6"></i> </button>
+                
+                <div class="collapse" id="collapseUsuarios">
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="administrarUsuarios.php?accion=listar" class="list-group-item list-group-item-action py-3 ps-4">
+                                <i class="bi bi-list-ul me-2"></i> Listar Usuarios
+                            </a>
+                            <a href="administrarUsuarios.php?accion=nuevo" class="list-group-item list-group-item-action py-3 ps-4">
+                                <i class="bi bi-person-plus-fill me-2"></i> Agregar Usuario
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    .admin-list .list-group-item {
-        border: none;
-        padding: 12px 20px;
-        font-size: 0.95rem;
-    }
+            <div class="card mb-3 border-0 shadow-sm">
+                <button class="btn btn-primary w-100 p-3 fs-5 fw-bold text-start d-flex justify-content-between align-items-center" 
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseProductos" aria-expanded="false">
+                    <span><i class="bi bi-box-seam-fill me-2"></i> Administrar Productos</span>
+                    <i class="bi bi-chevron-down fs-6"></i>
+                </button>
 
-    .admin-list .list-group-item a {
-        text-decoration: none;
-        color: #0d6efd;
-    }
+                <div class="collapse" id="collapseProductos">
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="prodAdmin.php" class="list-group-item list-group-item-action py-3 ps-4">
+                                <i class="bi bi-list-ul me-2"></i> Listar Productos
+                            </a>
+                            <a href="agregarProd.php" class="list-group-item list-group-item-action py-3 ps-4">
+                                <i class="bi bi-plus-circle-fill me-2"></i> Agregar Producto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    .admin-list .list-group-item:hover {
-        background: #f5f7ff;
-    }
-    
-</style>
-<div class="container mt-5">
+            <div class="card mb-3 border-0 shadow-sm">
+                <button class="btn btn-primary w-100 p-3 fs-5 fw-bold text-start d-flex justify-content-between align-items-center" 
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseRoles" aria-expanded="false">
+                    <span><i class="bi bi-shield-lock-fill me-2"></i> Administrar Roles</span>
+                    <i class="bi bi-chevron-down fs-6"></i>
+                </button>
 
-    <div class="admin-card card">
-        <div class="admin-header" data-bs-toggle="collapse" data-bs-target="#usuariosCollapse">
-            Administrar Usuarios
+                <div class="collapse" id="collapseRoles">
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="roles_listar.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Roles</a>
+                            <a href="roles_alta.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Rol</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3 border-0 shadow-sm">
+                <button class="btn btn-primary w-100 p-3 fs-5 fw-bold text-start d-flex justify-content-between align-items-center" 
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseMenu" aria-expanded="false">
+                    <span><i class="bi bi-list-task me-2"></i> Administrar Menú</span>
+                    <i class="bi bi-chevron-down fs-6"></i>
+                </button>
+
+                <div class="collapse" id="collapseMenu">
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="menu_listar.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Opciones</a>
+                            <a href="menu_alta.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Opción</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div id="usuariosCollapse" class="collapse admin-list">
-    <ul class="list-group">
-        <li class="list-group-item">
-            <a href="administrarUsuarios.php?accion=listar">admiistrar usuarios</a>
-        </li>
-       
-    </ul>
+    </div>
 </div>
-    </div>
-
-    <div class="admin-card card">
-        <div class="admin-header" data-bs-toggle="collapse" data-bs-target="#productosCollapse">
-            Administrar Productos
-        </div>
-        <div id="productosCollapse" class="collapse admin-list">
-            <li class="list-group-item"><a href="prodAdmin.php">Administrar Productos</a></li>
-        </div>
-    </div>
-
-    <div class="admin-card card">
-        <div class="admin-header" data-bs-toggle="collapse" data-bs-target="#rolesCollapse">
-            Administrar Roles
-        </div>
-        <div id="rolesCollapse" class="collapse admin-list">
-            <ul class="list-group">
-                <li class="list-group-item"><a href="roles_listar.php">Listar Roles</a></li>
-                <li class="list-group-item"><a href="roles_alta.php">Agregar Rol</a></li>
-                <li class="list-group-item"><a href="roles_modificar.php">Modificar Rol</a></li>
-                <li class="list-group-item"><a href="roles_eliminar.php">Eliminar Rol</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="admin-card card">
-        <div class="admin-header" data-bs-toggle="collapse" data-bs-target="#menuCollapse">
-            Administrar Menu
-        </div>
-        <div id="menuCollapse" class="collapse admin-list">
-            <ul class="list-group">
-                <li class="list-group-item"><a href="menu_listar.php">Listar Menu</a></li>
-                <li class="list-group-item"><a href="menu_alta.php">Agregar Opcion</a></li>
-                <li class="list-group-item"><a href="menu_modificar.php">Modificar Menu</a></li>
-                <li class="list-group-item"><a href="menu_eliminar.php">Eliminar Opcion</a></li>
-            </ul>
-        </div>
-    </div>
-
-</div>
-
 
 <?php include_once './structure/footer.php'; ?>
