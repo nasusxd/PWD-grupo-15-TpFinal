@@ -91,6 +91,12 @@ class Session {
         }
     }
 
+    public function limpiarCarrito() {
+        if (isset($_SESSION['carrito'])) {
+            unset($_SESSION['carrito']);
+        }
+    }
+
 
     public function totalProductosCarrito() {
         $total = 0;

@@ -110,7 +110,7 @@ $totalCarrito = $objSession->totalProductosCarrito();
               </div>
               
               <div class="modal-footer">
-                <button class="btn btn-success w-100">Finalizar compra</button>
+                <a href="<?= BASE_URL ?>finalizarCompra.php" class="btn btn-success w-100"> Finalizar compra </a>
               </div>
             </div>
           </div>

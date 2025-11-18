@@ -1,6 +1,6 @@
 <?php 
 include_once __DIR__ . '/../vendor/autoload.php';
-
+include_once __DIR__ . '../../configuracion.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 function datasubmitted() {
@@ -82,5 +82,58 @@ function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente) {
     }
     return $res;
 }
+
+function enviarCorreoResumen($correoCliente, $carrito) {
+    $res = false;
+    $mail = new PHPMailer();
+    $objabmProducto = new ABMProducto();
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // SMTP a utilizar. Por ej. smtp.elserver.com
+        $mail->SMTPAuth = true;
+        $mail->Username = 'grupo15pwd@gmail.com'; // correo
+        $mail->Password = 'dldrmbwtojfpaats'; // Contraseña
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        //remitente
+        $mail->setFrom('grupo15pwd@gmail.com', 'Soporte Pelunco');
+
+        //destinatario
+        $mail->addAddress($correoCliente);
+
+        //contenido del correo
+        $mail->isHTML(true);
+        $body = "
+        <p>Hola <strong>$correoCliente</strong>,</p>
+        <p>Gracias por tu compra. Aca esta tu resumen:</p>
+        <ul>";
+        foreach ($carrito as $idProducto => $cantidad) {
+            $producto = $objabmProducto->buscar(['idproducto' => $idProducto]);
+            if (count($producto) > 0) {
+                $producto = $producto[0];
+            }
+            $body .= "
+            <li>
+                <strong>" . $producto->getNombre() . "</strong><br>
+                Detalle: " . $producto->getDetalle() . "<br>
+                Precio: $" . $producto->getPrecio() . "<br>
+                Cantidad: $cantidad
+            </li><br>";
+        }
+        $body .= "</ul>
+        <p>Saludos,<br>El equipo de Pelunco</p>";
+
+        $mail->Body = $body;
+        //lo mando
+        $mail->send();
+        $res = true;
+    } catch (Exception $e) {
+        $res = "Error al enviar el correo: " . $e->getMessage();
+    }
+    return $res;
+}
+
+
 
 ?>

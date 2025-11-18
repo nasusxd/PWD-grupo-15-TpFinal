@@ -56,7 +56,6 @@ $(document).on("click", ".eliminar-item", function() {
                         `);
                     });
 
-                    // Actualizar total
                     $("#total-carrito").text(response.total);
                     $("#contador-carrito").text(response.total);
                 }
@@ -86,39 +85,6 @@ function actualizarListaCarrito(items) {
     $("#total-carrito").text(items.reduce((a, b) => a + b.cantidad, 0));
 }
 
-// PARA LA COMPRA
-
-$(document).ready(function () {
-    $("#btn-finalizar").click(function () {
-         // Eliminar alertas previas
-        $(".modal-body .alert").remove();
-
-        // Chequear si el carrito tiene items
-        if ($("#lista-carrito li").length === 0) {
-            const alerta = `
-            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                El carrito está vacío.
-                
-            </div>`;
-            $(".modal-body").prepend(alerta);
-            return;
-        }
-
-        // ALERTA CORRECTA (Bootstrap 5)
-        const alerta = `
-        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-            ¡Compra finalizada correctamente!
-            
-        </div>`;
-
-        $(".modal-body").prepend(alerta);
-
-        // Redirigir después de 2 segundos
-        setTimeout(() => {
-            window.location.href = "./finalizarCompra.php";
-        }, 2000);
-    });
-});
 
 
 
