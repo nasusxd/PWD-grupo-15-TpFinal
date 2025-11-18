@@ -1,14 +1,7 @@
 <?php
 
 class ABMUsuario {
-    public function actualizarContrasena($idUsuario, $datos) {
-
-    }
-
-    public function actualizarPerfil($idUsuario, $datos) {
-
-    }
-
+    
     public function cargarObjeto($param) {
         $obj = null;
 
@@ -20,12 +13,12 @@ class ABMUsuario {
     }
 
     public function cargarObjetoConClave($param) {
-        $obj = null;
+        $objUsuario = null;
         if (isset($param['idusuario'])) {
             $objUsuario = new Usuario();
             $objUsuario->cargarDatos(['idusuario' => $param['idusuario']]);
         }
-        return $obj;
+        return $objUsuario;
     }
 
     public function alta($param) {

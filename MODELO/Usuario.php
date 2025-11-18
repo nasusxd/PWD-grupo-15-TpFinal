@@ -91,12 +91,8 @@ class Usuario
         return $resultado;
     }
 
-    //se modifica por la cookie
-
-   public function modificarUsuario($datos)
-{
+   public function modificarUsuario($datos) {
     $baseDatos = new BaseDatos();
-
 
     $sql = "UPDATE usuario 
             SET usnombre = :usnombre, 
@@ -106,19 +102,15 @@ class Usuario
             WHERE idusuario = :idusuario";
 
     $stmt = $baseDatos->prepare($sql);
-
-    
     return $stmt->execute([
         ':usnombre' => $datos['usnombre'],
         ':usmail'   => $datos['usmail'],
         ':uspass'   => $datos['uspass'],
-       
         ':usdeshabilitado' => $datos['usdeshabilitado'] ?? null, 
         ':idusuario' => $datos['idusuario']
     ]);
 }
 
-    //se elimina por la cookie
     public function eliminarUsuario($idUsuario)
     {
         $res = false;

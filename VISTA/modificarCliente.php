@@ -1,6 +1,5 @@
 <?php
 
-//hay que usar una libreria de mail para el tema de cambiar el mail/contraseña/usuario
 include_once 'structure/header.php';
 $session = new Session();
 $idUsuario = $session->getUsuario(); //saco la id y anda

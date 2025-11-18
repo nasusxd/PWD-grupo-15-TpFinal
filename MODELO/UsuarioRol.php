@@ -62,14 +62,12 @@ class UsuarioRol {
 
     public function listar($condicion = "") {
         $base = new BaseDatos();
-        $sql = "SELECT * FROM usuariorol";
+        $sql = "SELECT * FROM usuariorol ";
         if ($condicion != "") {
             $sql .= " WHERE " . $condicion;
         }
-        
         $stmt = $base->prepare($sql);
         $stmt->execute();
-        
         $rolesUsuario = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $objUsuarioRol = new UsuarioRol();
