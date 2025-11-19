@@ -30,17 +30,19 @@ $listarMenus = $objMenu->buscar(null);
                         <td><?= $menu->getIdPadre() ?></td>
                         <td id="estado" class="estado"><?= $menu->getDeshabilitado() ? 'Deshabilitado' : 'Habilitado' ?></td>
                         <td>
-            
+                        <?php if ((($menu->getIdMenu()) == 15) || (($menu->getIdMenu()) == 16)){ ?>
+                        <button type="button" class="btn btn-secondary btn-sm" disabled>Sin Acción</button>
+                        <?php }else{ ?>
                         <button class="btn btn-warning btn-sm btn-cambiar-habilitado" 
                         data-id="<?= $menu->getIdMenu() ?>" 
                         data-estado="0">Habilitar</button>
                         <button class="btn btn-danger btn-sm btn-cambiar-deshabilitado" 
                         data-id="<?= $menu->getIdMenu() ?>" 
                         data-estado="1">Deshabilitar</button>
+                        <?php } ?>
                     </td>
                     </tr>
                 <?php } ?>
-
             <?php } else { ?>
                 <tr>
                     <td colspan="7" class="text-center">No hay menús cargados.</td>
