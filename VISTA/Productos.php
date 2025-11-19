@@ -1,14 +1,20 @@
 <?php
 include_once './structure/header.php';
 $sesion = new Session();
-
+$objAbmMenu = new ABMMenu();
+$menuTodosProductos = $objAbmMenu->buscar(['idmenu' => 3]);
+$estadoMenu = $menuTodosProductos[0]->getDeshabilitado();
 $idUsuario = $sesion->getUsuario();
 $objAbmUsuarioRol = new ABMUsuarioRol();
 $objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
 
 $objProducto = new ABMProducto();
 $listaProductos = $objProducto->buscar(null);
-
+if ($estadoMenu == 1) {
+    echo "<div class='alert alert-warning text-center' role='alert'>
+            Los productos están deshabilitados.
+          </div>";
+}else{
 ?>
 <br><hr>
 <!-- PRODUCTOS -->
@@ -58,7 +64,7 @@ endforeach;
  ?>
   </div>
 </div>
-
+<?php } ?>
 <script src="./assets/js/carrito.js"></script>
 <link rel="stylesheet" href="./assets/css/carrito.css">
 

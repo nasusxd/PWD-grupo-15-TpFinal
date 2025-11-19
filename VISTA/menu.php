@@ -1,6 +1,9 @@
 <?php
 include_once './structure/header.php';
 $sesion = new Session();
+$objAbmMenu = new ABMMenu();
+$menu = $objAbmMenu->buscar(['idmenu' => 1]);
+$estadoMenu = $menu[0]->getDeshabilitado();
 
 $idUsuario = $sesion->getUsuario();
 $objAbmUsuarioRol = new ABMUsuarioRol();
@@ -14,6 +17,12 @@ $listaProductos = array_filter(
 );
 $max = 4;
 $contador = 0;
+
+if ($estadoMenu == 1) {
+    echo "<div class='alert alert-warning text-center' role='alert'>
+            El menú principal está deshabilitado.
+          </div>";
+}else{
 ?>
 <br>
 <div id="miCarrusel" class="carousel slide" data-bs-ride="carousel">
@@ -108,7 +117,7 @@ endforeach;
  ?>
   </div>
 </div>
-
+<?php } ?>
 <script src="./assets/js/carrito.js"></script>
 <link rel="stylesheet" href="./assets/css/carrito.css">
 

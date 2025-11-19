@@ -2,23 +2,31 @@
 class ABMMenu {
 
     public function cargarObjeto($param) {
-        $obj = null;
+    $obj = null;
+    if (array_key_exists('idmenu', $param) && 
+        array_key_exists('menombre', $param) && 
+        array_key_exists('medescripcion', $param) && 
+        array_key_exists('idpadre', $param) && 
+        array_key_exists('medeshabilitado', $param)) {
 
-    if (array_key_exists('idmenu', $param) && array_key_exists('menombre', $param) && array_key_exists('medescripcion', $param) && array_key_exists('idpadre', $param) && array_key_exists('medeshabilitado', $param)) {
-            $objMenu = new Menu();
-            $objMenu->cargarDatos($param);
-        }
-        return $obj;
+        $obj = new Menu();
+        $obj->cargarDatos($param);
     }
+    return $obj;
+}
+
 
     public function cargarObjetoConClave($param) {
-        $obj = null;
-        if (isset($param['idmenu'])) {
-            $objMenu = new Menu();
-            $objMenu->cargarDatos(['idmenu' => $param['idmenu']]);
-        }
-        return $obj;
+    $obj = null;
+    if (isset($param['idmenu'])) {
+        $objMenu = new ABMMenu();
+        $objMenu->buscar($param['idmenu']); // carga todos los datos
+        $obj = $objMenu;
     }
+    return $obj;
+}
+
+
 
     public function alta($param) {
         $resp = false;
@@ -69,9 +77,21 @@ class ABMMenu {
             }
             if (array_key_exists('medeshabilitado', $param))
                 $where .= " AND medeshabilitado = '" . $param['medeshabilitado'] . "'";
-            $objMenu = new Menu();
-            $arreglo = $objMenu->listar($where);
-            return $arreglo;
         }
+        $objMenu = new Menu();
+        $arreglo = $objMenu->listar($where);
+        return $arreglo;
     }
+
+    public function cambiarEstado($idMenu, $nuevoEstado) {
+    $menus = $this->buscar(['idmenu' => $idMenu]);
+    if (!empty($menus)) {
+        $menu = $menus[0]; // obtener el objeto Menu
+        $menu->setDeshabilitado($nuevoEstado); 
+        return $menu->modificar(); 
+    }
+    return false;
+}
+
+
 }

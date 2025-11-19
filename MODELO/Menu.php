@@ -6,6 +6,7 @@ class Menu {
     private $medescripcion;
     private $idpadre;
     private $medeshabilitado;
+    private $urlMenu;
 
     public function __construct($datos = []) {
         if (!empty($datos)) {
@@ -19,6 +20,7 @@ class Menu {
         $this->medescripcion = $datos['medescripcion'] ?? null;
         $this->idpadre = $datos['idpadre'] ?? null;
         $this->medeshabilitado = $datos['medeshabilitado'] ?? null;
+        $this->urlMenu = $datos['urlMenu'] ?? null;
     }
 
     public function getIdMenu() {
@@ -37,6 +39,10 @@ class Menu {
         return $this->medeshabilitado; 
     }
 
+    public function getUrlMenu() {
+        return $this->urlMenu;
+    }
+
     public function setNombre($nombre) { 
         $this->menombre = $nombre; 
     }
@@ -48,6 +54,10 @@ class Menu {
     }
     public function setDeshabilitado($fecha) {
         $this->medeshabilitado = $fecha; 
+    }
+
+    public function setUrlMenu($url) {
+        $this->urlMenu = $url;
     }
 
     public function insertar() {

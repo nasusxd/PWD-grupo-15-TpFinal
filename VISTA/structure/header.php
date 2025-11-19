@@ -4,6 +4,13 @@ $objSession = new Session(); // Instancia de la sesión
 $rolUsuario = $objSession->getRol(); // Esto te dará el rol del usuario
 $idUsuario = $objSession->getUsuario();
 $totalCarrito = $objSession->totalProductosCarrito();
+
+$objAbmMenu = new ABMMenu();
+$opcionProductos = $objAbmMenu->buscar(['idmenu' => 2]);
+$opcionContacto = $objAbmMenu->buscar(['idmenu' => 5]);
+$estadoMenuProductos = $opcionProductos[0]->getDeshabilitado();
+$estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -38,6 +45,7 @@ $totalCarrito = $objSession->totalProductosCarrito();
 
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
           <!-- Menú principal con submenú -->
+    <?php if ($estadoMenuProductos == 0) { ?>
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle px-3" href="#" id="productosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       Productos
@@ -47,11 +55,13 @@ $totalCarrito = $objSession->totalProductosCarrito();
       <li><a class="dropdown-item" href="<?= BASE_URL ?>ofertas.php">Ofertas</a></li>
     </ul>
   </li>
-
+  <?php } ?>
+  <?php if ($estadoMenuContacto == 0) { ?>
   <!-- Ítems normales fuera del dropdown -->
   <li class="nav-item">
     <a class="nav-link px-3" href="<?= BASE_URL ?>contacto.php">Contacto</a>
   </li>
+  <?php } ?>
         </ul>
 
         <?php if ($rolUsuario == [] || $rolUsuario[0] != 2): ?>
