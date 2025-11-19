@@ -20,7 +20,7 @@ $objAbmMenu = new ABMMenu();
 $admUsuarios = $objAbmMenu->buscar(['idmenu' => 6]); $listarUsuarios = $objAbmMenu->buscar(['idmenu' => 7]); $agregarUsuario = $objAbmMenu->buscar(['idmenu' => 8]);
 $admProductos = $objAbmMenu->buscar(['idmenu' => 9]); $listarProductos = $objAbmMenu->buscar(['idmenu' => 10]); $agregarProductos = $objAbmMenu->buscar(['idmenu' => 11]);
 $admRoles = $objAbmMenu->buscar(['idmenu' => 12]); $listarRoles = $objAbmMenu->buscar(['idmenu' => 13]); $agregarRoles = $objAbmMenu->buscar(['idmenu' => 14]);
-$admCompras = $objAbmMenu->buscar(['idmenu' => 20]); $listarCompras = $objAbmMenu->buscar(['idmenu' => 21]);
+$admCompras = $objAbmMenu->buscar(['idmenu' => 19]); $listarCompras = $objAbmMenu->buscar(['idmenu' => 20]);
 
 // Obtener estados del menu
 $admUsuariosEstado = $admUsuarios[0]->getDeshabilitado(); //
@@ -124,8 +124,7 @@ $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
                 <div class="collapse" id="collapseMenu">
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
-                            <a href="./menuAdmin.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Opciones</a>
-                            <a href="menu_alta.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Opción</a>
+                            <a href="./menuAdmin.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Menús</a>
                         </div>
                     </div>
                 </div>
