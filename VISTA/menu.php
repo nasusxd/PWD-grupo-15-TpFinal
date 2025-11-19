@@ -7,7 +7,13 @@ $objAbmUsuarioRol = new ABMUsuarioRol();
 $objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
 
 $objProducto = new ABMProducto();
-$listaProductos = $objProducto->buscar(null);
+// Filtra solo los productos con stock disponible
+$listaProductos = array_filter(
+    $objProducto->buscar(null),
+    fn($producto) => $producto->getStock() > 0
+);
+$max = 4;
+$contador = 0;
 ?>
 <br>
 <div id="miCarrusel" class="carousel slide" data-bs-ride="carousel">
@@ -22,17 +28,17 @@ $listaProductos = $objProducto->buscar(null);
   <div class="carousel-inner">
     
     <div class="carousel-item active">
-        <img src="../img/ecoDeLaPampa.png" class="d-block w-100" alt="Eco de la Pampa" 
+        <img src="../img/promo1.jpg" class="d-block w-100" alt="Imagen 1" 
              style="height: 500px; object-fit: contain; background-color: #ffffffff;">
     </div>
 
     <div class="carousel-item">
-        <img src="../img/selloDeGoma.png" class="d-block w-100" alt="Sello de Goma" 
+        <img src="../img/promo2.jpg" class="d-block w-100" alt="Imagen 2" 
              style="height: 500px; object-fit: contain; background-color: #ffffffff;">
     </div>
 
     <div class="carousel-item">
-         <img src="../img/elRoboDelSigloPasado.png" class="d-block w-100" alt="Imagen 3" 
+         <img src="../img/promo3.png" class="d-block w-100" alt="Imagen 3" 
              style="height: 500px; object-fit: contain; background-color: #ffffffff;">
     </div>
 
@@ -56,13 +62,16 @@ $listaProductos = $objProducto->buscar(null);
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 <?php 
 foreach ($listaProductos as $producto):
+  if ($contador >= $max) {
+        break; 
+    }
     $disponible = $producto->getStock() > 0;
 ?>
     <div class="col">
       <div class="card h-100 shadow-sm">
-        <img src="../uploads/<?= $producto->getImagen(); ?>" 
+        <img src="../img/<?= $producto->getImagen(); ?>" 
              class="card-img-top img-fluid" 
-             style="height: 250px; object-fit: cover;" 
+             style="height: 450px; object-fit: cover;" 
              alt="<?= $producto->getNombre() ?>">
 
         <div class="card-body d-flex flex-column">
@@ -92,7 +101,11 @@ foreach ($listaProductos as $producto):
         </div>
       </div>
     </div>
-<?php endforeach; ?>
+<?php 
+$contador++;
+endforeach;
+
+ ?>
   </div>
 </div>
 

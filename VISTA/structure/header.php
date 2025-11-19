@@ -37,9 +37,21 @@ $totalCarrito = $objSession->totalProductosCarrito();
       <div class="collapse navbar-collapse" id="menuTienda">
 
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
-          <li class="nav-item"><a class="nav-link px-3" href="<?= BASE_URL ?>productos.php">Productos</a></li>
-          <li class="nav-item"><a class="nav-link px-3" href="<?= BASE_URL ?>ofertas.php">Ofertas</a></li>
-          <li class="nav-item"><a class="nav-link px-3" href="<?= BASE_URL ?>contacto.php">Contacto</a></li>
+          <!-- Menú principal con submenú -->
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle px-3" href="#" id="productosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Productos
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="productosDropdown">
+      <li><a class="dropdown-item" href="<?= BASE_URL ?>productos.php">Todos los productos</a></li>
+      <li><a class="dropdown-item" href="<?= BASE_URL ?>ofertas.php">Ofertas</a></li>
+    </ul>
+  </li>
+
+  <!-- Ítems normales fuera del dropdown -->
+  <li class="nav-item">
+    <a class="nav-link px-3" href="<?= BASE_URL ?>contacto.php">Contacto</a>
+  </li>
         </ul>
 
         <?php if ($rolUsuario == [] || $rolUsuario[0] != 2): ?>
@@ -79,12 +91,14 @@ $totalCarrito = $objSession->totalProductosCarrito();
           </a>
 
           <?php if ($rolUsuario !== [] && $rolUsuario[0] !== 2): ?>
-          <a href="#" class="text-dark fs-5 position-relative" title="Carrito" data-bs-toggle="modal" data-bs-target="#modalCarrito">
-            <i class="bi bi-cart3"></i>
-            <span id="contador-carrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
-              <?= $totalCarrito ?>
-            </span>
-          </a>
+          <a href="#" class="modalCarrito text-dark fs-5 position-relative" title="Carrito"
+   data-bs-toggle="modal" data-bs-target="#modalCarrito">
+    <i class="bi bi-cart3"></i>
+    <span id="contador-carrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+        <?= $totalCarrito ?>
+    </span>
+</a>
+
           <?php endif; ?>
 
         </div>
@@ -110,7 +124,7 @@ $totalCarrito = $objSession->totalProductosCarrito();
               </div>
               
               <div class="modal-footer">
-                <a href="<?= BASE_URL ?>finalizarCompra.php" class="btn btn-success w-100"> Finalizar compra </a>
+                <button class="btn btn-success w-100" id="btn-finalizar">Finalizar compra</button>
               </div>
             </div>
           </div>
