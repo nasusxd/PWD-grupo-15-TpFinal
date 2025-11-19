@@ -55,7 +55,7 @@ class CompraEstado {
          $sql = "INSERT INTO compraestado (idcompra, idcompraestadotipo, cefechaini, cefechafin) 
                 VALUES (:idcompra, :idcompraestadotipo, :getFechaIni, :cefechafin)";
 
-        $stmt = $base->prepare($sql);
+        $stmt = $baseDatos->prepare($sql);
         if ($stmt->execute([
             ':idcompra' => $this->getIdCompra(),
             ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),

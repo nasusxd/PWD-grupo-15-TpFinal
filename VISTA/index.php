@@ -93,6 +93,22 @@ include_once './structure/headerAdmin.php';
                 </div>
             </div>
 
+            <div class="card mb-3 border-0 shadow-sm">
+                <button class="btn btn-primary w-100 p-3 fs-5 fw-bold text-start d-flex justify-content-between align-items-center" 
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseCompras" aria-expanded="false">
+                    <span><i class="bi bi-list-task me-2"></i> Administrar Compras</span>
+                    <i class="bi bi-chevron-down fs-6"></i>
+                </button>
+
+                <div class="collapse" id="collapseCompras">
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="compraAdmin.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Compras</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

@@ -3,22 +3,22 @@
 class ABMCompraItem {
 
     public function cargarObjeto($param) {
-        $obj = null;
+        $objCompraItem = null;
 
         if (array_key_exists('idcompraitem', $param) && array_key_exists('idproducto', $param) && array_key_exists('idcompra', $param) && array_key_exists('cicantidad', $param)) {
             $objCompraItem = new CompraItem();
             $objCompraItem->cargarDatos($param);
         }
-        return $obj;
+        return $objCompraItem;
     }
 
     public function cargarObjetoConClave($param) {
-        $obj = null;
+        $objCompraItem = null;
         if (isset($param['idcompraitem'])) {
             $objCompraItem = new CompraItem();
             $objCompraItem->cargarDatos(['idcompraitem' => $param['idcompraitem']]);
         }
-        return $obj;
+        return $objCompraItem;
     }
 
     public function alta($param) {

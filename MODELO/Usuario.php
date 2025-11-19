@@ -35,8 +35,7 @@ class Usuario
     {
         return $this->uspass;
     }
-    public function getMail()
-    {
+    public function getMail() {
         return $this->usmail;
     }
     public function getDeshabilitado()

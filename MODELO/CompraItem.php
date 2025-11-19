@@ -47,7 +47,7 @@ class CompraItem {
          $sql = "INSERT INTO compraitem  (idproducto, idcompra, cicantidad) 
                 VALUES (:idproducto, :idcompra, :cicantidad)";
 
-        $stmt = $base->prepare($sql);
+        $stmt = $baseDatos->prepare($sql);
         if ($stmt->execute([
             ':idproducto' => $this->getIdProducto(),
             ':idcompra' => $this->getIdCompra(),

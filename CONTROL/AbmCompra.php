@@ -2,32 +2,33 @@
 
 class ABMCompra {
     public function cargarObjeto($param) {
-        $obj = null;
+        $objCompra = null;
 
         if (array_key_exists('idcompra', $param) && array_key_exists('cofecha', $param) && array_key_exists('idusuario', $param)) {
             $objCompra = new Compra();
             $objCompra->cargarDatos($param);
         }
-        return $obj;
+        return $objCompra;
     }
 
     public function cargarObjetoConClave($param) {
-        $obj = null;
+        $objCompra = null;
 
         if (isset($param['idcompra'])) {
             $objCompra = new Compra();
             $objCompra->cargarDatos(['idcompra' => $param['idcompra']]);
         }
-        return $obj;
+        return $objCompra;
     }
 
     public function alta($param) {
-        $resp = false;
+        $idCompra = -1;
         $objCompra = $this->cargarObjeto($param);
+
         if ($objCompra != null && $objCompra->insertar()) {
-            $resp = true;
+        $idCompra = $objCompra->getIdCompra();
         }
-        return $resp;
+        return $idCompra; // retorna el id
     }
 
     public function baja($param) {

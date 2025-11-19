@@ -26,6 +26,10 @@ class Compra {
         return $this->idusuario;
     }
 
+    public function setidcompra($idcompra) {
+        $this->idcompra = $idcompra;
+    }
+
     public function setFecha($fecha) {
         $this->cofecha = $fecha;
     }
@@ -36,18 +40,23 @@ class Compra {
     public function insertar() {
         $res = false;
         $baseDatos = new BaseDatos();
-         $sql = "INSERT INTO compra (cofecha, idusuario) 
+
+        $sql = "INSERT INTO compra (cofecha, idusuario) 
                 VALUES (:cofecha, :idusuario)";
 
-        $stmt = $base->prepare($sql);
+        $stmt = $baseDatos->prepare($sql);
+
         if ($stmt->execute([
             ':cofecha' => $this->getFecha(),
             ':idusuario' => $this->getIdUsuario()
         ])) {
-            $resp = true;
+            $id = $baseDatos->lastInsertId();
+            $this->setIdCompra($id);
+            $res = true;
         }
-        return $resp;
+        return $res;
     }
+
 
     public function modificar() {
         $base = new BaseDatos();
@@ -80,7 +89,7 @@ class Compra {
         return $resp;
     }
 
-    public function listar() {
+    public function listar($condicion = '') {
         $base = new BaseDatos();
         $sql = "SELECT * FROM compra";
         if ($condicion != "") {
@@ -91,7 +100,7 @@ class Compra {
         
         $compras = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objCompra = new Menu();
+            $objCompra = new Compra();
             $objCompra->cargarDatos($fila);
             $compras[] = $objCompra;
         }

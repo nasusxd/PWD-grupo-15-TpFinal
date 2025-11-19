@@ -1,29 +1,66 @@
 <?php
 header('Content-Type: application/json'); 
 include_once "../../configuracion.php";
+
 $mail = $_POST['mail'] ?? '';
+
 $objSesion = new Session();
+$idUsuario = $objSesion->getUsuario();
 $carrito = $objSesion->getCarrito();
 
-$response = ['existe' => false, 'error' => 'No se recibió email'];
+$abmCompra = new ABMCompra();
+$abmCompraEstado = new ABMCompraEstado();
+$abmCompraItem = new ABMCompraItem();
+
+$response = '';
+
 if ($mail == '') {
-    echo json_encode(['existe' => false, 'error' => 'No se recibió email']);
+    $response = ['existe' => false, 'error' => 'No se recibio email'];
     exit;
-} else {
-    $objAbmUsuario = new ABMUsuario();
-    $usuario = $objAbmUsuario->buscar(['usmail' => $mail]);
-    if (count($usuario) > 0) {
-        $enviarCorreo = enviarCorreoResumen($mail, $carrito);
-        if ($enviarCorreo === true) {
-            $response = ['existe' => true, 'msg' => 'Compra exitosa, se mando el resumen del pedido a tu correo'];
-            $objSesion->limpiarCarrito();
-        } else {
-            $response = ['existe' => false, 'msg' => $enviarCorreo];
-        }
-    } else {
-        $response = ['existe' => false, 'msg' =>'Error al buscar el mail del usuario'];
-    }
 }
+
+$objAbmUsuario = new ABMUsuario();
+$objUsuario = $objAbmUsuario->buscar(['usmail' => $mail]);
+
+if (count($objUsuario) == 0) {
+    echo json_encode(['existe' => false, 'msg' => 'Error: no existe un usuario con ese mail']);
+    exit;
+}
+
+$enviarCorreo = enviarCorreoResumen($mail, $carrito);
+if ($enviarCorreo !== true) {
+    echo json_encode(['existe' => false, 'msg' => $enviarCorreo]);
+    exit;
+}
+$fechaActual = date("Y-m-d H:i:s");
+$paramCompra = [
+    "idcompra" => null,
+    "cofecha" => $fechaActual,
+    "idusuario" => $idUsuario
+];
+
+$idNuevaCompra = $abmCompra->alta($paramCompra); 
+foreach ($carrito as $idProducto => $cantidad) {
+    $paramItem = [
+        "idcompraitem" => null,
+        "idproducto" => $idProducto,
+        "idcompra" => $idNuevaCompra,
+        "cicantidad" => $cantidad
+    ];
+    $abmCompraItem->alta($paramItem);
+}
+$paramCompraEstado = [
+    "idcompraestado" => null,
+    "idcompra" => $idNuevaCompra,
+    "idcompraestadotipo" => 1, //iniciada default
+    "cefechaini" => $fechaActual,
+    "cefechafin" => null
+];
+$abmCompraEstado->alta($paramCompraEstado);
+
+$objSesion->limpiarCarrito();
+
+$response = ['existe' => true, 'msg' =>'Compra exitosa, se envio el resumen del pedido a tu correo'];
 
 echo json_encode($response);
 exit;
