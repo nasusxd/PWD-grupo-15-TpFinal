@@ -101,9 +101,9 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
           </a>
 
           <?php if ($rolUsuario !== [] && $rolUsuario[0] !== 2): ?>
-          <a href="#" class="modalCarrito text-dark fs-5 position-relative" title="Carrito"
-   data-bs-toggle="modal" data-bs-target="#modalCarrito">
-    <i class="bi bi-cart3"></i>
+          <a href="#" class="modalCarrito text-dark fs-5 position-relative" title="Carrito" 
+          data-bs-toggle="modal" data-bs-target="#modalCarrito">
+          <i class="bi bi-cart3"></i>
     <span id="contador-carrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
         <?= $totalCarrito ?>
     </span>
@@ -118,7 +118,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
 </header>
 
         <div class="modal fade" id="modalCarrito" tabindex="-1">
-            <div class="modal-dialog modal-sm">
+            <div class="modal-dialog modal-md">
               <div class="modal-content">
 
               <div class="modal-header">

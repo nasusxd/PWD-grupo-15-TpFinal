@@ -24,6 +24,7 @@ $totalPrecio = $sesion->precioTotalCarrito();
 
 // Construir lista de items con nombre y cantidad
 $items = [];
+
 if (isset($_SESSION['carrito'])) {
     $objProducto = new ABMProducto();
     foreach ($_SESSION['carrito'] as $idProducto => $cantidad) {

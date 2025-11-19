@@ -27,24 +27,49 @@ $(document).ready(function () {
 
 });
 
+// Función para pintar el carrito en el modal
+function pintarCarritoEliminar(items) {
+    $("#lista-carrito").html(""); // limpiar lista
+
+    items.forEach(item => {
+        $("#lista-carrito").append(`
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    ${item.nombre}
+                    <span class="badge bg-dark rounded-pill ms-2">${item.cantidad}</span>
+                </div>
+                <button class="btn btn-sm btn-danger eliminar-item" data-id="${item.id}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </li>
+        `);
+    });
+
+    // Actualizar totales
+    let totalCantidad = items.reduce((acc, item) => acc + item.cantidad, 0);
+    let totalPrecio = items.reduce((acc, item) => acc + (item.cantidad * (item.precioUnitario ?? 0)), 0);
+
+    $("#total-carrito").text("$" + totalPrecio);
+    $("#contador-carrito").text(totalCantidad);
+}
+
+// Evento para eliminar producto
 $(document).on("click", ".eliminar-item", function() {
     let idProducto = $(this).data("id");
 
-        $.ajax({
-            url: "./action/actionEliminarCarrito.php",
-            type: "POST",
-            data: { idproducto: idProducto },
-            dataType: "json",
-            success: function(response) {
-                if(response.success) {
-                    pintarCarrito(response.items);
-                    $("#total-carrito").text("$" + response.total);
-                    $("#contador-carrito").text(response.total);
-
-                }
+    $.ajax({
+        url: "./action/actionEliminarCarrito.php",
+        type: "POST",
+        data: { idproducto: idProducto }, // elimina todo el producto
+        dataType: "json",
+        success: function(response) {
+            if(response.success) {
+                pintarCarritoEliminar(response.items);
             }
-        });
+        }
     });
+});
+
 
 
 // PARA LA COMPRA
@@ -126,4 +151,6 @@ function pintarCarrito(items) {
         `);
     });
 }
+
+
 
