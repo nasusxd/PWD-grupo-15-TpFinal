@@ -110,7 +110,7 @@ class ABMMenu {
     $menus = $this->buscar(['idmenu' => $idMenu]);
     if (!empty($menus)) {
         $menu = $menus[0]; // obtener el objeto Menu
-        $menu->setMeDeshabilitado($nuevoEstado); 
+        $menu->setDeshabilitado($nuevoEstado); 
         return $menu->modificar(); 
     }
     return false;
