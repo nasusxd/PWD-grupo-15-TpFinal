@@ -2,7 +2,7 @@
 include_once "../configuracion.php";
 $sesion = new Session();
 $sesion->validarLogin(true);
-include_once './structure/headerAdmin.php';
+include_once './structure/header.php';
 
 $objCompra = new ABMCompra();
 $objUsuario = new ABMUsuario();

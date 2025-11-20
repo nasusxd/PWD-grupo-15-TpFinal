@@ -2,7 +2,7 @@
 include_once "../configuracion.php";
 $objSesion = new Session();
 $objSesion->validarLogin(true);
-include_once './structure/headerAdmin.php';
+include_once './structure/header.php';
 
 $objMenu = new ABMMenu();
 $objMenuRol = new ABMMenuRol();
