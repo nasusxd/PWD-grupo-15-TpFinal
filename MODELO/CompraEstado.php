@@ -50,16 +50,16 @@ class CompraEstado {
     }
 
     public function insertar() {
-        $res = false;
+        $resp = false;
         $baseDatos = new BaseDatos();
          $sql = "INSERT INTO compraestado (idcompra, idcompraestadotipo, cefechaini, cefechafin) 
-                VALUES (:idcompra, :idcompraestadotipo, :getFechaIni, :cefechafin)";
+                VALUES (:idcompra, :idcompraestadotipo, :cefechaini, :cefechafin)";
 
         $stmt = $baseDatos->prepare($sql);
         if ($stmt->execute([
             ':idcompra' => $this->getIdCompra(),
             ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),
-            ':getFechaIni' => $this->getFechaIni(),
+            ':cefechaini' => $this->getFechaIni(),
             ':cefechafin' => $this->getFechaFin()
         ])) {
             $resp = true;
@@ -76,11 +76,11 @@ class CompraEstado {
         
             $stmt = $base->prepare($sql);
             if ($stmt->execute([
+            ':idcompraestado' => $this->getIdCompraEstado(),
             ':idcompra' => $this->getIdCompra(),
             ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),
-            ':getFechaIni' => $this->getFechaIni(),
-            ':cefechafin' => $this->getFechaFin(),
-            ':idcompraestado' => $this->getIdCompraEstado()
+            ':cefechaini' => $this->getFechaIni(),
+            ':cefechafin' => $this->getFechaFin()
             ])) {
                 $resp = true;
             }
@@ -90,7 +90,7 @@ class CompraEstado {
     public function eliminar() {
         $base = new BaseDatos();
         $resp = false;
-        $sql = "DELETE compraestado  WHERE idcompraestado = :idcompraestado";
+        $sql = "DELETE FROM compraestado  WHERE idcompraestado = :idcompraestado";
         $stmt = $base->prepare($sql);
             if ($stmt->execute([
             ':idcompraestado' => $this->getIdCompraEstado(),
@@ -111,12 +111,14 @@ class CompraEstado {
         
         $comprasEstados = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objCompraEstado = new Menu();
+            $objCompraEstado = new CompraEstado();
             $objCompraEstado->cargarDatos($fila);
             $comprasEstados[] = $objCompraEstado;
         }
+        if (count($comprasEstados) === 0) {
+           $comprasEstados = 'esta vacio';
+        }
         return $comprasEstados;
     }
-
 
 }

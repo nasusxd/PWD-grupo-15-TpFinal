@@ -80,7 +80,7 @@ class CompraEstadoTipo {
         return $resp;
     }
 
-    public function listar() {
+    public function listar($condicion = "") {
         $base = new BaseDatos();
         $sql = "SELECT * FROM compraestadotipo";
         if ($condicion != "") {
@@ -91,7 +91,7 @@ class CompraEstadoTipo {
         
         $comprasEstadoTipo = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objCompraEstadoTipo = new Menu();
+            $objCompraEstadoTipo = new CompraEstadoTipo();
             $objCompraEstadoTipo->cargarDatos($fila);
             $comprasEstadoTipo[] = $objCompraEstadoTipo;
         }

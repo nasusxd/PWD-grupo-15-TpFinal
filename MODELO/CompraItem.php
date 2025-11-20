@@ -92,7 +92,7 @@ class CompraItem {
         return $resp;
     }
 
-    public function listar() {
+    public function listar($condicion = "") {
         $base = new BaseDatos();
         $sql = "SELECT * FROM compraitem";
         if ($condicion != "") {
@@ -103,10 +103,11 @@ class CompraItem {
         
         $comprasItems = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $objCompraItem = new Menu();
+            $objCompraItem = new CompraItem();
             $objCompraItem->cargarDatos($fila);
             $comprasItems[] = $objCompraItem;
         }
         return $comprasItems;
     }
+
 }

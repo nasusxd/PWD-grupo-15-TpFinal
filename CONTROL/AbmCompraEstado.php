@@ -2,23 +2,38 @@
 
 class ABMCompraEstado {
 
+public function actualizarEstado($ultimoEstado, $idCompra, $nuevoEstado) {
+    $paramModificacion = [
+        'idcompraestado' => $ultimoEstado->getIdCompraEstado(),
+        "idcompra" => $idCompra,
+        'idcompraestadotipo' => $nuevoEstado,
+        'cefechaini' => $ultimoEstado->getFechaIni(),
+        'cefechafin' => date('Y-m-d H:i:s'),
+    ];
+
+    $resultadoMod = $this->modificacion($paramModificacion);
+
+    return $resultadoMod;
+}
+
+    
     public function cargarObjeto($param) {
-        $obj = null;
+        $objCompraEstado = null;
 
         if (array_key_exists('idcompraestado', $param) && array_key_exists('idcompra', $param) && array_key_exists('idcompraestadotipo', $param) && array_key_exists('cefechaini', $param) && array_key_exists('cefechafin', $param)) {
             $objCompraEstado = new CompraEstado();
             $objCompraEstado->cargarDatos($param);
         }
-        return $obj;
+        return $objCompraEstado;
     }
 
     public function cargarObjetoConClave($param) {
-        $obj = null;
+        $objCompraEstado = null;
         if (isset($param['idcompraestado'])) {
             $objCompraEstado = new CompraEstado();
             $objCompraEstado->cargarDatos(['idcompraestado' => $param['idcompraestado']]);
         }
-        return $obj;
+        return $objCompraEstado;
     }
 
     public function alta($param) {

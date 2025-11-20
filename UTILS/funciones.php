@@ -134,6 +134,53 @@ function enviarCorreoResumen($correoCliente, $carrito) {
     return $res;
 }
 
+function enviarCorreoCambioEstado($correoCliente, $nombreCliente, $idCompra, $estadoNuevo) {
+    $res = false;
+    $mail = new PHPMailer();
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'grupo15pwd@gmail.com';
+        $mail->Password = 'dldrmbwtojfpaats';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        // Remitente
+        $mail->setFrom('grupo15pwd@gmail.com', 'Pelunco - Actualizacion de compra');
+
+        // Destinatario
+        $mail->addAddress($correoCliente);
+
+        // Asunto
+        $mail->isHTML(true);
+        $mail->Subject = "Actualizacion en tu compra #$idCompra";
+
+        // Cuerpo del mensaje
+        $mail->Body = "
+            <p>Hola <strong>$nombreCliente</strong>,</p>
+            <p>Queriamos informarte que el estado de tu compra <strong>#$idCompra</strong> ha cambiado.</p>
+
+            <p><strong>Nuevo estado:</strong> <span style='color:#1a73e8'>$estadoNuevo</span></p>
+
+            <p>Gracias por confiar en Pelunco.</p>
+            <p>Saludos,<br>Equipo Pelunco</p>
+        ";
+
+        // Alternativa en texto plano
+        $mail->AltBody = "Hola $nombreCliente, tu compra #$idCompra cambio al estado: $estadoNuevo.";
+
+        // Enviar
+        $mail->send();
+        $res = true;
+
+    } catch (Exception $e) {
+        $res = "Error al enviar correo: " . $e->getMessage();
+    }
+
+    return $res;
+}
 
 
 ?>
