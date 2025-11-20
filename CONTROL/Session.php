@@ -35,7 +35,6 @@ class Session {
     $esAdmin = false;
     if ($this->validar()) {
         $roles = $this->getRol(); 
-        
        
         if (in_array(2, $roles)) { 
             $esAdmin = true;
@@ -48,6 +47,26 @@ class Session {
     public function validar() {
         return isset($_SESSION['idusuario']);
     }
+
+public function validarLogin(?bool $requerirAdmin = null) {
+    if (!$this->validar()) {
+        header("Location: login.php");
+        exit;
+    }
+
+    if ($requerirAdmin === true && !$this->esAdmin()) {
+        header("Location: menu.php"); 
+        exit;
+    }
+
+    if ($requerirAdmin === false && $this->esAdmin()) {
+        header("Location: index.php"); 
+        exit;
+    }
+
+}
+
+
 
     //devuelve true o false si la sesion esta activa y valida
     public function activa () {

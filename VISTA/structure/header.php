@@ -1,5 +1,7 @@
 <?php
-include_once(__DIR__ . '../../../configuracion.php');
+
+include_once('../configuracion.php');
+
 $objSession = new Session(); // Instancia de la sesión
 $rolUsuario = $objSession->getRol(); // Esto te dará el rol del usuario
 $idUsuario = $objSession->getUsuario();
@@ -32,7 +34,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
 <header class="container mt-3 mb-4">
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded-3 px-3 py-2 border">
     <div class="container-fluid">
-        
+
       <a class="navbar-brand fw-bold d-flex align-items-center" href="<?= BASE_URL ?>menu.php">
         <img src="../img/pelunco.svg" alt="Logo" height="45" class="d-inline-block align-text-top">
       </a>
@@ -55,6 +57,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
       <li><a class="dropdown-item" href="<?= BASE_URL ?>ofertas.php">Ofertas</a></li>
     </ul>
   </li>
+
   <?php } ?>
   <?php if ($estadoMenuContacto == 0) { ?>
   <!-- Ítems normales fuera del dropdown -->
@@ -76,7 +79,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
         <?php endif; ?>
 
         <div class="d-flex align-items-center gap-3">
-          
+
           <?php if ($rolUsuario !== [] ): ?>
           <div class="dropdown">
               <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,11 +88,14 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
               </a>
               <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">
                 <li><a class="dropdown-item" href="<?= BASE_URL ?>modificarCliente.php">Modificar mi Perfil</a></li>
+                <?php if ($rolUsuario[0] == 2){ ?>
+                <li><a class="dropdown-item" href="<?= BASE_URL ?>index.php">Panel Administrador</a></li>
+                <?php } ?>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
-          
+
           <?php else: ?>
           <a href="<?= BASE_URL ?>login.php" class="btn btn-primary btn-sm rounded-pill px-4 fw-bold">
               Ingresar
@@ -101,9 +107,9 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
           </a>
 
           <?php if ($rolUsuario !== [] && $rolUsuario[0] !== 2): ?>
-          <a href="#" class="modalCarrito text-dark fs-5 position-relative" title="Carrito" 
-          data-bs-toggle="modal" data-bs-target="#modalCarrito">
-          <i class="bi bi-cart3"></i>
+          <a href="#" class="modalCarrito text-dark fs-5 position-relative" title="Carrito"
+   data-bs-toggle="modal" data-bs-target="#modalCarrito">
+    <i class="bi bi-cart3"></i>
     <span id="contador-carrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
         <?= $totalCarrito ?>
     </span>
@@ -118,7 +124,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
 </header>
 
         <div class="modal fade" id="modalCarrito" tabindex="-1">
-            <div class="modal-dialog modal-md">
+            <div class="modal-dialog modal-sm">
               <div class="modal-content">
 
               <div class="modal-header">
@@ -132,7 +138,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
                   <strong>Total:</strong> <span id="total-carrito">$0</span>
                 </div>
               </div>
-              
+
               <div class="modal-footer">
                 <button class="btn btn-success w-100" id="btn-finalizar">Finalizar compra</button>
               </div>
@@ -148,4 +154,3 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
 <script src="<?= BASE_URL ?>assets/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

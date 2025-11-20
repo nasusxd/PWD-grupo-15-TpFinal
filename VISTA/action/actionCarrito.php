@@ -15,6 +15,9 @@ if (!$datos['idproducto'] || $datos['cantidad'] <= 0) {
     exit;
 }
 
+
+
+
 // Agregar al carrito usando la clase Session
 $sesion->agregarAlCarrito($datos['idproducto'], $datos['cantidad']);
 
@@ -29,18 +32,32 @@ if (isset($_SESSION['carrito'])) {
     $objProducto = new ABMProducto();
     foreach ($_SESSION['carrito'] as $idProducto => $cantidad) {
         $productos = $objProducto->buscar(['idproducto' => $idProducto]);
+
         if (count($productos) > 0) {
             $producto = $productos[0];
+
+            // OBTENER DESCUENTO DEL PRODUCTO
+            $descuento = $producto->getDescuento(); 
+            
+            // CALCULAR PRECIO FINAL
+            if ($descuento > 0) {
+                $precioUnitario = $producto->getPrecio() * (1 - $descuento / 100);
+            } else {
+                $precioUnitario = $producto->getPrecio();
+            }
+
             $items[] = [
                 "id" => $idProducto,
                 "nombre" => $producto->getNombre(),
                 "cantidad" => $cantidad,
-                "precioUnitario" => $producto->getPrecio(),
-                "subtotal" => $producto->getPrecio() * $cantidad
+                "precioUnitario" => $precioUnitario,
+                "subtotal" => $precioUnitario * $cantidad,
+                "descuento" => $descuento
             ];
         }
     }
-} 
+}
+
 
 // Devolver JSON completo
 echo json_encode([

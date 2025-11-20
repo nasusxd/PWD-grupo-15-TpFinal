@@ -1,15 +1,23 @@
 <?php
-include_once './structure/header.php';
+include_once(__DIR__ . '/../configuracion.php');
+
 $sesion = new Session();
+$sesion->validarLogin(false);
+include_once './structure/header.php';
+
 $objAbmMenu = new ABMMenu();
 $menuOfertas = $objAbmMenu->buscar(['idmenu' => 4]);
 $estadoMenu = $menuOfertas[0]->getDeshabilitado();
+
+
 $idUsuario = $sesion->getUsuario();
 $objAbmUsuarioRol = new ABMUsuarioRol();
 $objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
 
 $objProducto = new ABMProducto();
 $listaProductos = $objProducto->buscar(null);
+
+
 if ($estadoMenu == 1) {
     echo "<div class='alert alert-warning text-center' role='alert'>
             Las ofertas están deshabilitadas.
@@ -17,15 +25,24 @@ if ($estadoMenu == 1) {
 }else{
 ?>
 <br><hr>
-<!-- PRODUCTOS -->
 <div class="container">
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 <?php 
 foreach ($listaProductos as $producto):
     $disponible = $producto->getStock() > 0;
+    $esOferta = $producto->getDescuento() > 0;
+    if (!$esOferta) {
+        continue; // Saltar productos que no son ofertas
+    }
 ?>
     <div class="col">
       <div class="card h-100 shadow-sm">
+        <?php if ($esOferta): ?>
+    <div class="sticker-oferta">OFERTA</div>
+<?php endif; ?>
+
+
+
         <img src="../img/<?= $producto->getImagen(); ?>" 
      class="card-img-top img-fluid <?= $disponible ? '' : 'img-blur' ?>" 
      style="height: 450px; object-fit: cover;" 
@@ -35,12 +52,16 @@ foreach ($listaProductos as $producto):
           <?php if ($disponible): ?>
             <h5 class="card-title mb-2"><?= $producto->getNombre() ?></h5>
             <p class="mb-1">Cantidad disponible: <?= $producto->getStock() ?></p>
-            <p class="card-text text-success fw-bold mb-3">$<?= $producto->getPrecio(); ?></p>
+            <p class="card-text text-success fw-bold mb-0">Antes: $<?= $producto->getPrecio(); ?></p>
+            <p class="text-danger fw-bold mb-1">
+            Oferta: $<?= $producto->getPrecio() * (1 - $producto->getDescuento() / 100); ?>
+          </p>
 
             <?php if ($objUsuarioRol[0]->getIdRol() == 1): ?>
               <button class="agregar-carrito btn btn-primary mt-auto" 
                       data-id="<?=$producto->getIdProducto();?>" 
-                      data-nombre="<?=$producto->getNombre();?>">
+                      data-nombre="<?=$producto->getNombre();?>"
+                      data-descuento="<?=$producto->getDescuento();?>">
                 Agregar al carrito
               </button>
             <?php else: ?>
@@ -60,20 +81,12 @@ foreach ($listaProductos as $producto):
     </div>
 <?php 
 endforeach;
-
  ?>
   </div>
 </div>
 <?php } ?>
 <script src="./assets/js/carrito.js"></script>
-<link rel="stylesheet" href="./assets/css/carrito.css">
-
-<style>
-.img-blur {
-    filter: blur(1px);
-    opacity: 0.4;
-}
-</style>
+<link rel="stylesheet" href="./assets/css/ofertas.css">
 <?php
 include_once 'structure/footer.php';
 ?>

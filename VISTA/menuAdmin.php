@@ -1,5 +1,7 @@
 <?php
 include_once "../configuracion.php";
+$objSesion = new Session();
+$objSesion->validarLogin(true);
 include_once './structure/headerAdmin.php';
 $objMenu = new ABMMenu();
 $listarMenus = $objMenu->buscar(null);

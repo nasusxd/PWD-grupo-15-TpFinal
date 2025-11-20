@@ -1,8 +1,9 @@
 <?php
 $titulo = "Nuevo Producto";
-
+$sesion = new Session();
+$sesion->validarLogin(true);
 include_once "../configuracion.php";
-include_once './structure/headerAdmin.php';
+include_once './structure/header.php';
 ?>
 
 
@@ -41,7 +42,7 @@ include_once './structure/headerAdmin.php';
         <button type="submit" id="btn-cargar" value="Cargar" class="btn btn-primary">Cargar Producto</button>
         <div id="mensaje" style="margin-top: 20px;"></div>
             <hr class="mt-4">
-             <a href="prodAdmin.php" class="btn btn-danger">Volver</a>
+             <a href="./index.php" class="btn btn-danger">Volver</a>
         </form>
 
   </div>
@@ -64,13 +65,13 @@ include_once './structure/headerAdmin.php';
         } 
 
 
-      // Enviar solicitud AJAX
+      
       $.ajax({
         type: 'POST',
         url: 'action/actionAgregarProd.php',
         data: formData,
-        contentType: false, // importante para FormData
-        processData: false, // importante para FormData
+        contentType: false,
+        processData: false, 
         dataType: 'json',
         success: function(respuesta) {
           if (respuesta.success) {

@@ -11,9 +11,10 @@ class MenuRol {
     }
 
     public function cargarDatos($datos) {
-        $this->idmenu = $datos['idmenu'] ?? null;
-        $this->menombre = $datos['idrol'] ?? null;
-    }
+    $this->idmenu = $datos['idmenu'] ?? null;
+    $this->idrol = $datos['idrol'] ?? null;
+}
+
 
 
   public function getIdMenu() {
@@ -34,6 +35,7 @@ class MenuRol {
 
   public function insertar() {
     $resp = false;
+     $base = new BaseDatos();
     $sql = "INSERT INTO menurol (idmenu, idrol) VALUES (:idmenu, :idrol)";
     $stmt = $base->prepare($sql);
         if ($stmt->execute([
@@ -44,6 +46,7 @@ class MenuRol {
         }
     return $resp;
   }
+
 
     public function modificar() {
         $base = new BaseDatos();
@@ -67,7 +70,7 @@ public function eliminar() {
     $resp = false;
     $sql = "DELETE FROM menurol WHERE idmenu = :id AND idrol = :idrol";
     $stmt = $base->prepare($sql);
-    if ($stmt->execute([':id' => $this->getIdMenu()])) {
+    if ($stmt->execute([':id' => $this->getIdMenu(), 'idrol' => $this->getIdRol()])) {
         $resp = true;
     }
     return $resp;
@@ -84,7 +87,7 @@ public function listar($condicion = "") {
     
     $menusRoles = [];
     while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $objMenuRol = new Menu();
+        $objMenuRol = new MenuRol();
         $objMenuRol->cargarDatos($fila);
         $menusRoles[] = $objMenuRol;
     }

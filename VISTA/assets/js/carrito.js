@@ -1,10 +1,12 @@
 $(document).ready(function () {
     $(".agregar-carrito").off("click").on("click", function () {
         let idProducto = $(this).data("id");
+        let descuento = $(this).data("descuento");
+
         $.ajax({
             url: "./action/actionCarrito.php",
             type: "POST",
-            data: { idproducto: idProducto, cantidad: 1 },
+            data: { idproducto: idProducto, cantidad: 1, descuento: descuento},
             dataType: "json",
 
             success: function (respuesta) {
@@ -151,6 +153,3 @@ function pintarCarrito(items) {
         `);
     });
 }
-
-
-

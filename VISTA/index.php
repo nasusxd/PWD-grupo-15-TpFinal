@@ -1,37 +1,28 @@
 <?php
 include_once '../configuracion.php';
 $sesion = new Session();
+$sesion->validarLogin(true);
 
-// VALIDACIONES DE SEGURIDAD
-if (!$sesion->validar()) {
-    header("Location: login.php");
-    exit;
-}
-if (!$sesion->esAdmin()) {
-    header("Location: menu.php");
-    exit;
-}
-
-include_once './structure/headerAdmin.php';
+include_once './structure/header.php';
 
 $objAbmMenu = new ABMMenu();
 
-// Buscar  menus
+
 $admUsuarios = $objAbmMenu->buscar(['idmenu' => 6]); $listarUsuarios = $objAbmMenu->buscar(['idmenu' => 7]); $agregarUsuario = $objAbmMenu->buscar(['idmenu' => 8]);
-$admProductos = $objAbmMenu->buscar(['idmenu' => 9]); $listarProductos = $objAbmMenu->buscar(['idmenu' => 10]); $agregarProductos = $objAbmMenu->buscar(['idmenu' => 11]);
+$admProductos = $objAbmMenu->buscar(['idmenu' => 9]); $listarProductos = $objAbmMenu->buscar(['idmenu' => 10]); $agregarProductos = $objAbmMenu->buscar(['idmenu' => 11]); //$agregarDescuento = $objAbmMenu->buscar(['idmenu' => 22]);
 $admRoles = $objAbmMenu->buscar(['idmenu' => 12]); $listarRoles = $objAbmMenu->buscar(['idmenu' => 13]); $agregarRoles = $objAbmMenu->buscar(['idmenu' => 14]);
 $admCompras = $objAbmMenu->buscar(['idmenu' => 19]); $listarCompras = $objAbmMenu->buscar(['idmenu' => 20]);
 
-// Obtener estados del menu
-$admUsuariosEstado = $admUsuarios[0]->getDeshabilitado(); //
-$listarUsuariosEstado = $listarUsuarios[0]->getDeshabilitado(); //
-$agregarUsuarioEstado = $agregarUsuario[0]->getDeshabilitado(); //
-$admProductosEstado = $admProductos[0]->getDeshabilitado(); //
-$listarProductosEstado = $listarProductos[0]->getDeshabilitado(); //
-$agregarProductosEstado = $agregarProductos[0]->getDeshabilitado(); //
-$admRolesEstado = $admRoles[0]->getDeshabilitado(); //
-$listarRolesEstado = $listarRoles[0]->getDeshabilitado(); //
-$agregarRolesEstado = $agregarRoles[0]->getDeshabilitado(); //
+$admUsuariosEstado = $admUsuarios[0]->getDeshabilitado(); 
+$listarUsuariosEstado = $listarUsuarios[0]->getDeshabilitado(); 
+$agregarUsuarioEstado = $agregarUsuario[0]->getDeshabilitado(); 
+$admProductosEstado = $admProductos[0]->getDeshabilitado(); 
+$listarProductosEstado = $listarProductos[0]->getDeshabilitado(); 
+$agregarProductosEstado = $agregarProductos[0]->getDeshabilitado(); 
+//$agregarDescuentoEstado = $agregarDescuento[0]->getDeshabilitado(); 
+$admRolesEstado = $admRoles[0]->getDeshabilitado(); 
+$listarRolesEstado = $listarRoles[0]->getDeshabilitado(); 
+$agregarRolesEstado = $agregarRoles[0]->getDeshabilitado(); 
 $admComprasEstado = $admCompras[0]->getDeshabilitado();
 $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
 ?>
@@ -87,6 +78,12 @@ $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
                                 <i class="bi bi-plus-circle-fill me-2"></i> Agregar Producto
                             </a>
                             <?php } ?>
+                            
+                            <?php print_r('ESTO ESTA COMENTADO MAS ARRIBA'); if ($agregarDescuentoEstado == 0) { ?>
+                            <a href="agregarDescuento.php" class="list-group-item list-group-item-action py-3 ps-4">
+                                <i class="bi bi-plus-circle-fill me-2"></i> Agregar Descuentos
+                            </a>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
@@ -104,10 +101,10 @@ $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
                             <?php if ($listarRolesEstado == 0) { ?>
-                            <a href="roles_listar.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Roles</a>
+                            <a href="administrarRoles.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Roles</a>
                             <?php } ?>
                             <?php if ($agregarRolesEstado == 0) { ?>
-                            <a href="roles_alta.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Rol</a>
+                            <a href="administrarRoles.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Rol</a>
                             <?php } ?>
                         </div>
                     </div>
@@ -126,6 +123,9 @@ $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
                         <div class="list-group list-group-flush">
                             <a href="./menuAdmin.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Menús</a>
                         </div>
+                        <a href="./agregarMenu.php" class="list-group-item list-group-item-action py-3 ps-4">
+                                <i class="bi bi-plus-circle-fill me-2"></i> Agregar Menú
+                            </a>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,9 @@
 <?php
-include_once 'structure/header.php';
+include_once '../configuracion.php';
 
 $objSesion = new Session();
+$objSesion->validarLogin(false);
+include_once 'structure/header.php';
 $carrito = $objSesion->getCarrito();
 ?>
 <div class="container py-5" style="max-width: 600px;">

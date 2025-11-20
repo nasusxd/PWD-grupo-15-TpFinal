@@ -1,5 +1,7 @@
 <?php 
 include_once "../configuracion.php";
+$sesion = new Session();
+$sesion->validarLogin(true);
 include_once './structure/headerAdmin.php';
 
 $datos = datasubmitted();

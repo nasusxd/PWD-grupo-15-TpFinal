@@ -1,97 +1,111 @@
 <?php
 class ABMMenu {
 
-    public function cargarObjeto($param) {
-    $obj = null;
-    if (array_key_exists('idmenu', $param) && 
-        array_key_exists('menombre', $param) && 
-        array_key_exists('medescripcion', $param) && 
-        array_key_exists('idpadre', $param) && 
-        array_key_exists('medeshabilitado', $param)) {
+    public function cargarObjeto($param){
+        $obj = null;
+        if( array_key_exists('idmenu',$param) && array_key_exists('menombre',$param) && array_key_exists('medescripcion',$param)){
+            $obj = new Menu();
+           
+            $objMenuPadre = null;
+            if (isset($param['idpadre'])){
+                $objMenuPadre = new Menu();
+                $objMenuPadre->setIdMenu($param['idpadre']);
+                $objMenuPadre->cargar();
+            }
+            
+           
+            $medireccion = isset($param['medireccion']) ? $param['medireccion'] : null;
+            $medeshabilitado = isset($param['medeshabilitado']) ? $param['medeshabilitado'] : null;
 
-        $obj = new Menu();
-        $obj->cargarDatos($param);
+            $obj->setear($param['idmenu'], $param['menombre'], $param['medescripcion'], $medireccion, $objMenuPadre, $medeshabilitado);
+        }
+        return $obj;
     }
-    return $obj;
-}
 
-
-    public function cargarObjetoConClave($param) {
-    $obj = null;
-    if (isset($param['idmenu'])) {
-        $objMenu = new ABMMenu();
-        $objMenu->buscar($param['idmenu']); // carga todos los datos
-        $obj = $objMenu;
+    public function cargarObjetoConClave($param){
+        $obj = null;
+        if( isset($param['idmenu']) ){
+            $obj = new Menu();
+            $obj->setIdMenu($param['idmenu']);
+        }
+        return $obj;
     }
-    return $obj;
-}
 
-
-
-    public function alta($param) {
+    public function alta($param){
         $resp = false;
-        $objMenu = $this->cargarObjeto($param);
-        if ($objMenu != null && $objMenu->insertar()) {
+        $param['idmenu'] = null; 
+        $obj = $this->cargarObjeto($param);
+        if ($obj!=null && $obj->insertar()){
             $resp = true;
         }
         return $resp;
     }
 
-    public function baja($param) {
+    public function baja($param){
         $resp = false;
-        if (array_key_exists('idmenu', $param)) {
-            $objMenu = $this->cargarObjetoConClave($param);
-            if ($objMenu != null && $objMenu->eliminar()) {
+        if ($this->esBajaPermitida($param)){
+            $obj = $this->cargarObjetoConClave($param);
+            if ($obj!=null && $obj->eliminar()){
                 $resp = true;
             }
         }
         return $resp;
     }
 
-    public function modificacion($param) {
+    public function esBajaPermitida($param){
+       
         $resp = false;
-        if (array_key_exists('idmenu', $param)) {
-            $objMenu = $this->cargarObjeto($param);
-            if ($objMenu != null && $objMenu->modificar()) {
+        if(isset($param['idmenu'])){
+            $lista = $this->buscar(['idpadre'=>$param['idmenu']]);
+            if(count($lista)==0){
                 $resp = true;
             }
         }
         return $resp;
     }
 
-    public function buscar($param) {
-        $where = 'true';
-        if ($param != null) {
-            if (array_key_exists('idmenu', $param)) 
-                $where .= " AND idmenu = " . $param['idmenu'];
-            if (array_key_exists('menombre', $param))
-                $where .= " AND menombre = '" . $param['menombre'] . "'";
-            if (array_key_exists('medescripcion', $param))
-                $where .= " AND medescripcion = '" . $param['medescripcion'] . "'";
-            if (array_key_exists('idpadre', $param)) {
-                if (is_null($param['idpadre'])) {
-                     $where .= " AND idpadre IS NULL";
-                } else {
-                    $where .= " AND idpadre = " . $param['idpadre'];
-                }
-            }
-            if (array_key_exists('medeshabilitado', $param))
-                $where .= " AND medeshabilitado = '" . $param['medeshabilitado'] . "'";
+    public function modificacion($param){
+        $resp = false;
+        $obj = $this->cargarObjeto($param);
+        if($obj!=null && $obj->modificar()){
+            $resp = true;
         }
-        $objMenu = new Menu();
-        $arreglo = $objMenu->listar($where);
+        return $resp;
+    }
+
+    public function buscar($param){
+        $where = " true ";
+        if ($param<>NULL){
+            if  (isset($param['idmenu']))
+                $where.=" and idmenu =".$param['idmenu'];
+            if  (isset($param['menombre']))
+                $where.=" and menombre ='".$param['menombre']."'";
+            if  (isset($param['medescripcion']))
+                $where.=" and medescripcion ='".$param['medescripcion']."'";
+            if  (isset($param['idpadre']))
+                $where.=" and idpadre =".$param['idpadre'];
+            if  (isset($param['medeshabilitado']))
+                $where.=" and medeshabilitado ='".$param['medeshabilitado']."'";
+            
+          
+            if  (isset($param['medireccion']))
+                $where.=" and medireccion ='".$param['medireccion']."'";
+           
+        }
+        $obj = new Menu();
+        $arreglo = $obj->listar($where);
         return $arreglo;
     }
 
-    public function cambiarEstado($idMenu, $nuevoEstado) {
+
+        public function cambiarEstado($idMenu, $nuevoEstado) {
     $menus = $this->buscar(['idmenu' => $idMenu]);
     if (!empty($menus)) {
         $menu = $menus[0]; // obtener el objeto Menu
-        $menu->setDeshabilitado($nuevoEstado); 
+        $menu->setMeDeshabilitado($nuevoEstado); 
         return $menu->modificar(); 
     }
     return false;
 }
-
-
 }
+?>

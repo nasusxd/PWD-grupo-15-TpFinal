@@ -1,6 +1,9 @@
 <?php 
 include_once(__DIR__ . '/../configuracion.php');
+$sesion = new Session();
+$sesion->validarLogin(false);
 include_once 'structure/header.php';
+
 ?>
 <body>
 <div class="container mt-5">

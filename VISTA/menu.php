@@ -1,6 +1,9 @@
 <?php
-include_once './structure/header.php';
+include_once '../configuracion.php';
 $sesion = new Session();
+$sesion->validarLogin(false);
+include_once './structure/header.php';
+
 $objAbmMenu = new ABMMenu();
 $menu = $objAbmMenu->buscar(['idmenu' => 1]);
 $estadoMenu = $menu[0]->getDeshabilitado();
@@ -11,8 +14,7 @@ $objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
 
 $objProducto = new ABMProducto();
 // Filtra solo los productos con stock disponible
-$listaProductos = array_filter(
-    $objProducto->buscar(null),
+$listaProductos = array_filter($objProducto->buscar(null),
     fn($producto) => $producto->getStock() > 0
 );
 $max = 4;
@@ -26,7 +28,7 @@ if ($estadoMenu == 1) {
 ?>
 <br>
 <div id="miCarrusel" class="carousel slide" data-bs-ride="carousel">
-  
+
   <!-- Indicadores -->
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#miCarrusel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Imagen 1"></button>
@@ -35,7 +37,7 @@ if ($estadoMenu == 1) {
   </div>
 
   <div class="carousel-inner">
-    
+
     <div class="carousel-item active">
         <img src="../img/promo1.jpg" class="d-block w-100" alt="Imagen 1" 
              style="height: 500px; object-fit: contain; background-color: #ffffffff;">
@@ -75,9 +77,13 @@ foreach ($listaProductos as $producto):
         break; 
     }
     $disponible = $producto->getStock() > 0;
+    $esOferta = $producto->getDescuento() > 0;
 ?>
     <div class="col">
       <div class="card h-100 shadow-sm">
+        <?php if ($esOferta): ?>
+          <div class="sticker-oferta">OFERTA</div>
+          <?php endif; ?>
         <img src="../img/<?= $producto->getImagen(); ?>" 
              class="card-img-top img-fluid" 
              style="height: 450px; object-fit: cover;" 
@@ -87,8 +93,14 @@ foreach ($listaProductos as $producto):
           <?php if ($disponible): ?>
             <h5 class="card-title mb-2"><?= $producto->getNombre() ?></h5>
             <p class="mb-1">Cantidad disponible: <?= $producto->getStock() ?></p>
+            <?php if (!$esOferta){ ?>
             <p class="card-text text-success fw-bold mb-3">$<?= $producto->getPrecio(); ?></p>
-
+            <?php }else{ ?>
+              <p class="card-text text-success fw-bold mb-0">Antes: $<?= $producto->getPrecio(); ?></p>
+            <p class="text-danger fw-bold mb-1">
+            Oferta: $<?= $producto->getPrecio() * (1 - $producto->getDescuento() / 100); ?>
+          </p>
+              <?php } ?>
             <?php if ($objUsuarioRol[0]->getIdRol() == 1): ?>
               <button class="agregar-carrito btn btn-primary mt-auto" 
                       data-id="<?=$producto->getIdProducto();?>" 
@@ -117,9 +129,11 @@ endforeach;
  ?>
   </div>
 </div>
+
 <?php } ?>
 <script src="./assets/js/carrito.js"></script>
 <link rel="stylesheet" href="./assets/css/carrito.css">
+<link rel="stylesheet" href="./assets/css/ofertas.css">
 
 <?php
 include_once 'structure/footer.php';

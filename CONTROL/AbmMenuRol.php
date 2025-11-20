@@ -1,24 +1,26 @@
 <?php
 
 class ABMMenuRol {
+
     public function cargarObjeto($param) {
         $obj = null;
 
         if (array_key_exists('idmenu', $param) && array_key_exists('idrol', $param)) {
-            $objMenuRol = new MenuRol();
-            $objMenuRol->cargarDatos($param);
+            $obj = new MenuRol();
+            $obj->cargarDatos($param);
         }
         return $obj;
     }
 
+
     public function cargarObjetoConClave($param) {
-        $obj = null;
+        $objMenuRol = null;
 
         if (isset($param['idmenu']) && isset($param['idrol'])) {
             $objMenuRol = new MenuRol();
             $objMenuRol->cargarDatos(['idmenu' => $param['idmenu'], 'idrol' => $param['idrol']]);
         }
-        return $obj;
+        return $oobjMenuRolbj;
     }
     
     public function alta($param) {

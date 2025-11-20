@@ -22,6 +22,7 @@ class Producto
         $this->prodetalle = $datos['prodetalle'] ?? null;
         $this->precio = $datos['precio'] ?? null;
         $this->procantstock = $datos['procantstock'] ?? null;
+        $this->descuento = $datos['descuento'] ?? null;
         $this->proimagen = $datos['proimagen'] ?? null;
     }
 
@@ -49,6 +50,11 @@ class Producto
     public function getImagen()
     {
         return $this->proimagen;
+    }
+
+    public function getDescuento()
+    {
+        return $this->descuento;
     }
     
     public function setIdProducto($id)
@@ -80,13 +86,18 @@ class Producto
         $this->proimagen = $img;
     }
 
+    public function setDescuento($descuento)
+    {
+        $this->descuento = $descuento;
+    }
+
 
     public function insertar()
     {
         $res = false;
         $baseDatos = new BaseDatos();
-        $sql = "INSERT INTO producto (pronombre, prodetalle, precio, procantstock, proimagen) 
-                VALUES (:pronombre, :prodetalle, :precio, :procantstock, :proimagen)";
+        $sql = "INSERT INTO producto (pronombre, prodetalle, precio, procantstock, proimagen, descuento) 
+                VALUES (:pronombre, :prodetalle, :precio, :procantstock, :proimagen, :descuento)";
 
         $stmt = $baseDatos->prepare($sql);
         if ($stmt->execute([
@@ -94,7 +105,8 @@ class Producto
             ':prodetalle' => $this->getDetalle(),
             ':precio' => $this->getPrecio(),
             ':procantstock' => $this->getStock(),
-            ':proimagen' => $this->getImagen()
+            ':proimagen' => $this->getImagen(),
+            ':descuento' => $this->getDescuento()
         ])) {
             $resp = true;
         }
@@ -106,7 +118,7 @@ class Producto
         $base = new BaseDatos();
         $resp = false;
         $sql = "UPDATE producto
-                SET pronombre = :pronombre, prodetalle = :prodetalle, precio = :precio, procantstock = :procantstock, proimagen = :proimagen
+                SET pronombre = :pronombre, prodetalle = :prodetalle, precio = :precio, procantstock = :procantstock, proimagen = :proimagen, descuento = :descuento
                 WHERE idproducto = :idproducto";
 
         $stmt = $base->prepare($sql);
@@ -116,7 +128,8 @@ class Producto
             ':prodetalle' => $this->getDetalle(),
             ':precio' => $this->getPrecio(),
             ':procantstock' => $this->getStock(),
-            ':proimagen' => $this->getImagen()
+            ':proimagen' => $this->getImagen(),
+            ':descuento' => $this->getDescuento()
         ])) {
             $resp = true;
         }

@@ -3,22 +3,22 @@
 class ABMRol {
 
     public function cargarObjeto($param) {
-        $obj = null;
+        $objRol = null;
 
         if (array_key_exists('idrol', $param) && array_key_exists('rodescripcion', $param)) {
             $objRol = new Rol();
             $objRol->cargarDatos($param);
         }
-        return $obj;
+        return $objRol;
     }
 
     public function cargarObjetoConClave($param) {
-        $obj = null;
+        $objRol = null;
         if (isset($param['idrol'])) {
             $objRol = new Rol();
             $objRol->cargarDatos(['idrol' => $param['idrol']]);
         }
-        return $obj;
+        return $objRol;
     }
 
     public function alta($param) {

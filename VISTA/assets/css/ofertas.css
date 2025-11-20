@@ -1,0 +1,12 @@
+.sticker-oferta {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff3700ff;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: white;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
