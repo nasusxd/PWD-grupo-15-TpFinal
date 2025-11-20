@@ -35,6 +35,7 @@ $productos = $objProductos->buscar(null);
                         <td><?= $producto->getDetalle() ?></td>
                         <td><?= $producto->getPrecio() ?></td>
                         <td><?= $producto->getStock() ?></td>
+                        <td><?= $producto->getDescuento() ?></td>
                         <td>
                             <img src="../uploads/<?= $producto->getImagen() ?>"
                                 style="width: 80px; height: 80px; object-fit: cover;">

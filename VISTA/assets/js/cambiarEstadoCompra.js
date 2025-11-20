@@ -1,10 +1,10 @@
 $(document).ready(function() {
 
-    let idCompraGlobal = null; // 👈 guardamos el id globalmente
+    let idCompraGlobal = null; 
 
     $('.btnCambiarEstado').click(function () {
 
-        idCompraGlobal = $(this).data('id').toString().trim();  // 👈 guardo acá
+        idCompraGlobal = $(this).data('id').toString().trim(); 
 
         let estado = $(this).data('estado');
 
@@ -30,7 +30,6 @@ $(document).ready(function() {
 
                 if (data.success) {
 
-                    // ACTUALIZA SIN F5 🔥🔥🔥
                     $("#estadoCompra" + idCompraGlobal).text(data.nuevoEstadoTexto);
 
                     $("#modalEstadoCompra").modal("hide");

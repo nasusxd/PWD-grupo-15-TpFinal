@@ -1,8 +1,8 @@
 <?php
 $titulo = "Nuevo Producto";
+include_once "../configuracion.php";
 $sesion = new Session();
 $sesion->validarLogin(true);
-include_once "../configuracion.php";
 include_once './structure/header.php';
 ?>
 
@@ -39,6 +39,11 @@ include_once './structure/header.php';
             <input type="file" id="proimagen" class="form-control" name="proimagen" accept="image/*" required><br><br>
         </div>
 
+        <div class="mb-0">
+            <label for="descuento">Descuento:</label>
+            <input type="number" id="descuento"class="form-control" name="descuento" min="0" required><br><br>
+        </div>
+
         <button type="submit" id="btn-cargar" value="Cargar" class="btn btn-primary">Cargar Producto</button>
         <div id="mensaje" style="margin-top: 20px;"></div>
             <hr class="mt-4">
@@ -59,6 +64,7 @@ include_once './structure/header.php';
       formData.append("prodetalle", $("#prodetalle").val());
       formData.append("procantstock", $("#procantstock").val());
       formData.append("precio", $("#precio").val());
+      formData.append("descuento", $("#descuento").val());
         let archivo = $("#proimagen")[0].files[0];
         if (archivo) {
             formData.append("proimagen", archivo);

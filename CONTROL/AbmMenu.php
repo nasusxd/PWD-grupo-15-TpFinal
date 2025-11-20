@@ -1,6 +1,16 @@
 <?php
 class ABMMenu {
 
+    public function cargarObjetos ($param) {
+        $objMenu = null;
+        if (array_key_exists('idmenu',$param) && array_key_exists('menombre',$param) && array_key_exists('medescripcion',$param) &&
+            array_key_exists('idpadre',$param) && array_key_exists('medeshabilitado',$param) && array_key_exists('urlMenu',$param)) {
+            $objMenu = new Menu();
+            $objMenu = $objMenu->cargarDatos($param);
+        }
+        return $objMenu;
+    }
+
     public function cargarObjeto($param){
         $obj = null;
         if( array_key_exists('idmenu',$param) && array_key_exists('menombre',$param) && array_key_exists('medescripcion',$param)){
@@ -12,8 +22,6 @@ class ABMMenu {
                 $objMenuPadre->setIdMenu($param['idpadre']);
                 $objMenuPadre->cargar();
             }
-            
-           
             $medireccion = isset($param['medireccion']) ? $param['medireccion'] : null;
             $medeshabilitado = isset($param['medeshabilitado']) ? $param['medeshabilitado'] : null;
 
