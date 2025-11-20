@@ -13,7 +13,7 @@ $objAbmUsuarioRol = new ABMUsuarioRol();
 $objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
 
 $objProducto = new ABMProducto();
-// Filtra solo los productos con stock disponible
+
 $listaProductos = array_filter($objProducto->buscar(null),
     fn($producto) => $producto->getStock() > 0
 );
