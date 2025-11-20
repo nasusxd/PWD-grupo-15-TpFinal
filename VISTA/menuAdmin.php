@@ -3,144 +3,255 @@ include_once "../configuracion.php";
 $objSesion = new Session();
 $objSesion->validarLogin(true);
 include_once './structure/headerAdmin.php';
+
 $objMenu = new ABMMenu();
+$objMenuRol = new ABMMenuRol();
+$objRol = new ABMRol();
+
 $listarMenus = $objMenu->buscar(null);
+$listaRoles = $objRol->buscar(null);
 ?>
 <div class="container mt-4">
     <h2>Listado Menús</h2>
+
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
     <div id="toast-container"></div>
 </div>
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>ID menú</th>
-                <th>Nombre menú</th>
-                <th>Menú descripción</th>
-                <th>ID padre</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($listarMenus)) { ?>
-                <?php foreach ($listarMenus as $menu) { ?>
-                    <tr>
-                        <td><?= $menu->getIdMenu() ?></td>
-                        <td><?= $menu->getNombre() ?></td>
-                        <td><?= $menu->getDescripcion() ?></td>
-                        <td><?= $menu->getIdPadre() ?></td>
-                        <td id="estado" class="estado"><?= $menu->getDeshabilitado() ? 'Deshabilitado' : 'Habilitado' ?></td>
-                        <td>
-                        <?php if ((($menu->getIdMenu()) == 15) || (($menu->getIdMenu()) == 16)){ ?>
-                        <button type="button" class="btn btn-secondary btn-sm" disabled>Sin Acción</button>
-                        <?php }else{ ?>
-                        <button class="btn btn-warning btn-sm btn-cambiar-habilitado" 
-                        data-id="<?= $menu->getIdMenu() ?>" 
-                        data-estado="0">Habilitar</button>
-                        <button class="btn btn-danger btn-sm btn-cambiar-deshabilitado" 
-                        data-id="<?= $menu->getIdMenu() ?>" 
-                        data-estado="1">Deshabilitar</button>
-                        <?php } ?>
-                    </td>
-                    </tr>
-                <?php } ?>
-            <?php } else { ?>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ID menú</th>
+            <th>Nombre menú</th>
+            <th>Descripción</th>
+            <th>ID padre</th>
+            <th>Estado</th>
+            <th>Roles con acceso</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <?php if (!empty($listarMenus)) { ?>
+            <?php foreach ($listarMenus as $menu) { 
+                $idMenu = $menu->getIdMenu();
+                $rolesAsignados = $objMenuRol->buscar(["idmenu" => $idMenu]);
+            ?>
                 <tr>
-                    <td colspan="7" class="text-center">No hay menús cargados.</td>
+                    <td><?= $idMenu ?></td>
+                    <td><?= $menu->getNombre() ?></td>
+                    <td><?= $menu->getDescripcion() ?></td>
+                    <td><?= $menu->getIdPadre() ?></td>
+
+                    <td class="estado">
+                        <?= $menu->getDeshabilitado() ? "Deshabilitado" : "Habilitado" ?>
+                    </td>
+
+                    <td>
+                        <?php 
+                        if (!empty($rolesAsignados)) {
+                            foreach ($rolesAsignados as $mr) {
+                                $rol = $objRol->buscar(["idrol" => $mr->getIdRol()]);
+                                if (!empty($rol)) {
+                                    echo '<span class="badge bg-info me-1">'.$rol[0]->getRoDescripcion().'</span>';
+                                }
+                            }
+                        } else {
+                            echo "<span class='text-muted'>Sin roles</span>";
+                        }
+                        ?>
+                    </td>
+
+                    <td>
+                        <!-- Botón para cambiar estado -->
+                        <?php if ($idMenu != 15 && $idMenu != 16) { ?>
+                            <button class="btn btn-warning btn-sm btn-cambiar-habilitado"
+                                data-id="<?= $idMenu ?>" data-estado="0">Habilitar</button>
+
+                            <button class="btn btn-danger btn-sm btn-cambiar-deshabilitado"
+                                data-id="<?= $idMenu ?>" data-estado="1">Deshabilitar</button>
+                        <?php } else { ?>
+                            <button class="btn btn-secondary btn-sm" disabled>Sin Acción</button>
+                        <?php } ?>
+
+                        <!-- NUEVO: BOTÓN CONFIGURAR ROLES -->
+                        <button class="btn btn-primary btn-sm btn-configurar-roles"
+                                data-id="<?= $idMenu ?>"
+                                data-nombre="<?= $menu->getNombre() ?>">
+                            Roles
+                        </button>
+                    </td>
                 </tr>
+
+            <?php } ?>
+        <?php } else { ?>
+            <tr><td colspan="7" class="text-center">No hay menús cargados.</td></tr>
+        <?php } ?>
+    </tbody>
+</table>
+
+<a href="index.php" class="btn btn-secondary">← Volver</a>
+<br><br>
+</div>
+
+<!-- 🔵 MODAL PARA CONFIGURAR ROLES ----------------------------- -->
+<div class="modal fade" id="modalRoles" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Configurar roles para <span id="nombreMenu"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="formRolesMenu">
+
+            <input type="hidden" name="idmenu" id="idmenu">
+
+            <?php foreach ($listaRoles as $rol) { ?>
+                <div class="form-check">
+                    <input class="form-check-input rol-check" type="checkbox"
+                        name="roles[]"
+                        value="<?= $rol->getIdRol() ?>"
+                        id="rol<?= $rol->getIdRol() ?>">
+                    <label class="form-check-label" for="rol<?= $rol->getIdRol() ?>">
+                        <?= $rol->getRoDescripcion() ?>
+                    </label>
+                </div>
             <?php } ?>
 
-        </tbody>
-    </table>
-    <a href="index.php" class="btn btn-secondary">
-        ← Volver al menu anterior
-    </a>
-    <br><br>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-success" id="btnGuardarRoles">Guardar</button>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <script>
 $(document).ready(function() {
 
-    // Función común para ambos botones
+    /* ==========================================================
+       MOSTRAR MODAL Y CARGAR ROLES ASIGNADOS
+    ========================================================== */
+    $(".btn-configurar-roles").click(function() {
+        let idmenu = $(this).data("id");
+        let nombre = $(this).data("nombre");
+
+        $("#idmenu").val(idmenu);
+        $("#nombreMenu").text(nombre);
+        $(".rol-check").prop("checked", false);
+
+        $.ajax({
+            url: "./action/actionGetRolesMenu.php",
+            type: "POST",
+            data: { idmenu: idmenu },
+            dataType: "json",
+            success: function(res) {
+                if (res.success) {
+                    res.roles.forEach(r => $("#rol" + r).prop("checked", true));
+                }
+            }
+        });
+
+        $("#modalRoles").modal("show");
+    });
+
+
+    /* ==========================================================
+       GUARDAR ROLES (DINÁMICO)
+    ========================================================== */
+    $("#btnGuardarRoles").click(function() {
+
+        $.ajax({
+            url: "./action/actionMenu.php",
+            type: "POST",
+            data: $("#formRolesMenu").serialize(),
+            dataType: "json",
+            success: function(res) {
+
+                if (res.success) {
+
+                    // 1️⃣ Cerrar modal
+                    $("#modalRoles").modal("hide");
+
+                    // 2️⃣ Mostrar toast
+                    mostrarAlerta("Roles actualizados correctamente", "success");
+
+                    // 3️⃣ Actualizar columna "Roles con acceso" sin recargar
+                    let idMenu = $("#idmenu").val();
+
+                    // Obtener checkbox seleccionados
+                    let etiquetas = [];
+                    $(".rol-check:checked").each(function() {
+                        let label = $(this).next("label").text();
+                        etiquetas.push(`<span class="badge bg-info me-1">${label}</span>`);
+                    });
+
+                    // Buscar la fila y reemplazar contenido
+                    let fila = $("button.btn-configurar-roles[data-id='" + idMenu + "']").closest("tr");
+
+                    if (etiquetas.length > 0) {
+                        fila.find("td:nth-child(6)").html(etiquetas.join(" "));
+                    } else {
+                        fila.find("td:nth-child(6)").html("<span class='text-muted'>Sin roles</span>");
+                    }
+
+                } else {
+                    mostrarAlerta(res.msg, "danger");
+                }
+            }
+        });
+    });
+
+
+    /* ==========================================================
+       HABILITAR / DESHABILITAR
+    ========================================================== */
     $('.btn-cambiar-habilitado, .btn-cambiar-deshabilitado').click(function() {
         var boton = $(this);
         var idMenu = boton.data('id');
-        var nuevoEstado = boton.data('estado'); // 0 = habilitar, 1 = deshabilitar
+        var nuevoEstado = boton.data('estado');
         var fila = boton.closest('tr');
 
         $.ajax({
             url: './action/actionMenu.php',
             type: 'POST',
             data: { idMenu: idMenu, deshabilitado: nuevoEstado },
+            dataType: "json",
             success: function(response) {
                 if(response.success) {
-                    // Actualizar texto del td de estado
                     fila.find('.estado').text(nuevoEstado == 1 ? 'Deshabilitado' : 'Habilitado');
-                    // Cambiar visibilidad de botones
-                    if(nuevoEstado == 1){
-                        // Si deshabilitamos, mostrar botón "Habilitar" y ocultar "Deshabilitar"
-                        fila.find('.btn-cambiar-habilitado').show();
-                        fila.find('.btn-cambiar-deshabilitado').hide();
-                    } else {
-                        // Si habilitamos, mostrar botón "Deshabilitar" y ocultar "Habilitar"
-                        fila.find('.btn-cambiar-habilitado').hide();
-                        fila.find('.btn-cambiar-deshabilitado').show();
-                    }
-
-                } else {
-                    var mensajeError = response.message && response.message.trim() !== '' 
-                           ? response.message 
-                           : 'No se pudo realizar la acción';
-                           mostrarAlerta(mensajeError, 'danger', 5000);
+                    mostrarAlerta("Estado actualizado", "info");
                 }
-            },
-            error: function() {
-                alert('Error al actualizar el menú.');
             }
         });
     });
 
-    // Inicializamos visibilidad según estado actual al cargar la página
-    $('tr').each(function() {
-        var fila = $(this);
-        var estado = fila.find('.estado').text().trim();
-        if(estado === 'Deshabilitado') {
-            fila.find('.btn-cambiar-habilitado').show();
-            fila.find('.btn-cambiar-deshabilitado').hide();
-        } else {
-            fila.find('.btn-cambiar-habilitado').hide();
-            fila.find('.btn-cambiar-deshabilitado').show();
-        }
-    });
-
 });
 
-function mostrarAlerta(mensaje, tipo = 'success', duracion = 3000) {
-    var toastId = 'toast-' + Date.now();
-    var bgClass = tipo === 'success' ? 'bg-success' :
-                  tipo === 'danger' ? 'bg-danger' :
-                  tipo === 'warning' ? 'bg-warning' : 'bg-info';
 
-    var toastHTML = `
-        <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${mensaje}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    `;
-    $('#toast-container').append(toastHTML);
-
-    var toastElement = new bootstrap.Toast(document.getElementById(toastId), { delay: duracion });
-    toastElement.show();
-
-    // Eliminar el toast del DOM cuando desaparezca
-    $('#' + toastId).on('hidden.bs.toast', function () {
-        $(this).remove();
-    });
+/* ==========================================================
+   Toast bonito
+========================================================== */
+function mostrarAlerta(mensaje, tipo = 'success', tiempo = 3000) {
+    var toast = document.createElement("div");
+    toast.className = "toast align-items-center text-white bg-" + tipo;
+    toast.role = "alert";
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${mensaje}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                    data-bs-dismiss="toast"></button>
+        </div>`;
+    document.getElementById("toast-container").appendChild(toast);
+    new bootstrap.Toast(toast, { delay: tiempo }).show();
 }
-
 </script>
+<?php
+include_once 'structure/footer.php';
+?>

@@ -2,32 +2,55 @@
 include_once "../../configuracion.php";
 header('Content-Type: application/json');
 
-if (isset($_POST['idMenu']) && isset($_POST['deshabilitado'])) {
-    $idMenu = intval($_POST['idMenu']);
-    $nuevoEstado = intval($_POST['deshabilitado']);
+$abmMenuRol = new ABMMenuRol();
+$abmMenu = new ABMMenu();
 
-    $abmMenu = new ABMMenu();
-    // Buscar hijos habilitados
-    $hijosHabilitados = $abmMenu->buscar([
-    'idpadre' => $idMenu,
-    'medeshabilitado' => 0 // 0 = habilitado
-]);
 
-if (!empty($hijosHabilitados) && $nuevoEstado == 1) { // intentar deshabilitar
-    echo json_encode([
-        'success' => false,
-        'message' => ''
-    ]);
+// ======================================================
+// 1) GUARDAR ROLES DE MENÚ
+// ======================================================
+if (isset($_POST['idmenu']) && isset($_POST['roles'])) {
+
+    $idMenu = intval($_POST['idmenu']);
+    $rolesSeleccionados = $_POST['roles'];
+
+    // Borrar todos los roles actuales
+    $actuales = $abmMenuRol->buscar(["idmenu" => $idMenu]);
+    foreach ($actuales as $mr) {
+        $mr->eliminar();
+    }
+
+    // Insertar los nuevos
+    foreach ($rolesSeleccionados as $idRol) {
+        $abmMenuRol->alta([
+            "idmenu" => $idMenu,
+            "idrol" => intval($idRol)
+        ]);
+    }
+
+    echo json_encode(["success" => true, "msg" => "Roles actualizados"]);
     exit;
 }
 
-    // Usando tu método cambiarEstado directamente
+
+// ======================================================
+// 2) HABILITAR / DESHABILITAR MENÚ
+// ======================================================
+if (isset($_POST['idMenu']) && isset($_POST['deshabilitado'])) {
+
+    $idMenu = intval($_POST['idMenu']);
+    $nuevoEstado = intval($_POST['deshabilitado']);
+
+    // Ejecutar cambio de estado
     if ($abmMenu->cambiarEstado($idMenu, $nuevoEstado)) {
-        echo json_encode(['success' => true, 'message' => 'Estado actualizado correctamente']);
+        echo json_encode(["success" => true]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'No se pudo actualizar el estado']);
+        echo json_encode(["success" => false, "msg" => "No se pudo actualizar el estado"]);
     }
 
-} else {
-    echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
+    exit;
 }
+
+
+// ======================================================
+echo json_encode(["success" => false, "msg" => "Acción inválida"]);

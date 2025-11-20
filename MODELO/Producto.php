@@ -7,6 +7,7 @@ class Producto
     private $precio;
     private $procantstock;
     private $proimagen;
+     private $descuento;
 
     public function __construct($datos = [])
     {
