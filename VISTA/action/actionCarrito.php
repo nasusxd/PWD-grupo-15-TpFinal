@@ -6,7 +6,6 @@ include_once '../../UTILS/funciones.php';
 $sesion = new Session();
 $datos = datasubmitted();
 
-// Validar datos
 if (!$datos['idproducto'] || $datos['cantidad'] <= 0) {
     echo json_encode([
         "success" => false,
@@ -15,40 +14,57 @@ if (!$datos['idproducto'] || $datos['cantidad'] <= 0) {
     exit;
 }
 
+$objProducto = new ABMProducto();
+$productos = $objProducto->buscar(['idproducto' => $datos['idproducto']]);
 
+if (empty($productos)) {
+    echo json_encode([
+        "success" => false,
+        "mensaje" => "Producto inexistente"
+    ]);
+    exit;
+}
 
+$producto = $productos[0];
+$stockDisponible = $producto->getStock();
 
-// Agregar al carrito usando la clase Session
+$cantidadEnCarrito = $_SESSION['carrito'][$datos['idproducto']] ?? 0;
+
+$cantidadTotal = $cantidadEnCarrito + $datos['cantidad'];
+
+if ($cantidadTotal > $stockDisponible) {
+    echo json_encode([
+        "success" => false,
+        "mensaje" => "Stock insuficiente. Solo hay $stockDisponible unidades disponibles."
+    ]);
+    exit;
+}
+
 $sesion->agregarAlCarrito($datos['idproducto'], $datos['cantidad']);
 
-// Obtener totales
 $totalProductos = $sesion->totalProductosCarrito();
 $totalPrecio = $sesion->precioTotalCarrito();
 
-// Construir lista de items con nombre y cantidad
 $items = [];
 
 if (isset($_SESSION['carrito'])) {
-    $objProducto = new ABMProducto();
     foreach ($_SESSION['carrito'] as $idProducto => $cantidad) {
-        $productos = $objProducto->buscar(['idproducto' => $idProducto]);
+        $productosBuscados = $objProducto->buscar(['idproducto' => $idProducto]);
 
-        if (count($productos) > 0) {
-            $producto = $productos[0];
+        if (count($productosBuscados) > 0) {
+            $productoEncontrados = $productosBuscados[0];
 
-            // OBTENER DESCUENTO DEL PRODUCTO
-            $descuento = $producto->getDescuento(); 
+            $descuento = $productoEncontrados->getDescuento(); 
             
-            // CALCULAR PRECIO FINAL
             if ($descuento > 0) {
-                $precioUnitario = $producto->getPrecio() * (1 - $descuento / 100);
+                $precioUnitario = $productoEncontrados->getPrecio() * (1 - $descuento / 100);
             } else {
-                $precioUnitario = $producto->getPrecio();
+                $precioUnitario = $productoEncontrados->getPrecio();
             }
 
             $items[] = [
                 "id" => $idProducto,
-                "nombre" => $producto->getNombre(),
+                "nombre" => $productoEncontrados->getNombre(),
                 "cantidad" => $cantidad,
                 "precioUnitario" => $precioUnitario,
                 "subtotal" => $precioUnitario * $cantidad,
@@ -58,8 +74,6 @@ if (isset($_SESSION['carrito'])) {
     }
 }
 
-
-// Devolver JSON completo
 echo json_encode([
     "success" => true,
     "totalProductos" => $totalProductos,

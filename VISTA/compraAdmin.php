@@ -3,13 +3,16 @@ include_once "../configuracion.php";
 $sesion = new Session();
 $sesion->validarLogin(true);
 include_once './structure/headerAdmin.php';
+
 $objCompra = new ABMCompra();
 $objUsuario = new ABMUsuario();
 $abmCompraEstado = new ABMCompraEstado();
 $objCompraEstadoTipo = new ABMCompraEstadoTipo();
+
 $listaCompras = $objCompra->buscar(null);
 $listaUsuarios  = $objUsuario->buscar(null);
 ?>
+
 <div class="container mt-4">
     <h2>Listado de Compras</h2>
     <table class="table table-striped table-bordered">
@@ -24,40 +27,50 @@ $listaUsuarios  = $objUsuario->buscar(null);
         </thead>
         <tbody>
             <?php if (!empty($listaCompras)) { ?>
-                <?php foreach ($listaCompras as $compra) { ?>
-                  <tr><?php 
-                  $usuario = $objUsuario->buscar(['idusuario' => $compra->getIdUsuario()]); //id usuario
-                  $mailUsuario = $usuario[0]->getMail(); //obtengo el mail
-                  $idCompra = $compra->getIdCompra();
-                  $objCompraEstado = $abmCompraEstado->buscar(['idcompra' => $idCompra]);
-                  $estadoCompra = $objCompraEstado[0]->getIdCompraEstadoTipo();
-                  $compraEstadoTipo = $objCompraEstadoTipo->buscar(['idcompraestadotipo' => $estadoCompra]);
-                  ?>
-                  <td><?= $compra->getIdCompra() ?></td>
-                  <td><?= $compra->getFecha() ?></td>
-                  <td><?= $mailUsuario ?></td>
-                  <td id="estadoCompra<?= $compra->getIdCompra() ?>">
-                    <?= $compraEstadoTipo[0]->getDescripcion() ?>
-                  </td>
-                  <td>
-                      <a href="detalleCompra.php?idcompra=<?= $compra->getIdCompra() ?>" class="btn btn-primary btn-sm">
-                        Ver detalles
-                      </a>
-                      <button class="btn btn-info btn-sm btnCambiarEstado" data-id="<?= $compra->getIdCompra() ?>" data-estado="<?= $estadoCompra ?>">
-                        Cambiar estado
-                      </button>
-                  </td>
-                  </tr>
+                <?php foreach ($listaCompras as $compra) { 
+                    $usuario = $objUsuario->buscar(['idusuario' => $compra->getIdUsuario()]);
+                    $mailUsuario = !empty($usuario) ? $usuario[0]->getMail() : "Desconocido";
+
+                    $idCompra = $compra->getIdCompra();
+                    $objCompraEstado = $abmCompraEstado->buscar(['idcompra' => $idCompra]);
+
+                    if (!empty($objCompraEstado)) {
+                      $estadoCompra = $objCompraEstado[0]->getIdCompraEstadoTipo();
+                      $compraEstadoTipo = $objCompraEstadoTipo->buscar(['idcompraestadotipo' => $estadoCompra]);
+                      $descripcionEstado = !empty($compraEstadoTipo) ? $compraEstadoTipo[0]->getDescripcion() : "Desconocido";
+                    } else {
+                        $estadoCompra = null;
+                        $descripcionEstado = "Sin estado";
+                    }
+                ?>
+                <tr>
+                    <td><?= $compra->getIdCompra() ?></td>
+                    <td><?= $compra->getFecha() ?></td>
+                    <td><?= $mailUsuario ?></td>
+                    <td id="estadoCompra<?= $compra->getIdCompra() ?>">
+                        <?= $descripcionEstado ?>
+                    </td>
+                    <td>
+                        <a href="detalleCompra.php?idcompra=<?= $compra->getIdCompra() ?>" class="btn btn-primary btn-sm">
+                            Ver detalles
+                        </a>
+                        <button class="btn btn-info btn-sm btnCambiarEstado" 
+                                data-id="<?= $compra->getIdCompra() ?>" 
+                                data-estado="<?= $estadoCompra ?>">
+                            Cambiar estado
+                        </button>
+                    </td>
+                </tr>
                 <?php } ?>
             <?php } else { ?>
                 <tr>
-                  <td colspan="7" class="text-center">No hay productos cargados.</td>
+                  <td colspan="7" class="text-center">No hay compras cargadas.</td>
                 </tr>
             <?php } ?>
         </tbody>
     </table>
     <a href="index.php" class="btn btn-secondary">
-        ← Volver al menu anterior
+        ← Volver al menú anterior
     </a>
 </div>
 
@@ -91,4 +104,3 @@ $listaUsuarios  = $objUsuario->buscar(null);
 
 <script src="./assets/js/cambiarEstadoCompra.js"></script>
 <?php include_once "./structure/footer.php"; ?>
-

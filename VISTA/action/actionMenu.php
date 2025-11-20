@@ -36,9 +36,9 @@ if (isset($_POST['idmenu']) && isset($_POST['roles'])) {
 // ======================================================
 // 2) HABILITAR / DESHABILITAR MENÚ
 // ======================================================
-if (isset($_POST['idMenu']) && isset($_POST['deshabilitado'])) {
+if (isset($_POST['idmenu']) && isset($_POST['deshabilitado'])) {
 
-    $idMenu = intval($_POST['idMenu']);
+    $idMenu = intval($_POST['idmenu']);
     $nuevoEstado = intval($_POST['deshabilitado']);
 
     // Ejecutar cambio de estado

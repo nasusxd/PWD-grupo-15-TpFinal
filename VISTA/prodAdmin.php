@@ -74,6 +74,7 @@ $productos = $objProductos->buscar(null);
         toast.innerText = text;
         setTimeout(() => toast.className = "toast", 3000);
     }
+    
 
     $(document).ready(function() {
 
@@ -88,6 +89,18 @@ $productos = $objProductos->buscar(null);
                 let precio = row.find("td:eq(3) input").val();
                 let procantstock = row.find("td:eq(4) input").val();
                 let descuento = row.find("td:eq(5) input").val();
+                    if (precio < 0) {
+                        showToast("El precio no puede ser negativo.", "error");
+                        return;
+                    }
+                    if (procantstock < 0) {
+                        showToast("El stock no puede ser negativo.", "error");
+                        return;
+                    }
+                    if (descuento < 0) {
+                        showToast("El descuento no puede ser negativo.", "error");
+                        return;
+                    }
 
                 $.ajax({
                     url: "action/actionEditarProd.php",

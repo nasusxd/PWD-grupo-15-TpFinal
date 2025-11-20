@@ -48,6 +48,27 @@ foreach ($carrito as $idProducto => $cantidad) {
         "cicantidad" => $cantidad
     ];
     $abmCompraItem->alta($paramItem);
+
+    //bajo el stock
+    $objProducto = new ABMProducto();
+    $listarProductos = $objProducto->buscar(['idproducto' => $idProducto]);
+    if (count($listarProductos) > 0) {
+        $producto = $listarProductos[0];
+        $nuevoStock = $producto->getStock() - $cantidad;
+        $paramNuevoStock = [
+            'idproducto' => $idProducto,
+            'pronombre' => $producto->getNombre(),
+            'prodetalle' => $producto->getDetalle(),
+            'precio' => $producto->getPrecio(),
+            'procantstock' => $nuevoStock,
+            'descuento' => $producto->getDescuento(),
+            'proimagen' => $producto->getImagen()
+        ];
+    }
+    if (!$objProducto->modificacion($paramNuevoStock)) {
+        echo json_encode(['existe' => false, 'msg' => 'error al cambiar el stock']);
+        exit;
+    }
 }
 $paramCompraEstado = [
     "idcompraestado" => null,
