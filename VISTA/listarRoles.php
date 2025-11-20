@@ -1,4 +1,10 @@
 <?php
+include_once "../configuracion.php";
+$sesion = new Session();
+
+// Solo entrar si tiene permisos
+$sesion->validarLogin(true);
+
 include_once 'structure/header.php';
 $objAbmRol = new ABMRol();
 $listaRoles = $objAbmRol->buscar(null);

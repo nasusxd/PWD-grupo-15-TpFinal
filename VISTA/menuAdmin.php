@@ -139,9 +139,7 @@ $listaRoles = $objRol->buscar(null);
 <script>
     $(document).ready(function() {
 
-        /* ==========================================================
-           MOSTRAR MODAL Y CARGAR ROLES ASIGNADOS
-        ========================================================== */
+       
         $(".btn-configurar-roles").click(function() {
             let idmenu = $(this).data("id");
             let nombre = $(this).data("nombre");
