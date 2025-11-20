@@ -30,6 +30,8 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
 
 
 </head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <body class="d-flex flex-column min-vh-100">
 <header class="container mt-3 mb-4">
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded-3 px-3 py-2 border">
