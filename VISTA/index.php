@@ -101,10 +101,10 @@ $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
                             <?php if ($listarRolesEstado == 0) { ?>
-                            <a href="administrarRoles.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Roles</a>
+                            <a href="listarRoles.php" class="list-group-item list-group-item-action py-3 ps-4">Listar Roles</a>
                             <?php } ?>
                             <?php if ($agregarRolesEstado == 0) { ?>
-                            <a href="administrarRoles.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Rol</a>
+                            <a href="listarRoles.php" class="list-group-item list-group-item-action py-3 ps-4">Agregar Rol</a>
                             <?php } ?>
                         </div>
                     </div>
