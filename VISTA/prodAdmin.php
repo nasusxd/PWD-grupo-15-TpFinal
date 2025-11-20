@@ -22,6 +22,7 @@ $productos = $objProductos->buscar(null);
                 <th>Detalle</th>
                 <th>Precio</th>
                 <th>Stock</th>
+                <th>Descuento</th>
                 <th>Imagen</th>
                 <th>Acciones</th>
             </tr>
