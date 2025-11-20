@@ -74,30 +74,33 @@ $productos = $objProductos->buscar(null);
         toast.innerText = text;
         setTimeout(() => toast.className = "toast", 3000);
     }
+    
 
     $(document).ready(function() {
 
-        //editar producto
         $(".editar-btn").click(function() {
             let btn = $(this);
             let row = btn.closest("tr");
             let id = btn.data("id");
 
-            // Convertir a inputs
-            row.find("td:eq(1)").html(`<input class="form-control" value="${row.find("td:eq(1)").text()}">`);
-            row.find("td:eq(2)").html(`<input class="form-control" value="${row.find("td:eq(2)").text()}">`);
-            row.find("td:eq(3)").html(`<input class="form-control" type="number" value="${row.find("td:eq(3)").text().replace('$','')}">`);
-            row.find("td:eq(4)").html(`<input class="form-control" type="number" value="${row.find("td:eq(4)").text()}">`);
-
-            btn.removeClass("btn-warning").addClass("btn-success").text("Guardar");
-
-            btn.off().click(function() {
-
+            if (btn.hasClass("btn-success")) {
                 let pronombre = row.find("td:eq(1) input").val();
                 let prodetalle = row.find("td:eq(2) input").val();
                 let precio = row.find("td:eq(3) input").val();
                 let procantstock = row.find("td:eq(4) input").val();
-                let descuento = row.find("td:eq(5)").text()
+                let descuento = row.find("td:eq(5) input").val();
+                    if (precio < 0) {
+                        showToast("El precio no puede ser negativo.", "error");
+                        return;
+                    }
+                    if (procantstock < 0) {
+                        showToast("El stock no puede ser negativo.", "error");
+                        return;
+                    }
+                    if (descuento < 0) {
+                        showToast("El descuento no puede ser negativo.", "error");
+                        return;
+                    }
 
                 $.ajax({
                     url: "action/actionEditarProd.php",
@@ -113,13 +116,11 @@ $productos = $objProductos->buscar(null);
                     },
                     success: function(res) {
                         if (res.success) {
-
                             row.find("td:eq(1)").text(pronombre);
                             row.find("td:eq(2)").text(prodetalle);
                             row.find("td:eq(3)").text("$" + precio);
                             row.find("td:eq(4)").text(procantstock);
                             row.find("td:eq(5)").text(descuento);
-
                             btn.removeClass("btn-success").addClass("btn-warning").text("Editar");
                             showToast("Producto actualizado.");
                         } else {
@@ -127,14 +128,20 @@ $productos = $objProductos->buscar(null);
                         }
                     }
                 });
-            });
+
+            } else {
+                row.find("td:eq(1)").html(`<input class="form-control" value="${row.find("td:eq(1)").text()}">`);
+                row.find("td:eq(2)").html(`<input class="form-control" value="${row.find("td:eq(2)").text()}">`);
+                row.find("td:eq(3)").html(`<input class="form-control" type="number" value="${row.find("td:eq(3)").text().replace('$','')}">`);
+                row.find("td:eq(4)").html(`<input class="form-control" type="number" value="${row.find("td:eq(4)").text()}">`);
+                row.find("td:eq(5)").html(`<input class="form-control" type="number" value="${row.find("td:eq(5)").text()}">`);
+                btn.removeClass("btn-warning").addClass("btn-success").text("Guardar");
+            }
         });
 
         $(".eliminar-btn").click(function() {
             let id = $(this).data("id");
             let row = $(this).closest("tr");
-
-
             Swal.fire({
                 title: '¿Estás seguro?',
                 text: "No podrás revertir esta acción",
@@ -145,10 +152,7 @@ $productos = $objProductos->buscar(null);
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
-
                 if (result.isConfirmed) {
-
-
                     $.ajax({
                         url: "action/actionEliminarProducto.php",
                         type: "POST",

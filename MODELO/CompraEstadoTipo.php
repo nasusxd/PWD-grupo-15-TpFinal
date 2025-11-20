@@ -82,7 +82,7 @@ class CompraEstadoTipo {
 
     public function listar($condicion = "") {
         $base = new BaseDatos();
-        $sql = "SELECT * FROM compraestadotipo";
+        $sql = "SELECT * FROM compraestadotipo ";
         if ($condicion != "") {
             $sql .= " WHERE " . $condicion;
         }
