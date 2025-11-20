@@ -16,55 +16,79 @@ $objAbmCompraItem = new ABMCompraItem();
 $objCompraEstado = $objAbmCompraEstado->buscar(['idcompra' => $idCompra]);
 
 if (empty($objCompraEstado)) {
-    $response = ["success" => false, "msg" =>'no hay estado'];
+    $response = ["success" => false, "msg" =>'No hay estado registrado para esta compra'];
     echo json_encode($response);
     exit;
 }
 
 $ultimoEstado = end($objCompraEstado);
+$estadoActual = $ultimoEstado->getIdCompraEstadoTipo(); 
+$nuevoEstado = intval($datos['estado']); 
+
 $compra = $objAbmCompra->buscar(['idcompra' => $idCompra]);
 $usuario = $objAbmUsuario->buscar(["idusuario" => $compra[0]->getIdUsuario()])[0];
-
-// echo "<pre>"; print_r($usuario); echo "</pre>"; exit;
-
 $nombre = $usuario->getNombre();
 $email = $usuario->getMail();
 
-switch ($datos['estado']) {
-    case '2':
-        if ($objAbmCompraEstado->actualizarEstado($ultimoEstado, $idCompra, 2)) {
-            $estado = "Aceptada";
-            $response = ["success" => true, "msg" => "Estado actualizado a aceptado.", "nuevoEstadoTexto" => $estado];
-            enviarCorreoCambioEstado($email,$nombre,$idCompra, $estado);
-        } else { 
-            $response = [ "success" => false, "msg" => "Error al actualizar a aceptado."];
-        }
-    break;
+if ($estadoActual == 3) {
+    $response["msg"] = "No se puede cambiar una compra ya enviada.";
+    echo json_encode($response);
+    exit;
+}
 
-    case '3':
+if ($estadoActual == 2 && $nuevoEstado == 4) {
+    $response["msg"] = "No se puede cancelar una compra aceptada.";
+    echo json_encode($response);
+    exit;
+}
+
+if ($estadoActual == 1 && !in_array($nuevoEstado, [2,4])) {
+    $response["msg"] = "Cambio de estado inválido desde iniciada.";
+    echo json_encode($response);
+    exit;
+}
+
+if ($estadoActual == 2 && $nuevoEstado != 3) {
+    $response["msg"] = "Cambio de estado inválido desde aceptada.";
+    echo json_encode($response);
+    exit;
+}
+
+switch ($nuevoEstado) {
+    case 2: 
+        if ($objAbmCompraEstado->actualizarEstado($ultimoEstado, $idCompra, 2)) {
+            $estadoTexto = "Aceptada";
+            $response = ["success" => true, "msg" => "Estado actualizado a aceptado.", "nuevoEstadoTexto" => $estadoTexto];
+            enviarCorreoCambioEstado($email, $nombre, $idCompra, $estadoTexto);
+        } else { 
+            $response = ["success" => false, "msg" => "Error al actualizar a aceptado."];
+        }
+        break;
+
+    case 3:
         if ($objAbmCompraEstado->actualizarEstado($ultimoEstado, $idCompra, 3)) {
-            $estado = "Enviada";
-            enviarCorreoCambioEstado($email,$nombre,$idCompra, $estado);
-            $response = ["success" => true, "msg" => "Estado actualizado a enviado.", "nuevoEstadoTexto" => $estado ];
+            $estadoTexto = "Enviada";
+            $response = ["success" => true, "msg" => "Estado actualizado a enviado.", "nuevoEstadoTexto" => $estadoTexto];
+            enviarCorreoCambioEstado($email, $nombre, $idCompra, $estadoTexto);
         } else {
             $response = ["success" => false, "msg" => "Error al actualizar a enviado."];
         }
-    break;
+        break;
 
-    case '4':
+    case 4:
         if ($objAbmCompraEstado->actualizarEstado($ultimoEstado, $idCompra, 4)) {
-            $estado = "Cancelada";
-            enviarCorreoCambioEstado($email,$nombre,$idCompra, $estado);
-            $response = ["success" => true, "msg" => "Estado actualizado a cancelado.", "nuevoEstadoTexto" => $estado];
+            $estadoTexto = "Cancelada";
+            $response = ["success" => true, "msg" => "Estado actualizado a cancelado.", "nuevoEstadoTexto" => $estadoTexto];
+            enviarCorreoCambioEstado($email, $nombre, $idCompra, $estadoTexto);
         } else {
             $response = ["success" => false, "msg" => "Error al actualizar a cancelado."];
         }
-    break;
-    default: 
-    $response["msg"] = "Accion no valida.";
-    break;
-}
+        break;
 
+    default: 
+        $response["msg"] = "Acción no válida.";
+        break;
+}
 
 echo json_encode($response);
 exit;
