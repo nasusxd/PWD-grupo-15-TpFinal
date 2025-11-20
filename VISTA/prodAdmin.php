@@ -97,6 +97,7 @@ $productos = $objProductos->buscar(null);
                 let prodetalle = row.find("td:eq(2) input").val();
                 let precio = row.find("td:eq(3) input").val();
                 let procantstock = row.find("td:eq(4) input").val();
+                let descuento = row.find("td:eq(5)").text()
 
                 $.ajax({
                     url: "action/actionEditarProd.php",
@@ -107,7 +108,8 @@ $productos = $objProductos->buscar(null);
                         pronombre: pronombre,
                         prodetalle: prodetalle,
                         precio: precio,
-                        procantstock: procantstock
+                        procantstock: procantstock,
+                        descuento: descuento
                     },
                     success: function(res) {
                         if (res.success) {
@@ -116,6 +118,7 @@ $productos = $objProductos->buscar(null);
                             row.find("td:eq(2)").text(prodetalle);
                             row.find("td:eq(3)").text("$" + precio);
                             row.find("td:eq(4)").text(procantstock);
+                            row.find("td:eq(5)").text(descuento);
 
                             btn.removeClass("btn-success").addClass("btn-warning").text("Editar");
                             showToast("Producto actualizado.");

@@ -16,16 +16,11 @@ if (!$datos['idproducto'] || $datos['cantidad'] <= 0) {
 }
 
 
-
-
-// Agregar al carrito usando la clase Session
 $sesion->agregarAlCarrito($datos['idproducto'], $datos['cantidad']);
 
-// Obtener totales
 $totalProductos = $sesion->totalProductosCarrito();
 $totalPrecio = $sesion->precioTotalCarrito();
 
-// Construir lista de items con nombre y cantidad
 $items = [];
 
 if (isset($_SESSION['carrito'])) {
@@ -36,7 +31,6 @@ if (isset($_SESSION['carrito'])) {
         if (count($productos) > 0) {
             $producto = $productos[0];
 
-            // OBTENER DESCUENTO DEL PRODUCTO
             $descuento = $producto->getDescuento(); 
             
             // CALCULAR PRECIO FINAL

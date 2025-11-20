@@ -4,6 +4,10 @@ $sesion = new Session();
 $sesion->validarLogin(true);
 include_once 'structure/headerAdmin.php';
 
+$objSesion = new Session();
+$objSesion->validarLogin(null, 12); 
+
+
 $session = new Session();
 $tienePermiso = false;
 $mensajeError = "";
@@ -41,9 +45,7 @@ switch ($accion) {
 
 
 
-/* ######################################################################
-   #######################   LISTAR USUARIOS   ##########################
-   ###################################################################### */
+
 case 'listar':
 
     $abmUsuario = new ABMUsuario();
@@ -207,9 +209,7 @@ break;
 
 
 
-/* ######################################################################
-   #######################   NUEVO USUARIO   ############################
-   ###################################################################### */
+
 case 'nuevo':
 
     $abmRol = new ABMRol();
@@ -237,7 +237,6 @@ case 'nuevo':
                 <input type="password" class="form-control" id="uspass" name="uspass" required>
             </div>
 
-            <!-- SELECT DINÁMICO DE ROLES -->
             <div class="mb-3">
                 <label for="idrol" class="form-label">Rol Asignado</label>
                 <select class="form-select" name="idrol" id="idrol">
@@ -298,11 +297,6 @@ $(document).ready(function() {
 break;
 
 
-
-
-/* ######################################################################
-   ########################   EDITAR USUARIO   ##########################
-   ###################################################################### */
 case 'editar':
 
 $idEditar = isset($_GET['id']) ? $_GET['id'] : null;

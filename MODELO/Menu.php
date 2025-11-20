@@ -1,12 +1,13 @@
 <?php
 
 class Menu {
+
     private $idmenu;
     private $menombre;
     private $medescripcion;
     private $idpadre;
     private $medeshabilitado;
-    private $urlMenu;
+    private $medireccion;
 
     public function __construct($datos = []) {
         if (!empty($datos)) {
@@ -20,110 +21,95 @@ class Menu {
         $this->medescripcion = $datos['medescripcion'] ?? null;
         $this->idpadre = $datos['idpadre'] ?? null;
         $this->medeshabilitado = $datos['medeshabilitado'] ?? null;
-        $this->urlMenu = $datos['urlMenu'] ?? null;
+        $this->medireccion = $datos['medireccion'] ?? null;
     }
 
-    public function getIdMenu() {
-        return $this->idmenu;
-    }
-    public function getNombre() { 
-        return $this->menombre; 
-    }
-    public function getDescripcion() { 
-        return $this->medescripcion; 
-    }
-    public function getIdPadre() { 
-        return $this->idpadre; 
-    }
-    public function getDeshabilitado() { 
-        return $this->medeshabilitado; 
-    }
+    /* ============================
+        GETTERS
+    ============================ */
+    public function getIdMenu() { return $this->idmenu; }
+    public function getNombre() { return $this->menombre; }
+    public function getDescripcion() { return $this->medescripcion; }
+    public function getIdPadre() { return $this->idpadre; }
+    public function getDeshabilitado() { return $this->medeshabilitado; }
+    public function getDireccion() { return $this->medireccion; }
 
-    public function getUrlMenu() {
-        return $this->urlMenu;
-    }
+    /* ============================
+        SETTERS
+    ============================ */
+    public function setNombre($nombre) { $this->menombre = $nombre; }
+    public function setDescripcion($desc) { $this->medescripcion = $desc; }
+    public function setIdPadre($idpadre) { $this->idpadre = $idpadre; }
+    public function setDeshabilitado($valor) { $this->medeshabilitado = $valor; }
+    public function setDireccion($url) { $this->medireccion = $url; }
 
-    public function setNombre($nombre) { 
-        $this->menombre = $nombre; 
-    }
-    public function setDescripcion($desc) {
-         $this->medescripcion = $desc; 
-    }
-    public function setIdPadre($idpadre) {
-    $this->idpadre = $idpadre; 
-    }
-    public function setDeshabilitado($fecha) {
-        $this->medeshabilitado = $fecha; 
-    }
-
-    public function setUrlMenu($url) {
-        $this->urlMenu = $url;
-    }
+    /* ============================
+        CRUD
+    ============================ */
 
     public function insertar() {
         $base = new BaseDatos();
-        $resp = false;
-        $sql = "INSERT INTO menu (menombre, medescripcion, idpadre, medeshabilitado) 
-                VALUES (:nombre, :desc, :idpadre, :deshabilitado)";
+        $sql = "INSERT INTO menu (menombre, medescripcion, idpadre, medeshabilitado, medireccion)
+                VALUES (:nombre, :desc, :idpadre, :deshabilitado, :dir)";
 
         $stmt = $base->prepare($sql);
-        if ($stmt->execute([
-            ':nombre' => $this->getNombre(),
-            ':desc' => $this->getDescripcion(),
-            ':idpadre' => $this->getIdPadre() ?? null, 
-            ':deshabilitado' => $this->getDeshabilitado() ?? null 
-        ])) {
-            $resp = true;
-        }
-        return $resp;
+        return $stmt->execute([
+            ':nombre' => $this->menombre,
+            ':desc' => $this->medescripcion,
+            ':idpadre' => $this->idpadre,
+            ':deshabilitado' => $this->medeshabilitado,
+            ':dir' => $this->medireccion
+        ]);
     }
 
     public function modificar() {
         $base = new BaseDatos();
-        $resp = false;
         $sql = "UPDATE menu 
-                SET menombre = :nombre, medescripcion = :desc, idpadre = :idpadre, medeshabilitado = :deshabilitado
+                SET menombre = :nombre,
+                    medescripcion = :desc,
+                    idpadre = :idpadre,
+                    medeshabilitado = :deshabilitado,
+                    medireccion = :dir
                 WHERE idmenu = :id";
-        
-            $stmt = $base->prepare($sql);
-            if ($stmt->execute([
-                ':nombre' => $this->getNombre(),
-                ':desc' => $this->getDescripcion(),
-                ':idpadre' => $this->getIdPadre() ?? null,
-                ':deshabilitado' => $this->getDeshabilitado() ?? null,
-                ':id' => $this->getIdMenu()
-            ])) {
-                $resp = true;
-            }
-        return $resp;
+
+        $stmt = $base->prepare($sql);
+
+        return $stmt->execute([
+            ':nombre' => $this->menombre,
+            ':desc' => $this->medescripcion,
+            ':idpadre' => $this->idpadre,
+            ':deshabilitado' => $this->medeshabilitado,
+            ':dir' => $this->medireccion,
+            ':id' => $this->idmenu
+        ]);
+    }
+
+    public function eliminar() {
+        $base = new BaseDatos();
+        $sql = "DELETE FROM menu WHERE idmenu = :id";
+
+        $stmt = $base->prepare($sql);
+        return $stmt->execute([':id' => $this->idmenu]);
     }
 
     public function listar($condicion = "") {
         $base = new BaseDatos();
         $sql = "SELECT * FROM menu";
+
         if ($condicion != "") {
             $sql .= " WHERE " . $condicion;
         }
+
         $stmt = $base->prepare($sql);
         $stmt->execute();
-        
+
         $menus = [];
         while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $objMenu = new Menu();
             $objMenu->cargarDatos($fila);
             $menus[] = $objMenu;
         }
-        return $menus;
-    }
 
-    public function eliminar() {
-        $base = new BaseDatos();
-        $resp = false;
-        $sql = "DELETE FROM menu WHERE idmenu = :id";
-        $stmt = $base->prepare($sql);
-        if ($stmt->execute([':id' => $this->getIdMenu()])) {
-            $resp = true;
-        }
-        return $resp;
+        return $menus;
     }
 }

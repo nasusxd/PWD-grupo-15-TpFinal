@@ -25,7 +25,6 @@ $ultimoEstado = end($objCompraEstado);
 $compra = $objAbmCompra->buscar(['idcompra' => $idCompra]);
 $usuario = $objAbmUsuario->buscar(["idusuario" => $compra[0]->getIdUsuario()])[0];
 
-// echo "<pre>"; print_r($usuario); echo "</pre>"; exit;
 
 $nombre = $usuario->getNombre();
 $email = $usuario->getMail();
