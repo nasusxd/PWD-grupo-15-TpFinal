@@ -9,7 +9,7 @@ $objAbmMenu = new ABMMenu();
 
 
 $admUsuarios = $objAbmMenu->buscar(['idmenu' => 6]); $listarUsuarios = $objAbmMenu->buscar(['idmenu' => 7]); $agregarUsuario = $objAbmMenu->buscar(['idmenu' => 8]);
-$admProductos = $objAbmMenu->buscar(['idmenu' => 9]); $listarProductos = $objAbmMenu->buscar(['idmenu' => 10]); $agregarProductos = $objAbmMenu->buscar(['idmenu' => 11]); //$agregarDescuento = $objAbmMenu->buscar(['idmenu' => 22]);
+$admProductos = $objAbmMenu->buscar(['idmenu' => 9]); $listarProductos = $objAbmMenu->buscar(['idmenu' => 10]); $agregarProductos = $objAbmMenu->buscar(['idmenu' => 11]);// $agregarDescuento = $objAbmMenu->buscar(['idmenu' => 22]);
 $admRoles = $objAbmMenu->buscar(['idmenu' => 12]); $listarRoles = $objAbmMenu->buscar(['idmenu' => 13]); $agregarRoles = $objAbmMenu->buscar(['idmenu' => 14]);
 $admCompras = $objAbmMenu->buscar(['idmenu' => 19]); $listarCompras = $objAbmMenu->buscar(['idmenu' => 20]);
 
@@ -79,11 +79,7 @@ $listarComprasEstado = $listarCompras[0]->getDeshabilitado();
                             </a>
                             <?php } ?>
                             
-                            <?php print_r('ESTO ESTA COMENTADO MAS ARRIBA'); if ($agregarDescuentoEstado == 0) { ?>
-                            <a href="agregarDescuento.php" class="list-group-item list-group-item-action py-3 ps-4">
-                                <i class="bi bi-plus-circle-fill me-2"></i> Agregar Descuentos
-                            </a>
-                            <?php } ?>
+                           
                         </div>
                     </div>
                 </div>
