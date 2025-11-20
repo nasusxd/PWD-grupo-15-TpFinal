@@ -1,7 +1,6 @@
 <?php
 include_once '../configuracion.php';
 $sesion = new Session();
-$sesion->validarLogin(false);
 include_once './structure/header.php';
 
 $objAbmMenu = new ABMMenu();
@@ -91,6 +90,7 @@ foreach ($listaProductos as $producto):
 
         <div class="card-body d-flex flex-column">
           <?php if ($disponible): ?>
+            <?php if (!($rolUsuario === [])): ?>
             <h5 class="card-title mb-2"><?= $producto->getNombre() ?></h5>
             <p class="mb-1">Cantidad disponible: <?= $producto->getStock() ?></p>
             <?php if (!$esOferta){ ?>
@@ -101,6 +101,7 @@ foreach ($listaProductos as $producto):
             Oferta: $<?= $producto->getPrecio() * (1 - $producto->getDescuento() / 100); ?>
           </p>
               <?php } ?>
+               <?php endif; ?>
             <?php if ($objUsuarioRol[0]->getIdRol() == 1): ?>
               <button class="agregar-carrito btn btn-primary mt-auto" 
                       data-id="<?=$producto->getIdProducto();?>" 

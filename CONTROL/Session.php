@@ -81,9 +81,10 @@ class Session
 
     public function validarLogin(?bool $requerirAdmin = null, ?int $idMenu = null)
     {
+        
         if (!$this->validar()) {
-            header("Location: login.php");
-            exit;
+        header("Location: menu.php");
+        exit;
         }
 
         if ($requerirAdmin === true && !$this->esAdmin()) {

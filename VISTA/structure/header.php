@@ -26,12 +26,10 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
   <title>TPFINAL - Programación Web Dinámica</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="assets/css/menu.css">
-
-
-
 </head>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<!-- Header Usuario / Cliente -->
+<?php if (($rolUsuario === []) || ($rolUsuario[0] == 1)): ?>
 <body class="d-flex flex-column min-vh-100">
 <header class="container mt-3 mb-4">
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded-3 px-3 py-2 border">
@@ -50,6 +48,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
           <!-- Menú principal con submenú -->
     <?php if ($estadoMenuProductos == 0) { ?>
+  <?php if (!($rolUsuario === [])): ?>
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle px-3" href="#" id="productosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       Productos
@@ -59,6 +58,7 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
       <li><a class="dropdown-item" href="<?= BASE_URL ?>ofertas.php">Ofertas</a></li>
     </ul>
   </li>
+<?php endif; ?>
 
   <?php } ?>
   <?php if ($estadoMenuContacto == 0) { ?>
@@ -151,7 +151,10 @@ $estadoMenuContacto = $opcionContacto[0]->getDeshabilitado();
     </div>
   </nav>
 </header>
-
+</body>
+<?php else: 
+  include_once ('./structure/headerAdmin.php');
+ endif; ?>
 <script src="<?= BASE_URL ?>assets/js/carrito.js"></script>
 <script src="<?= BASE_URL ?>assets/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
