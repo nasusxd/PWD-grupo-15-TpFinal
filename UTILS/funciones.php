@@ -3,6 +3,8 @@ include_once __DIR__ . '/../vendor/autoload.php';
 include_once __DIR__ . '../../configuracion.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use FPDF\FPDF;
+
 function datasubmitted() {
     $_AAux= array();
     if (!empty($_POST))
@@ -85,54 +87,81 @@ function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente) {
 
 function enviarCorreoResumen($correoCliente, $carrito) {
     $res = false;
-    $mail = new PHPMailer();
+    $mail = new PHPMailer(true);
     $objabmProducto = new ABMProducto();
+
     try {
+        $pdf = new \FPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(0,10,'Resumen de Compra',0,1,'C');
+        $pdf->Ln(5);
+
+        $pdf->SetFont('Arial','',12);
+        $pdf->Cell(0,8,'Cliente: '.$correoCliente,0,1);
+        $pdf->Ln(5);
+
+        $pdf->SetFont('Arial','B',12);
+        $pdf->Cell(80,8,'Producto',1);
+        $pdf->Cell(30,8,'Cantidad',1);
+        $pdf->Cell(30,8,'Precio',1);
+        $pdf->Cell(30,8,'Subtotal',1);
+        $pdf->Ln();
+
+        $pdf->SetFont('Arial','',12);
+        $total = 0;
+        foreach ($carrito as $idProducto => $cantidad) {
+            $productoArr = $objabmProducto->buscar(['idproducto'=>$idProducto]);
+            if (count($productoArr) > 0) {
+                $producto = $productoArr[0];
+                $subtotal = $producto->getPrecio() * $cantidad;
+                $total += $subtotal;
+
+                $pdf->Cell(80,8,$producto->getNombre(),1);
+                $pdf->Cell(30,8,$cantidad,1);
+                $pdf->Cell(30,8,'$'.$producto->getPrecio(),1);
+                $pdf->Cell(30,8,'$'.$subtotal,1);
+                $pdf->Ln();
+            }
+        }
+
+        $pdf->Cell(140,8,'Total',1);
+        $pdf->Cell(30,8,'$'.$total,1);
+
+        $pdfFile = tempnam(sys_get_temp_dir(), 'resumen_') . '.pdf';
+        $pdf->Output('F', $pdfFile);
+
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com'; // SMTP a utilizar. Por ej. smtp.elserver.com
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'grupo15pwd@gmail.com'; // correo
-        $mail->Password = 'dldrmbwtojfpaats'; // Contraseña
+        $mail->Username = 'grupo15pwd@gmail.com';
+        $mail->Password = 'dldrmbwtojfpaats';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        //remitente
         $mail->setFrom('grupo15pwd@gmail.com', 'Soporte Pelunco');
-
-        //destinatario
         $mail->addAddress($correoCliente);
 
-        //contenido del correo
         $mail->isHTML(true);
-        $body = "
-        <p>Hola <strong>$correoCliente</strong>,</p>
-        <p>Gracias por tu compra. Aca esta tu resumen:</p>
-        <ul>";
-        foreach ($carrito as $idProducto => $cantidad) {
-            $producto = $objabmProducto->buscar(['idproducto' => $idProducto]);
-            if (count($producto) > 0) {
-                $producto = $producto[0];
-            }
-            $body .= "
-            <li>
-                <strong>" . $producto->getNombre() . "</strong><br>
-                Detalle: " . $producto->getDetalle() . "<br>
-                Precio: $" . $producto->getPrecio() . "<br>
-                Cantidad: $cantidad
-            </li><br>";
-        }
-        $body .= "</ul>
-        <p>Saludos,<br>El equipo de Pelunco</p>";
-
-        $mail->Body = $body;
-        //lo mando
+        $mail->Subject = 'Resumen de tu compra';
+        $mail->Body = "<p>Hola <strong>$correoCliente</strong>,</p>
+                       <p>Gracias por tu compra. Te enviamos tu resumen en PDF adjunto.</p>
+                       <p>Saludos,<br>El equipo de Pelunco</p>";
+        $mail->addAttachment($pdfFile, 'resumen_compra.pdf');
         $mail->send();
         $res = true;
+
+        unlink($pdfFile);
+
     } catch (Exception $e) {
-        $res = "Error al enviar el correo: " . $e->getMessage();
+        $res = "Error al enviar el correo: " . $mail->ErrorInfo;
     }
+
     return $res;
 }
+
+
+
 
 function enviarCorreoCambioEstado($correoCliente, $nombreCliente, $idCompra, $estadoNuevo) {
     $res = false;

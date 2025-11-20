@@ -84,7 +84,7 @@ foreach ($listaProductos as $producto):
         <?php if ($esOferta): ?>
           <div class="sticker-oferta">OFERTA</div>
           <?php endif; ?>
-        <img src="../img/<?= $producto->getImagen(); ?>" 
+        <img src="../uploads/<?= $producto->getImagen(); ?>" 
              class="card-img-top img-fluid" 
              style="height: 450px; object-fit: cover;" 
              alt="<?= $producto->getNombre() ?>">

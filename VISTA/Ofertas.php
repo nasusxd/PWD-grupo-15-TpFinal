@@ -43,7 +43,7 @@ foreach ($listaProductos as $producto):
 
 
 
-        <img src="../img/<?= $producto->getImagen(); ?>" 
+        <img src="../uploads/<?= $producto->getImagen(); ?>" 
      class="card-img-top img-fluid <?= $disponible ? '' : 'img-blur' ?>" 
      style="height: 450px; object-fit: cover;" 
      alt="<?= $producto->getNombre() ?>">
