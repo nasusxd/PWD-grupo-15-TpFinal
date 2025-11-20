@@ -19,7 +19,7 @@ class ABMMenu {
             $objMenuPadre = null;
             if (isset($param['idpadre'])){
                 $objMenuPadre = new Menu();
-                $objMenuPadre->setIdMenu($param['idpadre']);
+                $objMenuPadre->setIdpadre($param['idpadre']);
                 $objMenuPadre->cargar();
             }
             $medireccion = isset($param['medireccion']) ? $param['medireccion'] : null;
@@ -34,7 +34,7 @@ class ABMMenu {
         $obj = null;
         if( isset($param['idmenu']) ){
             $obj = new Menu();
-            $obj->setIdMenu($param['idmenu']);
+            $obj->setIdpadre($param['idmenu']);
         }
         return $obj;
     }

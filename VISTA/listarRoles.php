@@ -6,7 +6,7 @@ $listaRoles = $objAbmRol->buscar(null);
 
 <div class="container mt-5">
 
-    <!-- 🔙 BOTÓN VOLVER -->
+    
     <a href="javascript:history.back()" class="btn btn-secondary mb-3">
         <i class="bi bi-arrow-left"></i> Volver atrás
     </a>
@@ -34,22 +34,47 @@ $listaRoles = $objAbmRol->buscar(null);
         </thead>
         <tbody>
             <?php foreach ($listaRoles as $rol): ?>
-                <tr>
+                <tr id="filaRol<?= $rol->getIdRol() ?>">
                     <td><?= $rol->getIdRol() ?></td>
                     <td><?= $rol->getRoDescripcion() ?></td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="abrirPermisos(<?= $rol->getIdRol() ?>, '<?= $rol->getRoDescripcion() ?>')">
-                            <i class="bi bi-key"></i> Permisos
-                        </button>
+                   <td>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
 
-                        <?php if ($rol->getIdRol() > 2): ?>
-                            <button class="btn btn-danger btn-sm" onclick="mostrarConfirmacionBorrar(<?= $rol->getIdRol() ?>)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        <?php else: ?>
-                            <span class="badge bg-secondary">Protegido</span>
-                        <?php endif; ?>
-                    </td>
+        <?php 
+            // Cargar la clase MenuRol
+            $menuRol = new MenuRol();
+            $menus = $menuRol->listar("idrol = " . $rol->getIdRol());
+
+            if (!empty($menus)) {
+
+                foreach ($menus as $mr) {
+                    $menuObj = new abmMenu();
+                    $menuEncontrado = $menuObj->buscar(['idmenu' => $mr->getIdMenu()]);
+
+                    if (!empty($menuEncontrado)) {
+                        echo '<span class="badge bg-info text-dark">'
+                            . $menuEncontrado[0]->getNombre() .
+                            '</span>';
+                    }
+                }
+
+            } else {
+                echo '<span class="text-muted">Sin acceso</span>';
+            }
+        ?>
+
+        <!-- Botón borrar o protegido (fuera del bloque de menús) -->
+        <?php if ($rol->getIdRol() > 2): ?>
+            <button class="btn btn-danger btn-sm ms-2" onclick="mostrarConfirmacionBorrar(<?= $rol->getIdRol() ?>)">
+                <i class="bi bi-trash"></i>
+            </button>
+        <?php else: ?>
+            <span class="badge bg-secondary ms-2">Protegido</span>
+        <?php endif; ?>
+
+    </div>
+</td>
+
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -96,59 +121,102 @@ $listaRoles = $objAbmRol->buscar(null);
 </div>
 
 <script>
+$(document).ready(function() {
     let rolAEliminar = null;
 
-    function mostrarConfirmacionBorrar(id) {
+    // MOSTRAR MODAL CONFIRMAR BORRAR
+    window.mostrarConfirmacionBorrar = function(id) {
         rolAEliminar = id;
-        let modal = new bootstrap.Modal(document.getElementById('modalConfirmarBorrar'));
-        modal.show();
-    }
+        $('#modalConfirmarBorrar').modal('show');
+    };
 
-    document.getElementById('btnConfirmarEliminar').addEventListener('click', function() {
-        $.post('./action/actionRol.php', {
-            accion: 'borrar',
-            idrol: rolAEliminar
-        }, function(data) {
-            var res = JSON.parse(data);
-            alert(res.mensaje);
-            location.reload();
+    // CONFIRMAR ELIMINAR
+    $('#btnConfirmarEliminar').click(function() {
+        $.ajax({
+            url: './action/actionRol.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { 
+                accion: 'borrar', 
+                idrol: rolAEliminar 
+            },
+            success: function(data) {
+                if (data.success) {
+                    $('#filaRol' + rolAEliminar).remove();
+                    $('#modalConfirmarBorrar').modal('hide');
+                }
+            }
         });
     });
 
-
+    // CREAR NUEVO ROL
     $('#formNuevoRol').submit(function(e) {
         e.preventDefault();
-        $.post('./action/actionRol.php', $(this).serialize(), function(data) {
-            location.reload();
+        
+        let descripcion = $('input[name="rodescripcion"]').val();
+        
+        $.ajax({
+            url: './action/actionRol.php',
+            type: 'POST',
+            dataType: 'json',
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data.success) {
+                    // Agregar nueva fila dinámicamente
+                    let nuevaFila = `
+                        <tr id="filaRol${data.idrol}">
+                            <td>${data.idrol}</td>
+                            <td>${descripcion}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <span class="text-muted">Sin acceso</span>
+                                    <button class="btn btn-danger btn-sm ms-2" onclick="mostrarConfirmacionBorrar(${data.idrol})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $('table tbody').append(nuevaFila);
+                    $('input[name="rodescripcion"]').val('');
+                }
+            }
         });
     });
 
-    function abrirPermisos(idRol, nombreRol) {
+    // ABRIR MODAL PERMISOS
+    window.abrirPermisos = function(idRol, nombreRol) {
         $('#idRolPermiso').val(idRol);
         $('#nombreRolModal').text(nombreRol);
 
         $.ajax({
             url: './action/actionObtenerMenusPorRol.php',
             type: 'POST',
-            data: {
-                idrol: idRol
-            },
+            data: { idrol: idRol },
             success: function(response) {
                 $('#listaCheckboxesMenus').html(response);
-                var modal = new bootstrap.Modal(document.getElementById('modalPermisos'));
-                modal.show();
+                $('#modalPermisos').modal('show');
             }
         });
-    }
+    };
 
+    // GUARDAR PERMISOS
     $('#formPermisos').submit(function(e) {
-    e.preventDefault();
-    $.post('./action/actionActualizarPermisos.php', $(this).serialize(), function(data) {
-        alert("Permisos actualizados");
-        location.reload();
+        e.preventDefault();
+        
+        $.ajax({
+            url: './action/actionActualizarPermisos.php',
+            type: 'POST',
+            dataType: 'json',
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data.success) {
+                    $('#modalPermisos').modal('hide');
+                }
+            }
+        });
     });
 });
-
 </script>
 
 <?php include_once 'structure/footer.php'; ?>
