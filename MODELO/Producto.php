@@ -95,7 +95,7 @@ class Producto
 
     public function insertar()
     {
-        $res = false;
+        $resp = false;
         $baseDatos = new BaseDatos();
         $sql = "INSERT INTO producto (pronombre, prodetalle, precio, procantstock, proimagen, descuento) 
                 VALUES (:pronombre, :prodetalle, :precio, :procantstock, :proimagen, :descuento)";
@@ -114,8 +114,7 @@ class Producto
         return $resp;
     }
 
-    public function modificar()
-    {
+    public function modificar() {
         $base = new BaseDatos();
         $resp = false;
         $sql = "UPDATE producto

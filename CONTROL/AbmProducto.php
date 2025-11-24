@@ -5,7 +5,7 @@ class ABMProducto  {
         $objProducto = null;
 
         if (array_key_exists('idproducto', $param) && array_key_exists('pronombre', $param) && array_key_exists('prodetalle', $param) && array_key_exists('precio', $param) 
-            && array_key_exists('procantstock', $param) && array_key_exists('descuento', $param) && array_key_exists('proimagen', $param)) {
+            && array_key_exists('procantstock', $param) && array_key_exists('proimagen', $param) && array_key_exists('descuento', $param)) {
             $objProducto = new Producto();
             $objProducto->cargarDatos($param);
         }

@@ -29,7 +29,7 @@ class CompraItem {
     }
     public function getCantidad() {
         return $this->cicantidad;
-    }
+    }   
 
     public function setIdProducto($idProducto) {
         $this->idproducto = $idProducto;
@@ -42,7 +42,7 @@ class CompraItem {
     }
 
     public function insertar() {
-        $res = false;
+        $resp = false;
         $baseDatos = new BaseDatos();
          $sql = "INSERT INTO compraitem  (idproducto, idcompra, cicantidad) 
                 VALUES (:idproducto, :idcompra, :cicantidad)";
@@ -82,7 +82,7 @@ class CompraItem {
     public function eliminar() {
         $base = new BaseDatos();
         $resp = false;
-        $sql = "DELETE compraitem WHERE idcompraitem = :idcompraitem";
+        $sql = "DELETE FROM compraitem WHERE idcompraitem = :idcompraitem";
         $stmt = $base->prepare($sql);
             if ($stmt->execute([
             ':idcompraitem' => $this->getIdCompraItem()

@@ -1,21 +1,19 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
-    let idCompraGlobal = null; 
+    let idCompraGlobal = null;
 
     $('.btnCambiarEstado').click(function () {
 
-        idCompraGlobal = $(this).data('id').toString().trim(); 
-
-        let estado = $(this).data('estado');
+        idCompraGlobal = $(this).data('id');
+        let estadoActual = $(this).data('estado');
 
         $("#idCompraModal").val(idCompraGlobal);
-        $("#nuevoEstado").val(estado);
+        $("#nuevoEstado").val(estadoActual);
 
         $("#modalEstadoCompra").modal("show");
     });
 
     $("#btnGuardarEstado").click(function () {
-
         let nuevoEstado = $("#nuevoEstado").val();
 
         $.ajax({
@@ -33,10 +31,44 @@ $(document).ready(function() {
                     $("#estadoCompra" + idCompraGlobal).text(data.nuevoEstadoTexto);
 
                     $("#modalEstadoCompra").modal("hide");
-                } 
+                }
                 else {
                     alert("Error: " + data.msg);
                 }
+            }
+        });
+    });
+
+    $('.btnHistorial').click(function () {
+        let idCompra = $(this).data("idcompra");
+
+        $.ajax({
+            url: "./action/actionObtenerHistorialEstados.php",
+            type: "POST",
+            dataType: "json",
+            data: { idcompra: idCompra },
+            success: function (resp) {
+
+                if (!resp.success) {
+                    alert(resp.msg);
+                    return;
+                }
+
+                let rows = "";
+
+                resp.data.forEach(e => {
+                    rows += `
+                        <tr>
+                            <td>${e.descripcion}</td>
+                            <td>${e.inicio}</td>
+                            <td>${e.fin ?? "-"}</td>
+                        </tr>
+                    `;
+                });
+
+                $("#tablaHistorialEstados").html(rows);
+
+                $("#modalHistorial").modal("show");
             }
         });
     });
