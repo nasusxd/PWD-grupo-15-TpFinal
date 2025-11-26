@@ -9,41 +9,8 @@ if (!$datos['idcompra']) {
     exit;
 }
 
-$objAbmCompraEstado = new ABMCompraEstado();
-$objAbmCompraEstadoTipo = new ABMCompraEstadoTipo();
+$abm = new ABMCompraEstado();
+$respuesta = $abm->obtenerHistorialCompra($datos['idcompra']);
 
-$estados = $objAbmCompraEstado->buscar(['idcompra' => $datos['idcompra']]);
-
-if (empty($estados)) {
-    echo json_encode(["success" => false, "msg" => "No se encontraron estados para esta compra"]);
-    exit;
-}
-
-$data = [];
-
-foreach ($estados as $estado) {
-
-    $tipo = $objAbmCompraEstadoTipo->buscar([
-        "idcompraestadotipo" => $estado->getIdCompraEstadoTipo()
-    ]);
-
-    $descripcion = !empty($tipo) ? $tipo[0]->getDescripcion() : "Desconocido";
-
-    $data[] = [
-        "idcompraestado" => $estado->getIdCompraEstado(),
-        "estado" => $estado->getIdCompraEstadoTipo(),
-        "descripcion" => $descripcion,
-        "inicio" => $estado->getFechaIni(),
-        "fin" => $estado->getFechaFin()
-    ];
-}
-
-usort($data, function ($a, $b) {
-    return strtotime($a["inicio"]) <=> strtotime($b["inicio"]);
-});
-
-echo json_encode([
-    "success" => true,
-    "data" => $data
-]);
+echo json_encode($respuesta);
 exit;

@@ -81,10 +81,10 @@ class Session
 
     public function validarLogin(?bool $requerirAdmin = null, ?int $idMenu = null)
     {
-        
+
         if (!$this->validar()) {
-        header("Location: menu.php");
-        exit;
+            header("Location: menu.php");
+            exit;
         }
 
         if ($requerirAdmin === true && !$this->esAdmin()) {
@@ -194,5 +194,9 @@ class Session
     {
         session_unset();
         session_destroy();
+    }
+    public function crearSessionConUsuario($usuario)
+    {
+        $_SESSION['idusuario'] = $usuario->getIdUsuario();
     }
 }

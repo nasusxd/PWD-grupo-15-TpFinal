@@ -2,27 +2,13 @@
 include_once "../../configuracion.php";
 
 $sesion = new Session();
-$carrito = $sesion->getCarrito();
-$items = [];
-$totalProductos = $sesion->totalProductosCarrito();
+$abmProducto = new ABMProducto();
 
-if ($carrito) {
-    $abmProducto = new ABMProducto();
-
-    foreach ($carrito as $id => $cantidad) {
-        $prod = $abmProducto->buscar(['idproducto' => $id])[0];
-
-        $items[] = [
-            'id' => $id,
-            'nombre' => $prod->getNombre(),
-            'cantidad' => $cantidad
-        ];
-    }
-}
+$items = $abmProducto->obtenerItemsCarrito($sesion->getCarrito());
 
 echo json_encode([
     "success" => true,
     "items" => $items,
-    "total" => $totalProductos,
+    "total" => $sesion->totalProductosCarrito(),
     "precioTotal" => $sesion->precioTotalCarrito()
 ]);

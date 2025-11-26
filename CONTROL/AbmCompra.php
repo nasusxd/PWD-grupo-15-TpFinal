@@ -1,7 +1,9 @@
 <?php
 
-class ABMCompra {
-    public function cargarObjeto($param) {
+class ABMCompra
+{
+    public function cargarObjeto($param)
+    {
         $objCompra = null;
 
         if (array_key_exists('idcompra', $param) && array_key_exists('cofecha', $param) && array_key_exists('idusuario', $param)) {
@@ -11,7 +13,8 @@ class ABMCompra {
         return $objCompra;
     }
 
-    public function cargarObjetoConClave($param) {
+    public function cargarObjetoConClave($param)
+    {
         $objCompra = null;
 
         if (isset($param['idcompra'])) {
@@ -21,17 +24,19 @@ class ABMCompra {
         return $objCompra;
     }
 
-    public function alta($param) {
+    public function alta($param)
+    {
         $idCompra = -1;
         $objCompra = $this->cargarObjeto($param);
 
         if ($objCompra != null && $objCompra->insertar()) {
-        $idCompra = $objCompra->getIdCompra();
+            $idCompra = $objCompra->getIdCompra();
         }
         return $idCompra; // retorna el id
     }
 
-    public function baja($param) {
+    public function baja($param)
+    {
         $resp = false;
         if (array_key_exists('idcompra', $param)) {
             $objCompra = $this->cargarObjetoConClave($param);
@@ -42,7 +47,8 @@ class ABMCompra {
         return $resp;
     }
 
-    public function modificacion($param) {
+    public function modificacion($param)
+    {
         $resp = false;
         if (array_key_exists('idcompra', $param)) {
             $objCompra = $this->cargarObjeto($param);
@@ -53,7 +59,8 @@ class ABMCompra {
         return $resp;
     }
 
-    public function buscar($param) {
+    public function buscar($param)
+    {
         $where = "true";
         if ($param != null) {
             if (isset($param['idcompra']))
@@ -66,5 +73,88 @@ class ABMCompra {
         $objCompra = new Compra();
         $arreglo = $objCompra->listar($where);
         return $arreglo;
+    }
+
+    public function procesarCompra($mail, $idUsuario, $carrito)
+    {
+
+        // Validar email
+        $abmUsuario = new ABMUsuario();
+        $usuario = $abmUsuario->buscar(['usmail' => $mail]);
+
+        if (empty($usuario)) {
+            return ['success' => false, 'msg' => 'No existe un usuario con ese email'];
+        }
+
+        // Enviar correo
+        $enviado = enviarCorreoResumen($mail, $carrito);
+        if ($enviado !== true) {
+            return ['success' => false, 'msg' => $enviado];
+        }
+
+        // Crear compra
+        $fechaActual = date("Y-m-d H:i:s");
+        $paramCompra = [
+            "idcompra" => null,
+            "cofecha" => $fechaActual,
+            "idusuario" => $idUsuario
+        ];
+
+        $idCompra = $this->alta($paramCompra);
+        if (!$idCompra) {
+            return ['success' => false, 'msg' => 'Error al crear la compra'];
+        }
+
+        // ABMs auxiliares
+        $abmItem = new ABMCompraItem();
+        $abmProducto = new ABMProducto();
+
+        // Crear items + actualizar stock
+        foreach ($carrito as $idProducto => $cantidad) {
+
+            // Crear item
+            $paramItem = [
+                "idcompraitem" => null,
+                "idproducto" => $idProducto,
+                "idcompra" => $idCompra,
+                "cicantidad" => $cantidad
+            ];
+            $abmItem->alta($paramItem);
+
+            // Bajar stock
+            $producto = $abmProducto->buscar(['idproducto' => $idProducto])[0];
+            $nuevoStock = $producto->getStock() - $cantidad;
+
+            $paramMod = [
+                'idproducto' => $idProducto,
+                'pronombre' => $producto->getNombre(),
+                'prodetalle' => $producto->getDetalle(),
+                'precio' => $producto->getPrecio(),
+                'procantstock' => $nuevoStock,
+                'descuento' => $producto->getDescuento(),
+                'proimagen' => $producto->getImagen()
+            ];
+
+            if (!$abmProducto->modificacion($paramMod)) {
+                return ['success' => false, 'msg' => 'Error al actualizar el stock de un producto'];
+            }
+        }
+
+        // Crear estado inicial
+        $abmEstado = new ABMCompraEstado();
+        $paramEstado = [
+            "idcompraestado" => null,
+            "idcompra" => $idCompra,
+            "idcompraestadotipo" => 1, // iniciada
+            "cefechaini" => $fechaActual,
+            "cefechafin" => null
+        ];
+        $abmEstado->alta($paramEstado);
+
+        return [
+            "success" => true,
+            "msg" => "Compra procesada correctamente",
+            "idcompra" => $idCompra
+        ];
     }
 }

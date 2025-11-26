@@ -3,58 +3,39 @@ include_once "../../configuracion.php";
 
 $session = new Session();
 
-
 if (!$session->validar()) {
-    echo json_encode(["success" => false, "error" => "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."]);
+    echo json_encode(["success" => false, "error" => "Sesión expirada"]);
     exit;
 }
 
-
-$usuario = $session->getUsuario();
-
+$idUsuario = $session->getUsuario();
 $accion = $_POST["accion"];
-$abm = new AbmUsuario();
-$resultado = false;
+$abm = new ABMUsuario();
 
+switch ($accion) {
 
-$datosActuales = $abm->buscar(['idusuario' => $usuario]);
-if (!$datosActuales) {
-    echo json_encode(["success" => false, "error" => "Usuario no encontrado"]);
-    exit;
+    case "nombre":
+        $res = $abm->actualizarNombre($idUsuario, trim($_POST["usnombre"]));
+        break;
+
+    case "email":
+        $res = $abm->actualizarEmail($idUsuario, trim($_POST["usmail"]));
+        if ($res === "email_ocupado") {
+            echo json_encode(["success" => false, "mensaje" => "El email ya está registrado"]);
+            exit;
+        }
+        break;
+
+    case "pass":
+        $res = $abm->actualizarPassword($idUsuario, $_POST["pass1"]);
+        break;
+
+    default:
+        echo json_encode(["success" => false, "mensaje" => "Acción inválida"]);
+        exit;
 }
 
-$datosActuales = $datosActuales[0];
-
-//este param me estaba arruinando la vida
-$param = [
-    "idusuario" => $usuario,
-    "usnombre" => $datosActuales->getNombre(),      
-    "uspass" => $datosActuales->getPassword(),    
-    "usmail" => $datosActuales->getMail(),        
-    "usdeshabilitado" => $datosActuales->getDeshabilitado() 
-];
-
-
-if ($accion == "nombre") {
-    $param["usnombre"] = trim($_POST["usnombre"]);
-    $resultado = $abm->modificacion($param);
-}
-
-
-if ($accion == "email") {
-    $param["usmail"] = trim($_POST["usmail"]);
-    $resultado = $abm->modificacion($param);
-}
-
-
-if ($accion == "pass") {
-    $p1 = $_POST["pass1"];
-    
-    $param["uspass"] = password_hash($p1, PASSWORD_DEFAULT); //hasheamos directamente aca
-    
-    $resultado = $abm->modificacion($param);
-}
 echo json_encode([
-    "success" => $resultado,
-    "mensaje" => $resultado ? "Datos actualizados" : "Error al guardar"
+    "success" => $res ? true : false,
+    "mensaje" => $res ? "Datos actualizados" : "Error al guardar"
 ]);

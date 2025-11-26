@@ -10,14 +10,10 @@ if (!isset($_POST['idmenu'])) {
 $idMenu = intval($_POST['idmenu']);
 
 $abmMenuRol = new ABMMenuRol();
-$rolesAsignados = $abmMenuRol->buscar(["idmenu" => $idMenu]);
-
-$idsRoles = [];
-foreach ($rolesAsignados as $mr) {
-    $idsRoles[] = $mr->getIdRol();
-}
+$roles = $abmMenuRol->obtenerRolesDeMenu($idMenu);
 
 echo json_encode([
     "success" => true,
-    "roles" => $idsRoles
+    "roles" => $roles
 ]);
+?>
