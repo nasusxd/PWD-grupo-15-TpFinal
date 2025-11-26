@@ -120,7 +120,7 @@ class ABMMenu
     {
         $menus = $this->buscar(['idmenu' => $idMenu]);
         if (!empty($menus)) {
-            $menu = $menus[0]; // obtener el objeto Menu
+            $menu = $menus[0]; 
             $menu->setDeshabilitado($nuevoEstado);
             return $menu->modificar();
         }
@@ -128,8 +128,6 @@ class ABMMenu
     }
     public function crearMenu($datos)
     {
-
-        // Validación de datos
         if (
             !isset($datos["pronombre"]) ||
             !isset($datos["prodetalle"]) ||
@@ -138,13 +136,10 @@ class ABMMenu
             return ["success" => false, "msg" => "Faltan datos obligatorios."];
         }
 
-        // Verificar si ya existe menú con ese nombre
         $existe = $this->buscar(['menombre' => $datos['pronombre']]);
         if (count($existe) > 0) {
             return ["success" => false, "msg" => "Ya existe un menú con ese nombre."];
         }
-
-        // Crear menú
         $paramMenu = [
             "idmenu" => null,
             "menombre" => $datos["pronombre"],
@@ -156,8 +151,6 @@ class ABMMenu
         if (!$this->alta($paramMenu)) {
             return ["success" => false, "msg" => "Falló la creación del menú."];
         }
-
-        // Buscar menú recién creado
         $nuevoMenuArr = $this->buscar(['menombre' => $datos['pronombre']]);
         if (empty($nuevoMenuArr)) {
             return ["success" => false, "msg" => "Error al recuperar el menú recién creado."];
@@ -166,7 +159,6 @@ class ABMMenu
         $objMenu = $nuevoMenuArr[0];
         $idMenu = $objMenu->getIdMenu();
 
-        // Asignar roles al menú
         if (isset($datos["menuRoles"]) && is_array($datos["menuRoles"])) {
 
             $abmMenuRol = new ABMMenuRol();

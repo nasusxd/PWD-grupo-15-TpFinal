@@ -2,7 +2,7 @@
 class Compra {
     private $idcompra;
     private $cofecha;
-    private $idusuario; // FK a Usuario
+    private $idusuario; 
 
     public function __construct($datos = []) {
         if (!empty($datos)) {

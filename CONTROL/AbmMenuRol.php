@@ -88,18 +88,12 @@ class ABMMenuRol
     {
         $abmMenu = new ABMMenu();
 
-        // =============================
-        // 1) BORRAR ROLES DEL MENÚ
-        // =============================
         $actuales = $this->buscar(["idmenu" => $idMenu]);
 
         foreach ($actuales as $mr) {
             $mr->eliminar();
         }
 
-        // =============================
-        // 2) INSERTAR ROLES NUEVOS
-        // =============================
         foreach ($rolesSeleccionados as $idRol) {
             $this->alta([
                 "idmenu" => $idMenu,
@@ -107,9 +101,6 @@ class ABMMenuRol
             ]);
         }
 
-        // =============================
-        // 3) AGREGAR ROLES AL PADRE
-        // =============================
         $menuData = $abmMenu->buscar(['idmenu' => $idMenu]);
 
         if (!empty($menuData)) {

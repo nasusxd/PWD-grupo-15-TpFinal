@@ -86,7 +86,6 @@ class ABMCompraEstado
     public function cambiarEstadoCompra($datos)
     {
 
-        // Validación inicial
         if (!isset($datos['idcompra']) || !isset($datos['estado'])) {
             return ["success" => false, "msg" => "Datos incompletos"];
         }
@@ -99,7 +98,6 @@ class ABMCompraEstado
         $objAbmProducto = new ABMProducto();
         $objAbmCompraItem = new ABMCompraItem();
 
-        // Obtener estados existentes
         $estados = $this->buscar(['idcompra' => $idCompra]);
         if (empty($estados)) {
             return ["success" => false, "msg" => "No hay estado registrado para esta compra"];
@@ -108,9 +106,6 @@ class ABMCompraEstado
         $ultimoEstado = end($estados);
         $estadoActual = $ultimoEstado->getIdCompraEstadoTipo();
 
-        // ─────────────────────────────────────────────
-        // VALIDACIONES DE TRANSICIÓN
-        // ─────────────────────────────────────────────
 
         if ($estadoActual == 3) {
             return ["success" => false, "msg" => "No se puede cambiar una compra ya enviada."];
@@ -131,9 +126,6 @@ class ABMCompraEstado
             return ["success" => false, "msg" => "Cambio de estado inválido desde aceptada."];
         }
 
-        // ─────────────────────────────────────────────
-        // CERRAR EL ESTADO ANTERIOR
-        // ─────────────────────────────────────────────
         $cerrar = [
             "idcompraestado" => $ultimoEstado->getIdCompraEstado(),
             "idcompra" => $idCompra,
@@ -146,9 +138,6 @@ class ABMCompraEstado
             return ["success" => false, "msg" => "Error al actualizar el estado anterior"];
         }
 
-        // ─────────────────────────────────────────────
-        // CREAR NUEVO ESTADO
-        // ─────────────────────────────────────────────
         $nuevoReg = [
             "idcompraestado" => null,
             "idcompra" => $idCompra,
@@ -161,9 +150,6 @@ class ABMCompraEstado
             return ["success" => false, "msg" => "Error al registrar el nuevo estado"];
         }
 
-        // ─────────────────────────────────────────────
-        // SI SE CANCELA → DEVOLVER STOCK
-        // ─────────────────────────────────────────────
         if ($nuevoEstado == 4) {
 
             $items = $objAbmCompraItem->buscar(['idcompra' => $idCompra]);
@@ -189,9 +175,6 @@ class ABMCompraEstado
             }
         }
 
-        // ─────────────────────────────────────────────
-        // ENVIAR EMAIL
-        // ─────────────────────────────────────────────
         $compra = $objAbmCompra->buscar(['idcompra' => $idCompra])[0];
         $usuario = $objAbmUsuario->buscar(["idusuario" => $compra->getIdUsuario()])[0];
 
@@ -222,7 +205,6 @@ class ABMCompraEstado
 
         $objAbmCompraEstadoTipo = new ABMCompraEstadoTipo();
 
-        // Obtener todos los estados de la compra
         $estados = $this->buscar(['idcompra' => $idCompra]);
 
         if (empty($estados)) {
@@ -236,7 +218,7 @@ class ABMCompraEstado
 
         foreach ($estados as $estado) {
 
-            // Buscar descripción del tipo
+           
             $tipo = $objAbmCompraEstadoTipo->buscar([
                 "idcompraestadotipo" => $estado->getIdCompraEstadoTipo()
             ]);
@@ -252,7 +234,7 @@ class ABMCompraEstado
             ];
         }
 
-        // Ordenar por fecha
+       
         usort($data, function ($a, $b) {
             return strtotime($a["inicio"]) <=> strtotime($b["inicio"]);
         });

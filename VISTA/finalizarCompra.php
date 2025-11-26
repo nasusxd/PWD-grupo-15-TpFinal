@@ -104,10 +104,10 @@ $carrito = $objSesion->getCarrito();
     </div>
 
     <div class="col-6">
-        <label for="anio" class="form-label">Año</label>
+        <label for="anio" class="form-label">Año de Vencimiento</label>
         <select id="anio" name="anio" class="form-select" required>
             <?php
-                for ($anio = 2010; $anio <=  2025; $anio++) {
+                for ($anio = 2025; $anio <=  2050; $anio++) {
                     echo "<option value='$anio'>$anio</option>";
                 }
             ?>
@@ -116,7 +116,6 @@ $carrito = $objSesion->getCarrito();
 </div>
 
     </div>
-    <!-- Código de seguridad -->
     <div class="mb-3">
         <label for="cvv" class="form-label">Código de seguridad (CVV)</label>
         <input type="password" class="form-control" id="cvv" name="cvv" maxlength="4" required>
@@ -124,7 +123,6 @@ $carrito = $objSesion->getCarrito();
      <button id="finalizar-compra" type="submit" class="btn btn-success w-100">Confirmar compra</button>
     </form>
 <br>
-    <!-- Alerta -->
     <div id="alerta-compra"></div>
 </div>
 </div>

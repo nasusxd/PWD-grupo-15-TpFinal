@@ -2,7 +2,6 @@
 include_once '../configuracion.php';
 $sesion = new Session();
 
-// Solo entrar si tiene permisos
 $sesion->validarLogin(true);
 
 include_once './structure/header.php';
@@ -12,9 +11,6 @@ $objAbmMenuRol = new ABMMenuRol();
 
 $rolesUsuario = $sesion->getRol();
 
-/**
- * Verifica si el usuario tiene permiso sobre un menú
- */
 function usuarioPuede($idMenu, $abmMenuRol, $rolesUsuario)
 {
     $permisos = $abmMenuRol->buscar(['idmenu' => $idMenu]);
@@ -27,7 +23,6 @@ function usuarioPuede($idMenu, $abmMenuRol, $rolesUsuario)
     return false;
 }
 
-// Obtener los menús del panel admin (idpadre = 1)
 $menusIndex = $objAbmMenu->buscar(['idpadre' => 1]);
 ?>
 
@@ -61,10 +56,10 @@ $menusIndex = $objAbmMenu->buscar(['idpadre' => 1]);
                                     <?php if (!usuarioPuede($sub->getIdMenu(), $objAbmMenuRol, $rolesUsuario)) continue; ?>
 
                                     <?php
-                                        // URL segura
+                                        
                                         $url = $sub->getDireccion();
                                         if ($url === null || trim($url) === "") {
-                                            continue; // Ignorar menús sin URL
+                                            continue; 
                                         }
                                     ?>
 

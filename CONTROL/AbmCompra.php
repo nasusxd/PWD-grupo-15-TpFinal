@@ -32,7 +32,7 @@ class ABMCompra
         if ($objCompra != null && $objCompra->insertar()) {
             $idCompra = $objCompra->getIdCompra();
         }
-        return $idCompra; // retorna el id
+        return $idCompra;
     }
 
     public function baja($param)
@@ -112,7 +112,6 @@ class ABMCompra
         // Crear items + actualizar stock
         foreach ($carrito as $idProducto => $cantidad) {
 
-            // Crear item
             $paramItem = [
                 "idcompraitem" => null,
                 "idproducto" => $idProducto,
@@ -121,7 +120,6 @@ class ABMCompra
             ];
             $abmItem->alta($paramItem);
 
-            // Bajar stock
             $producto = $abmProducto->buscar(['idproducto' => $idProducto])[0];
             $nuevoStock = $producto->getStock() - $cantidad;
 
@@ -140,12 +138,12 @@ class ABMCompra
             }
         }
 
-        // Crear estado inicial
+       
         $abmEstado = new ABMCompraEstado();
         $paramEstado = [
             "idcompraestado" => null,
             "idcompra" => $idCompra,
-            "idcompraestadotipo" => 1, // iniciada
+            "idcompraestadotipo" => 1, 
             "cefechaini" => $fechaActual,
             "cefechafin" => null
         ];

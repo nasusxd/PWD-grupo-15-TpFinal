@@ -188,15 +188,47 @@ $listaRoles = $objRol->buscar(null);
 
                         // 3️⃣ Actualizar columna "Roles con acceso" sin recargar
                         let idMenu = $("#idmenu").val();
+                        /* ==========================================================
+   ACTUALIZAR TAMBIÉN LOS ROLES DEL PADRE
+========================================================== */
+let idpadre = $("button.btn-configurar-roles[data-id='" + idMenu + "']").data("idpadre");
 
-                        // Obtener checkbox seleccionados
+if (idpadre && idpadre != 0) {
+
+    $.ajax({
+        url: "./action/actionGetRolesMenu.php",
+        type: "POST",
+        data: { idmenu: idpadre },
+        dataType: "json",
+        success: function(res2) {
+
+            let filaPadre = $("button.btn-configurar-roles[data-id='" + idpadre + "']").closest("tr");
+
+            if (res2.success && res2.roles.length > 0) {
+
+                let etiquetasPadre = [];
+
+                res2.roles.forEach(rid => {
+                    let label = $("#rol" + rid).next("label").text();
+                    etiquetasPadre.push(`<span class="badge bg-info me-1">${label}</span>`);
+                });
+
+                filaPadre.find("td:nth-child(6)").html(etiquetasPadre.join(" "));
+
+            } else {
+                filaPadre.find("td:nth-child(6)").html("<span class='text-muted'>Sin roles</span>");
+            }
+        }
+    });
+}
+
+
                         let etiquetas = [];
                         $(".rol-check:checked").each(function() {
                             let label = $(this).next("label").text();
                             etiquetas.push(`<span class="badge bg-info me-1">${label}</span>`);
                         });
 
-                        // Buscar la fila y reemplazar contenido
                         let fila = $("button.btn-configurar-roles[data-id='" + idMenu + "']").closest("tr");
 
                         if (etiquetas.length > 0) {
@@ -213,9 +245,6 @@ $listaRoles = $objRol->buscar(null);
         });
 
 
-        /* ==========================================================
-           HABILITAR / DESHABILITAR
-        ========================================================== */
         $('.btn-cambiar-habilitado, .btn-cambiar-deshabilitado').click(function() {
             var boton = $(this);
             var idMenu = boton.data('id');

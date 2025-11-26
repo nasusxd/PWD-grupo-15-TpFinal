@@ -13,9 +13,12 @@ $objUsuarioRol = $objAbmUsuarioRol->buscar(['idusuario' => $idUsuario]);
 
 $objProducto = new ABMProducto();
 
-$listaProductos = array_filter($objProducto->buscar(null),
+// traer solo productos activos (prodeshabilitado = 0) y después filtrar por stock > 0
+$listaProductos = array_filter(
+    $objProducto->buscar(['prodeshabilitado' => 0]),
     fn($producto) => $producto->getStock() > 0
 );
+
 $max = 4;
 $contador = 0;
 
@@ -23,9 +26,11 @@ if ($estadoMenu == 1) {
     echo "<div class='alert alert-warning text-center' role='alert'>
             El menú principal está deshabilitado.
           </div>";
-}else{
+} else {
 ?>
 <br>
+
+<!-- CARRUSEL -->
 <div id="miCarrusel" class="carousel slide" data-bs-ride="carousel">
 
   <!-- Indicadores -->
@@ -52,7 +57,8 @@ if ($estadoMenu == 1) {
              style="height: 500px; object-fit: contain; background-color: #ffffffff;">
     </div>
 
-</div>
+  </div>
+
   <!-- Botón anterior -->
   <button class="carousel-control-prev" type="button" data-bs-target="#miCarrusel" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -72,70 +78,76 @@ if ($estadoMenu == 1) {
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 <?php 
 foreach ($listaProductos as $producto):
-  if ($contador >= $max) {
-        break; 
-    }
-    $disponible = $producto->getStock() > 0;
-    $esOferta = $producto->getDescuento() > 0;
+  if ($contador >= $max) break;
+
+  $disponible = $producto->getStock() > 0;
+  $esOferta = $producto->getDescuento() > 0;
 ?>
     <div class="col">
       <div class="card h-100 shadow-sm">
+
         <?php if ($esOferta): ?>
           <div class="sticker-oferta">OFERTA</div>
-          <?php endif; ?>
-        <img src="../uploads/<?= $producto->getImagen(); ?>" 
-             class="card-img-top img-fluid" 
-             style="height: 450px; object-fit: cover;" 
-             alt="<?= $producto->getNombre() ?>">
+        <?php endif; ?>
+
+        <img src="../uploads/<?= htmlspecialchars($producto->getImagen(), ENT_QUOTES) ?>" 
+          class="card-img-top img-fluid"
+          style="height: 450px; object-fit: cover;"
+          alt="<?= htmlspecialchars($producto->getNombre(), ENT_QUOTES) ?>">
 
         <div class="card-body d-flex flex-column">
-          <?php if ($disponible): ?>
-            <?php if (!($rolUsuario === [])): ?>
-            <h5 class="card-title mb-2"><?= $producto->getNombre() ?></h5>
+
+        <?php if ($disponible): ?>
+
+          <?php if (!empty($objUsuarioRol)): ?>
+            <h5 class="card-title mb-2"><?= htmlspecialchars($producto->getNombre()) ?></h5>
             <p class="mb-1">Cantidad disponible: <?= $producto->getStock() ?></p>
-            <?php if (!$esOferta){ ?>
-            <p class="card-text text-success fw-bold mb-3">$<?= $producto->getPrecio(); ?></p>
-            <?php }else{ ?>
-              <p class="card-text text-success fw-bold mb-0">Antes: $<?= $producto->getPrecio(); ?></p>
-            <p class="text-danger fw-bold mb-1">
-            Oferta: $<?= $producto->getPrecio() * (1 - $producto->getDescuento() / 100); ?>
-          </p>
-              <?php } ?>
-               <?php endif; ?>
-            <?php if ($objUsuarioRol[0]->getIdRol() == 1): ?>
-              <button class="agregar-carrito btn btn-primary mt-auto" 
-                      data-id="<?=$producto->getIdProducto();?>" 
-                      data-nombre="<?=$producto->getNombre();?>">
-                Agregar al carrito
-              </button>
+
+            <?php if (!$esOferta): ?>
+              <p class="card-text text-success fw-bold mb-3">$<?= $producto->getPrecio(); ?></p>
             <?php else: ?>
-              <div class="mt-auto text-center w-100">
-                <span class="fw-bold">Inicia sesión para comprar</span>
-              </div>
+              <p class="card-text text-success fw-bold mb-0">Antes: $<?= $producto->getPrecio(); ?></p>
+              <p class="text-danger fw-bold mb-1">
+                Oferta: $<?= number_format($producto->getPrecio() * (1 - $producto->getDescuento() / 100), 2, '.', ','); ?>
+              </p>
             <?php endif; ?>
 
+          <?php endif; ?>
+
+          <?php if (!empty($objUsuarioRol) && $objUsuarioRol[0]->getIdRol() == 1): ?>
+            <button class="agregar-carrito btn btn-primary mt-auto"
+              data-id="<?= $producto->getIdProducto(); ?>"
+              data-nombre="<?= htmlspecialchars($producto->getNombre(), ENT_QUOTES); ?>">
+              Agregar al carrito
+            </button>
           <?php else: ?>
-            <div class="text-center text-muted" style="opacity: 0.6;">
-              <h5 class="card-title">No disponible</h5>
-              <p class="mb-0"><?= $producto->getNombre() ?></p>
+            <div class="mt-auto text-center w-100">
+              <span class="fw-bold">Inicia sesión para comprar</span>
             </div>
           <?php endif; ?>
+
+        <?php else: ?>
+          <div class="text-center text-muted" style="opacity: 0.6;">
+            <h5 class="card-title">No disponible</h5>
+            <p class="mb-0"><?= htmlspecialchars($producto->getNombre()) ?></p>
+          </div>
+        <?php endif; ?>
+
         </div>
       </div>
     </div>
+
 <?php 
 $contador++;
 endforeach;
-
- ?>
+?>
   </div>
 </div>
 
 <?php } ?>
+
 <script src="./assets/js/carrito.js"></script>
 <link rel="stylesheet" href="./assets/css/carrito.css">
 <link rel="stylesheet" href="./assets/css/ofertas.css">
 
-<?php
-include_once 'structure/footer.php';
-?>
+<?php include_once 'structure/footer.php'; ?>

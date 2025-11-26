@@ -74,13 +74,11 @@ class ABMRol
     public function crearRol($descripcion)
     {
 
-        // Verificar si ya existe
         $existe = $this->buscar(['rodescripcion' => $descripcion]);
         if (!empty($existe)) {
             return ["success" => false, "mensaje" => "El rol ya existe."];
         }
 
-        // Crear rol
         if ($this->alta(['idrol' => null, 'rodescripcion' => $descripcion])) {
             $nuevo = $this->buscar(['rodescripcion' => $descripcion])[0];
 
@@ -97,12 +95,10 @@ class ABMRol
     public function borrarRol($idRol)
     {
 
-        // Roles protegidos (por ej: Admin 1 y Cliente 2)
         if ($idRol == 1 || $idRol == 2) {
             return ["success" => false, "mensaje" => "No se pueden eliminar los roles del sistema."];
         }
 
-        // Verificar si hay usuarios con ese rol
         $objUsuarioRol = new UsuarioRol();
         $asignados = $objUsuarioRol->listar("idrol = " . $idRol);
 
@@ -113,7 +109,6 @@ class ABMRol
             ];
         }
 
-        // Borrar permisos del rol
         $abmMenuRol = new ABMMenuRol();
         $permisos = $abmMenuRol->buscar(['idrol' => $idRol]);
 
@@ -121,7 +116,6 @@ class ABMRol
             $p->eliminar();
         }
 
-        // Borrar rol
         if ($this->baja(['idrol' => $idRol])) {
             return ["success" => true, "mensaje" => "Rol eliminado correctamente."];
         }

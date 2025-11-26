@@ -1,8 +1,8 @@
 <?php
 class CompraItem {
     private $idcompraitem;
-    private $idproducto; // FK a Producto
-    private $idcompra;   // FK a Compra
+    private $idproducto; 
+    private $idcompra;   
     private $cicantidad;
 
     public function __construct($datos = []) {

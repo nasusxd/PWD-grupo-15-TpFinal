@@ -100,7 +100,6 @@ class ABMUsuario
 
         $usuario = $buscado[0];
 
-        // Construir parámetros para modificacion()
         $param = [
             "idusuario" => $usuario->getIdUsuario(),
             "usnombre" => $datos["usnombre"] ?? $usuario->getNombre(),
@@ -109,24 +108,19 @@ class ABMUsuario
             "usdeshabilitado" => $usuario->getDeshabilitado()
         ];
 
-        // Si envió nueva contraseña → hashearla
         if (isset($datos["uspass"]) && $datos["uspass"] != "" && $datos["uspass"] != "null") {
             $param["uspass"] = password_hash($datos["uspass"], PASSWORD_DEFAULT);
         }
 
-        // Guardar usuario
         if (!$this->modificacion($param)) {
             $resp["msg"] = "No se pudo modificar el usuario";
             return $resp;
         }
 
-        // --- Manejo del Rol ---
         $abmUsuarioRol = new ABMUsuarioRol();
 
-        // Obtener roles actuales
         $rolesActuales = $abmUsuarioRol->buscar(["idusuario" => $usuario->getIdUsuario()]);
 
-        // Eliminarlos todos (aunque el diseño deje un solo rol)
         if (!empty($rolesActuales)) {
             foreach ($rolesActuales as $rol) {
                 $abmUsuarioRol->baja([
@@ -136,7 +130,6 @@ class ABMUsuario
             }
         }
 
-        // Asignar nuevo rol
         if (isset($datos["idrol"])) {
             $abmUsuarioRol->alta([
                 "idusuario" => $usuario->getIdUsuario(),
@@ -157,8 +150,6 @@ class ABMUsuario
 
         $usuario = $lista[0];
 
-        // Si la acción es deshabilitar → fecha actual
-        // Si la acción es habilitar → null
         $nuevaFecha = ($accion == 'deshabilitar') ? date('Y-m-d H:i:s') : null;
 
         $param = [
@@ -181,12 +172,10 @@ class ABMUsuario
 
         $usuario = $lista[0];
 
-        // usuario deshabilitado
         if ($usuario->getDeshabilitado() != null) {
             return null;
         }
 
-        // contraseña incorrecta
         if (!password_verify($password, $usuario->getPassword())) {
             return null;
         }
@@ -200,7 +189,6 @@ class ABMUsuario
 
         $abmUsuarioRol = new ABMUsuarioRol();
 
-        // 1) Validar duplicados
         $existe = $this->buscar(["usnombre" => $datos["usnombre"]]);
         $existeMail = $this->buscar(["usmail" => $datos["usmail"]]);
 
@@ -211,7 +199,6 @@ class ABMUsuario
             ];
         }
 
-        // 2) Crear usuario
         if (!$this->alta($datos)) {
             return [
                 "success" => false,
@@ -219,11 +206,9 @@ class ABMUsuario
             ];
         }
 
-        // 3) Recuperar el usuario recién creado
         $nuevo = $this->buscar(["usnombre" => $datos["usnombre"]])[0];
         $idUsuario = $nuevo->getIdUsuario();
 
-        // 4) Rol por defecto o enviado
         $idRol = $datos["idrol"] ?? 1;
 
         if (!$abmUsuarioRol->alta(["idusuario" => $idUsuario, "idrol" => $idRol])) {
@@ -242,17 +227,14 @@ class ABMUsuario
     {
         $resp = ["success" => false, "msg" => ""];
 
-        // Validar email ya registrado
         $existe = $this->buscar(['usmail' => $datos['usmail']]);
         if (count($existe) > 0) {
             $resp["msg"] = "El email ingresado ya está registrado";
             return $resp;
         }
 
-        // Alta de usuario
         if ($this->alta($datos)) {
 
-            // Obtener ID del usuario recién creado
             $nuevo = $this->buscar(['usmail' => $datos['usmail']]);
             if (empty($nuevo)) {
                 $resp["msg"] = "Error al recuperar el ID del usuario";
@@ -261,7 +243,6 @@ class ABMUsuario
 
             $idUsuario = $nuevo[0]->getIdUsuario();
 
-            // Asignar rol por defecto (1 = Cliente)
             $abmUsuarioRol = new ABMUsuarioRol();
             $paramRol = [
                 "idusuario" => $idUsuario,

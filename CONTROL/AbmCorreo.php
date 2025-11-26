@@ -8,7 +8,6 @@ class ABMCorreo {
      */
     public function enviarConsulta($datos)
     {
-        // Validaciones
         if (
             empty($datos['correo']) ||
             empty($datos['asunto']) ||
@@ -21,7 +20,6 @@ class ABMCorreo {
             ];
         }
 
-        // Llama a tu función real que ya tenés
         $resultado = enviarCorreo(
             $datos['correo'],
             $datos['asunto'],

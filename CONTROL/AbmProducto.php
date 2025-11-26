@@ -11,6 +11,9 @@ class ABMProducto
             && array_key_exists('procantstock', $param) && array_key_exists('proimagen', $param) && array_key_exists('descuento', $param)
         ) {
             $objProducto = new Producto();
+            if (!array_key_exists('prodeshabilitado', $param)) {
+                $param['prodeshabilitado'] = 0;
+            }
             $objProducto->cargarDatos($param);
         }
         return $objProducto;
@@ -26,6 +29,7 @@ class ABMProducto
         }
         return $obj;
     }
+
     public function alta($param)
     {
         $resp = false;
@@ -36,7 +40,8 @@ class ABMProducto
             "procantstock" => $param['procantstock'],
             "precio" => $param['precio'],
             "proimagen" => $param['proimagen'],
-            "descuento" => $param['descuento']
+            "descuento" => $param['descuento'],
+            "prodeshabilitado" => $param['prodeshabilitado'] ?? 0
         ];
 
         $objProducto = $this->cargarObjeto($nuevoProducto);
@@ -61,12 +66,33 @@ class ABMProducto
     public function modificacion($param)
     {
         $resp = false;
-        if (array_key_exists('idproducto', $param)) {
-            $objProducto = $this->cargarObjeto($param);
-            if ($objProducto != null && $objProducto->modificar()) {
-                $resp = true;
-            }
+
+        if (!array_key_exists('idproducto', $param)) {
+            return $resp;
         }
+
+        $prodArr = $this->buscar(['idproducto' => $param['idproducto']]);
+        if (empty($prodArr)) {
+            return $resp;
+        }
+        $prodActual = $prodArr[0];
+
+        $paramCompletado = [
+            "idproducto"       => $param['idproducto'],
+            "pronombre"        => $param['pronombre'] ?? $prodActual->getNombre(),
+            "prodetalle"       => $param['prodetalle'] ?? $prodActual->getDetalle(),
+            "procantstock"     => $param['procantstock'] ?? $prodActual->getStock(),
+            "precio"           => $param['precio'] ?? $prodActual->getPrecio(),
+            "proimagen"        => $param['proimagen'] ?? $prodActual->getImagen(),
+            "descuento"        => $param['descuento'] ?? $prodActual->getDescuento(),
+            "prodeshabilitado" => $param['prodeshabilitado'] ?? $prodActual->getProdeshabilitado()
+        ];
+
+        $objProducto = $this->cargarObjeto($paramCompletado);
+        if ($objProducto != null && $objProducto->modificar()) {
+            $resp = true;
+        }
+
         return $resp;
     }
 
@@ -75,13 +101,16 @@ class ABMProducto
         $where = "true";
         if ($param != null) {
             if (isset($param['idproducto']))
-                $where .= " and idproducto = " . $param['idproducto'];
+                $where .= " and idproducto = " . intval($param['idproducto']);
             if (isset($param['pronombre']))
-                $where .= " and pronombre = '" . $param['pronombre'];
+                $where .= " and pronombre = '" . str_replace("'", "''", $param['pronombre']) . "'";
             if (isset($param['prodetalle']))
-                $where .= " and prodetalle = '" . $param['prodetalle'];
+                $where .= " and prodetalle = '" . str_replace("'", "''", $param['prodetalle']) . "'";
             if (isset($param['procantstock'])) {
-                $where .= " and procantstock = '" . $param['procantstock'];
+                $where .= " and procantstock = " . intval($param['procantstock']);
+            }
+            if (isset($param['prodeshabilitado'])) {
+                $where .= " and prodeshabilitado = " . intval($param['prodeshabilitado']);
             }
         }
         $objProducto = new Producto();
@@ -110,7 +139,6 @@ class ABMProducto
             ];
         }
 
-        // Buscar si existe
         $producto = $this->buscar(["idproducto" => $idProducto]);
 
         if (empty($producto)) {
@@ -123,7 +151,6 @@ class ABMProducto
         /** @var Producto $prod */
         $prod = $producto[0];
 
-        // Armo parámetros para modificación
         $param = [
             "idproducto"   => $prod->getIdProducto(),
             "pronombre"    => $prod->getNombre(),
@@ -131,10 +158,10 @@ class ABMProducto
             "precio"       => $prod->getPrecio(),
             "procantstock" => $prod->getStock(),
             "proimagen"    => $prod->getImagen(),
-            "descuento"    => $descuento
+            "descuento"    => $descuento,
+            "prodeshabilitado" => $prod->getProdeshabilitado()
         ];
 
-        // Modificar
         $resultado = $this->modificacion($param);
 
         if ($resultado) {
@@ -152,12 +179,11 @@ class ABMProducto
 
     public function altaConImagen($datos, $files)
     {
-        // Validar imagen
+       
         if (!isset($files['proimagen']) || $files['proimagen']['error'] !== 0) {
             return ["success" => false, "message" => "No se seleccionó una imagen."];
         }
 
-        // Preparar archivo
         $nombreArchivo = time() . "_" . $files['proimagen']['name'];
         $tmpArchivo = $files['proimagen']['tmp_name'];
         $carpeta = "../../uploads/";
@@ -167,15 +193,11 @@ class ABMProducto
             mkdir($carpeta, 0777, true);
         }
 
-        // Mover archivo
         if (!move_uploaded_file($tmpArchivo, $rutaDestino)) {
             return ["success" => false, "message" => "Error al subir la imagen."];
         }
-
-        // Agregar imagen al array
         $datos['proimagen'] = $nombreArchivo;
 
-        // Usar el ALTA tradicional del ABM
         $creado = $this->alta($datos);
 
         if ($creado) {
@@ -184,13 +206,11 @@ class ABMProducto
 
         return ["success" => false, "message" => "Error al guardar el producto."];
     }
+
     public function agregarAlCarrito($datos)
     {
         $sesion = new Session();
 
-        // ------------------------------
-        // 1) Validaciones básicas
-        // ------------------------------
         if (
             !isset($datos['idproducto']) ||
             !is_numeric($datos['idproducto']) ||
@@ -206,9 +226,6 @@ class ABMProducto
         $idProducto = $datos['idproducto'];
         $cantidadPedida = $datos['cantidad'];
 
-        // ------------------------------
-        // 2) Buscar producto
-        // ------------------------------
         $productos = $this->buscar(['idproducto' => $idProducto]);
 
         if (empty($productos)) {
@@ -221,9 +238,6 @@ class ABMProducto
         $producto = $productos[0];
         $stockDisponible = $producto->getStock();
 
-        // ------------------------------
-        // 3) Verificar stock vs carrito actual
-        // ------------------------------
         $cantidadEnCarrito = $_SESSION['carrito'][$idProducto] ?? 0;
         $cantidadTotal = $cantidadEnCarrito + $cantidadPedida;
 
@@ -234,20 +248,11 @@ class ABMProducto
             ];
         }
 
-        // ------------------------------
-        // 4) Agregar al carrito
-        // ------------------------------
         $sesion->agregarAlCarrito($idProducto, $cantidadPedida);
 
-        // ------------------------------
-        // 5) Recalcular totales
-        // ------------------------------
         $totalProductos = $sesion->totalProductosCarrito();
         $totalPrecio = $sesion->precioTotalCarrito();
 
-        // ------------------------------
-        // 6) Armar lista de items con precios y descuentos
-        // ------------------------------
         $items = [];
 
         if (!empty($_SESSION['carrito'])) {
@@ -261,7 +266,6 @@ class ABMProducto
                     $descuento = $p->getDescuento();
                     $precioBase = $p->getPrecio();
 
-                    // aplicar descuento
                     $precioFinal = ($descuento > 0)
                         ? $precioBase * (1 - $descuento / 100)
                         : $precioBase;
@@ -278,9 +282,6 @@ class ABMProducto
             }
         }
 
-        // ------------------------------
-        // 7) Retorno final
-        // ------------------------------
         return [
             "success" => true,
             "totalProductos" => $totalProductos,
@@ -288,6 +289,7 @@ class ABMProducto
             "items" => $items
         ];
     }
+
     public function modificarProducto($datos)
     {
         $respuesta = ["success" => false, "msg" => "Error al modificar el producto."];
@@ -297,7 +299,6 @@ class ABMProducto
             return $respuesta;
         }
 
-        // Buscar producto actual
         $productoActual = $this->buscar(['idproducto' => $datos['idproducto']]);
 
         if (empty($productoActual)) {
@@ -307,25 +308,27 @@ class ABMProducto
 
         $productoActual = $productoActual[0];
 
-        // Mantener imagen anterior si no vino una nueva
         if (empty($datos['proimagen'])) {
             $datos['proimagen'] = $productoActual->getImagen();
         }
 
-        // Llamar al método modificacion original
+        if (!isset($datos['prodeshabilitado'])) {
+            $datos['prodeshabilitado'] = $productoActual->getProdeshabilitado();
+        }
+
         if ($this->modificacion($datos)) {
             return ["success" => true, "msg" => "Producto modificado."];
         } else {
             return ["success" => false, "msg" => "No se pudo modificar el producto en la BD."];
         }
     }
+
     public function eliminarProducto($idProducto)
     {
         if (!$idProducto) {
             return false;
         }
 
-        // Llamamos al método baja estándar del ABM
         return $this->baja(['idproducto' => $idProducto]);
     }
 
@@ -347,4 +350,48 @@ class ABMProducto
 
         return $items;
     }
+
+    public function bajaLogica($idProducto)
+    {
+        $param = [
+            "idproducto" => $idProducto,
+            "prodeshabilitado" => 1
+        ];
+        return $this->modificacion($param);
+    }
+    public function cambiarEstado($idProducto, $accion)
+{
+    if (!$idProducto) {
+        return ["success" => false, "message" => "ID inválido."];
+    }
+
+    $prodArr = $this->buscar(['idproducto' => $idProducto]);
+    if (empty($prodArr)) {
+        return ["success" => false, "message" => "Producto no encontrado."];
+    }
+
+    if ($accion === 'baja') {
+        $nuevoEstado = 1;
+        $mensaje = "Producto dado de baja correctamente.";
+    } elseif ($accion === 'alta') {
+        $nuevoEstado = 0;
+        $mensaje = "Producto habilitado correctamente.";
+    } else {
+        return ["success" => false, "message" => "Acción inválida."];
+    }
+
+    $params = [
+        "idproducto" => $idProducto,
+        "prodeshabilitado" => $nuevoEstado
+    ];
+
+    $ok = $this->modificacion($params);
+
+    if ($ok) {
+        return ["success" => true, "message" => $mensaje];
+    } else {
+        return ["success" => false, "message" => "No se pudo actualizar el estado del producto."];
+    }
+}
+
 }

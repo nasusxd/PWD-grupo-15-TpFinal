@@ -34,9 +34,6 @@ class Session
         return $resp;
     }
 
-    /* -----------------------------------------
-     *  FALTA ESTE MÉTODO !!!
-     * ---------------------------------------- */
     public function validar()
     {
         return isset($_SESSION['idusuario']);
@@ -58,7 +55,6 @@ class Session
         $abmMenuRol = new ABMMenuRol();
         $abmMenu = new ABMMenu();
 
-        // Los menús del panel admin cuelgan del ID = 1
         $menusAdmin = $abmMenu->buscar(['idpadre' => 1]);
 
         if (empty($menusAdmin)) {
