@@ -5,12 +5,29 @@ $(document).ready(function () {
     $('.btnCambiarEstado').click(function () {
 
         idCompraGlobal = $(this).data('id');
-        let estadoActual = $(this).data('estado');
+        let estadoActual = parseInt($(this).data('estado'));
+
 
         $("#idCompraModal").val(idCompraGlobal);
         $("#nuevoEstado").val(estadoActual);
 
+        if (estadoActual == 4 ) {
+            $("#motivoContainer").show();
+        } else {
+            $("#motivoContainer").hide();
+            $("#motivoCancelacion").val("");
+        }
         $("#modalEstadoCompra").modal("show");
+    });
+
+    $("#nuevoEstado").on("change", function () {
+        let estado = $(this).val(); //valor del select
+        if (estado == 4) {
+            $("#motivoContainer").show();
+        } else {
+            $("#motivoContainer").hide();
+            $("#motivoCancelacion").val("");
+        }
     });
 
     $("#btnGuardarEstado").click(function () {

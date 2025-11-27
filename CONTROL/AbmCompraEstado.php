@@ -85,14 +85,14 @@ class ABMCompraEstado
 
     public function cambiarEstadoCompra($datos)
     {
-
+        
         if (!isset($datos['idcompra']) || !isset($datos['estado'])) {
             return ["success" => false, "msg" => "Datos incompletos"];
         }
 
         $idCompra = $datos['idcompra'];
         $nuevoEstado = (int)$datos['estado'];
-
+        $motivo = $datos['motivo'] ?? null;
         $objAbmUsuario = new ABMUsuario();
         $objAbmCompra = new ABMCompra();
         $objAbmProducto = new ABMProducto();
@@ -143,7 +143,8 @@ class ABMCompraEstado
             "idcompra" => $idCompra,
             "idcompraestadotipo" => $nuevoEstado,
             "cefechaini" => date("Y-m-d H:i:s"),
-            "cefechafin" => null
+            "cefechafin" => null,
+            "motivo" => ($nuevoEstado == 4 ? $motivo : null)
         ];
 
         if (!$this->alta($nuevoReg)) {

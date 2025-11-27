@@ -5,7 +5,7 @@ class CompraEstado {
     private $idcompraestadotipo;
     private $cefechaini;
     private $cefechafin;
-
+    private $motivoCancelacion;
     public function __construct($datos = []) {
         if (!empty($datos)) {
             $this->cargarDatos($datos);
@@ -18,6 +18,7 @@ class CompraEstado {
         $this->idcompraestadotipo = $datos['idcompraestadotipo'] ?? null;
         $this->cefechaini = $datos['cefechaini'] ?? null;
         $this->cefechafin = $datos['cefechafin'] ?? null;
+        $this->motivoCancelacion = $datos['motivoCancelacion'] ?? null;
     }
 
     public function getIdCompraEstado() {
@@ -34,6 +35,9 @@ class CompraEstado {
     }
     public function getFechaFin() {
         return $this->cefechafin;
+    }
+    public function getMotivo() {
+        return $this->motivoCancelacion;
     }
 
     public function setIdCompra($idCompra) {
@@ -52,15 +56,17 @@ class CompraEstado {
     public function insertar() {
         $resp = false;
         $baseDatos = new BaseDatos();
-         $sql = "INSERT INTO compraestado (idcompra, idcompraestadotipo, cefechaini, cefechafin) 
-                VALUES (:idcompra, :idcompraestadotipo, :cefechaini, :cefechafin)";
+         $sql = "INSERT INTO compraestado (idcompra, idcompraestadotipo, cefechaini, cefechafin, motivoCancelacion) 
+                VALUES (:idcompra, :idcompraestadotipo, :cefechaini, :cefechafin, :motivoCancelacion)";
 
         $stmt = $baseDatos->prepare($sql);
         if ($stmt->execute([
             ':idcompra' => $this->getIdCompra(),
             ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),
             ':cefechaini' => $this->getFechaIni(),
-            ':cefechafin' => $this->getFechaFin()
+            ':cefechafin' => $this->getFechaFin(),
+            ':cefechafin' => $this->getFechaFin(),
+            ':motivoCancelacion' => $this->getMotivo()
         ])) {
             $resp = true;
         }
@@ -71,7 +77,7 @@ class CompraEstado {
         $base = new BaseDatos();
         $resp = false;
         $sql = "UPDATE compraestado 
-                SET idcompra = :idcompra, idcompraestadotipo = :idcompraestadotipo, cefechaini = :cefechaini, cefechafin = :cefechafin
+                SET idcompra = :idcompra, idcompraestadotipo = :idcompraestadotipo, cefechaini = :cefechaini, cefechafin = :cefechafin, motivoCancelacion = :motivoCancelacion
                 WHERE idcompraestado = :idcompraestado";
         
             $stmt = $base->prepare($sql);
@@ -80,7 +86,8 @@ class CompraEstado {
             ':idcompra' => $this->getIdCompra(),
             ':idcompraestadotipo' => $this->getIdCompraEstadoTipo(),
             ':cefechaini' => $this->getFechaIni(),
-            ':cefechafin' => $this->getFechaFin()
+            ':cefechafin' => $this->getFechaFin(),
+            ':motivoCancelacion' => $this->getMotivo()
             ])) {
                 $resp = true;
             }

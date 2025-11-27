@@ -97,16 +97,22 @@ $listaCompras = $objCompra->buscar(null);
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <div class="modal-body">
-        <input type="hidden" id="idCompraModal">
+  <div class="modal-body">
+      <input type="hidden" id="idCompraModal">
 
-        <label>Seleccionar nuevo estado:</label>
-        <select id="nuevoEstado" class="form-select">
-          <option value="2">Aceptada</option>
-          <option value="3">Enviada</option>
-          <option value="4">Cancelada</option>
-        </select>
+      <label>Seleccionar nuevo estado:</label>
+      <select id="nuevoEstado" class="form-select">
+        <option value="2">Aceptada</option>
+        <option value="3">Enviada</option>
+        <option value="4">Cancelada</option>
+      </select>
+
+      <div id="motivoContainer" class="mt-3" style="display:none;">
+          <label>Motivo de cancelación:</label>
+          <textarea id="motivoCancelacion" class="form-control" rows="3"></textarea>
       </div>
+  </div>
+
 
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
