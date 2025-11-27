@@ -32,14 +32,15 @@ $(document).ready(function () {
 
     $("#btnGuardarEstado").click(function () {
         let nuevoEstado = $("#nuevoEstado").val();
-
+        let motivoCancelacion = $("#motivoCancelacion").val().trim();
         $.ajax({
             url: "./action/actionActualizarCompraEstado.php",
             type: "POST",
             dataType: "json",
             data: {
                 idcompra: idCompraGlobal,
-                estado: nuevoEstado
+                estado: nuevoEstado,
+                motivo: motivoCancelacion
             },
             success: function (data) {
 

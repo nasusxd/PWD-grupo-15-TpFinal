@@ -144,7 +144,7 @@ class ABMCompraEstado
             "idcompraestadotipo" => $nuevoEstado,
             "cefechaini" => date("Y-m-d H:i:s"),
             "cefechafin" => null,
-            "motivo" => ($nuevoEstado == 4 ? $motivo : null)
+            "motivoCancelacion" => ($nuevoEstado == 4 ? $motivo : null)
         ];
 
         if (!$this->alta($nuevoReg)) {
@@ -191,7 +191,8 @@ class ABMCompraEstado
             $usuario->getMail(),
             $usuario->getNombre(),
             $idCompra,
-            $estadoTexto
+            $estadoTexto,
+            ($nuevoEstado == 4) ? $motivo : null
         );
 
         return [

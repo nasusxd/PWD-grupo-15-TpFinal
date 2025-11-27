@@ -1,26 +1,27 @@
-<?php 
+<?php
 include_once __DIR__ . '/../vendor/autoload.php';
 include_once __DIR__ . '../../configuracion.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use FPDF\FPDF;
 
-function datasubmitted() {
-    $_AAux= array();
+function datasubmitted()
+{
+    $_AAux = array();
     if (!empty($_POST))
-        $_AAux =$_POST;
-        else
-            if(!empty($_GET)) {
-                $_AAux =$_GET;
-            }
-        if (count($_AAux)){
-            foreach ($_AAux as $indice => $valor) {
-                if ($valor=="")
-                    $_AAux[$indice] = 'null' ;
-            }
+        $_AAux = $_POST;
+    else
+            if (!empty($_GET)) {
+        $_AAux = $_GET;
+    }
+    if (count($_AAux)) {
+        foreach ($_AAux as $indice => $valor) {
+            if ($valor == "")
+                $_AAux[$indice] = 'null';
         }
-        return $_AAux;
-        
+    }
+    return $_AAux;
 }
 
 // Autoload automático de clases
@@ -43,7 +44,8 @@ spl_autoload_register(function ($clase) {
     }
 });
 
-function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente) {
+function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente)
+{
     $res = false;
     $mail = new PHPMailer();
 
@@ -75,7 +77,7 @@ function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente) {
 
         //alternativa 
         $mail->AltBody = "Hola $nombre, gracias por contactarte. Tu mensaje fue: $mensajeCliente";
-        
+
         //lo mando
         $mail->send();
         $res = true;
@@ -85,7 +87,8 @@ function enviarCorreo($correoCliente, $subject, $nombre, $mensajeCliente) {
     return $res;
 }
 
-function enviarCorreoResumen($correoCliente, $carrito) {
+function enviarCorreoResumen($correoCliente, $carrito)
+{
     $res = false;
     $mail = new PHPMailer(true);
     $objabmProducto = new ABMProducto();
@@ -93,40 +96,40 @@ function enviarCorreoResumen($correoCliente, $carrito) {
     try {
         $pdf = new \FPDF();
         $pdf->AddPage();
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(0,10,'Resumen de Compra',0,1,'C');
+        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->Cell(0, 10, 'Resumen de Compra', 0, 1, 'C');
         $pdf->Ln(5);
 
-        $pdf->SetFont('Arial','',12);
-        $pdf->Cell(0,8,'Cliente: '.$correoCliente,0,1);
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(0, 8, 'Cliente: ' . $correoCliente, 0, 1);
         $pdf->Ln(5);
 
-        $pdf->SetFont('Arial','B',12);
-        $pdf->Cell(80,8,'Producto',1);
-        $pdf->Cell(30,8,'Cantidad',1);
-        $pdf->Cell(30,8,'Precio',1);
-        $pdf->Cell(30,8,'Subtotal',1);
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(80, 8, 'Producto', 1);
+        $pdf->Cell(30, 8, 'Cantidad', 1);
+        $pdf->Cell(30, 8, 'Precio', 1);
+        $pdf->Cell(30, 8, 'Subtotal', 1);
         $pdf->Ln();
 
-        $pdf->SetFont('Arial','',12);
+        $pdf->SetFont('Arial', '', 12);
         $total = 0;
         foreach ($carrito as $idProducto => $cantidad) {
-            $productoArr = $objabmProducto->buscar(['idproducto'=>$idProducto]);
+            $productoArr = $objabmProducto->buscar(['idproducto' => $idProducto]);
             if (count($productoArr) > 0) {
                 $producto = $productoArr[0];
                 $subtotal = $producto->getPrecio() * $cantidad;
                 $total += $subtotal;
 
-                $pdf->Cell(80,8,$producto->getNombre(),1);
-                $pdf->Cell(30,8,$cantidad,1);
-                $pdf->Cell(30,8,'$'.$producto->getPrecio(),1);
-                $pdf->Cell(30,8,'$'.$subtotal,1);
+                $pdf->Cell(80, 8, $producto->getNombre(), 1);
+                $pdf->Cell(30, 8, $cantidad, 1);
+                $pdf->Cell(30, 8, '$' . $producto->getPrecio(), 1);
+                $pdf->Cell(30, 8, '$' . $subtotal, 1);
                 $pdf->Ln();
             }
         }
 
-        $pdf->Cell(140,8,'Total',1);
-        $pdf->Cell(30,8,'$'.$total,1);
+        $pdf->Cell(140, 8, 'Total', 1);
+        $pdf->Cell(30, 8, '$' . $total, 1);
 
         $pdfFile = tempnam(sys_get_temp_dir(), 'resumen_') . '.pdf';
         $pdf->Output('F', $pdfFile);
@@ -152,7 +155,6 @@ function enviarCorreoResumen($correoCliente, $carrito) {
         $res = true;
 
         unlink($pdfFile);
-
     } catch (Exception $e) {
         $res = "Error al enviar el correo: " . $mail->ErrorInfo;
     }
@@ -163,7 +165,8 @@ function enviarCorreoResumen($correoCliente, $carrito) {
 
 
 
-function enviarCorreoCambioEstado($correoCliente, $nombreCliente, $idCompra, $estadoNuevo) {
+function enviarCorreoCambioEstado($correoCliente, $nombreCliente, $idCompra, $estadoNuevo, $motivoCancelacion = null)
+{
     $res = false;
     $mail = new PHPMailer();
 
@@ -190,7 +193,9 @@ function enviarCorreoCambioEstado($correoCliente, $nombreCliente, $idCompra, $es
         $mail->Body = "
             <p>Hola <strong>$nombreCliente</strong>,</p>
             <p>Queriamos informarte que el estado de tu compra <strong>#$idCompra</strong> ha cambiado.</p>
-
+            <?php if ($estadoNuevo == 'Cancelada'): ?>
+            <p><strong>Motivo de la cancelación:</strong> <span style='color:#e82121'>$motivoCancelacion</span></p>
+            <?php endif; ?>
             <p><strong>Nuevo estado:</strong> <span style='color:#1a73e8'>$estadoNuevo</span></p>
 
             <p>Gracias por confiar en Pelunco.</p>
@@ -203,13 +208,9 @@ function enviarCorreoCambioEstado($correoCliente, $nombreCliente, $idCompra, $es
         // Enviar
         $mail->send();
         $res = true;
-
     } catch (Exception $e) {
         $res = "Error al enviar correo: " . $e->getMessage();
     }
 
     return $res;
 }
-
-
-?>

@@ -156,6 +156,7 @@ $listaCompras = $objCompra->buscar(null);
 
 
 
-<script src="./assets/js/cambiarEstadoCompra.js"></script>
+
 
 <?php include_once "./structure/footer.php"; ?>
+<script src="./assets/js/cambiarEstadoCompra.js"></script>
